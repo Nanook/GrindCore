@@ -34,7 +34,8 @@ jobs:
           rm -rf build/.github
           mv build/* .
 
-      - name: Call reusable workflow
-        uses: Nanook/GrindCore.build/.github/workflows/ci.yaml@main
-        with:
-          token: ${{ secrets.GRINDCORE_BUILD_READ }}
+  call-reusable-workflow:
+    needs: combine-and-build
+    uses: Nanook/GrindCore.build/.github/workflows/ci.yaml@main
+    secrets:
+      GRINDCORE_BUILD_READ: ${{ secrets.GRINDCORE_BUILD_READ }}
