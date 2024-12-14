@@ -32,19 +32,19 @@ jobs:
           rm -rf build/.github
           rm -rf build/.git
           mv build/* .
-          echo ------
+          echo "------"
           ls -al
-          echo ------.github/workflows
+          echo "------.github/workflows"
           ls -al .github/workflows
-          echo ------src/native
+          echo "------src/native"
           ls -al src/native
-          echo ------src/native/external
+          echo "------src/native/external"
           ls -al src/native/external
-          echo ------src/native/libs
+          echo "------src/native/libs"
           ls -al src/native/libs
-          echo ------eng
+          echo "------eng"
           ls -al eng
-          echo ------eng/native
+          echo "------eng/native"
           ls -al eng/native
 
       - name: Upload combined filesystem
@@ -56,12 +56,5 @@ jobs:
   call-reusable-workflow:
     needs: combine-and-build
     uses: Nanook/GrindCore.build/.github/workflows/ci.yaml@main
-    with:
-      secrets:
-        GRINDCORE_BUILD_READ: ${{ secrets.GRINDCORE_BUILD_READ }}
-    steps:
-      - name: Download combined filesystem
-        uses: actions/download-artifact@v3
-        with:
-          name: combined-filesystem
-          path: .
+    secrets:
+      GRINDCORE_BUILD_READ: ${{ secrets.GRINDCORE_BUILD_READ }}
