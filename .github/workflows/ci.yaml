@@ -29,7 +29,7 @@ jobs:
           rsync -a external/ build/src/native/external/
           rsync -a libs/ build/src/native/libs/
           rsync -a minipal/ build/src/native/minipal/
-           rm -rf build/.github
+          rm -rf build/.github
           rm -rf build/.git
           mv build/* .
           echo ------
@@ -47,8 +47,24 @@ jobs:
           echo ------eng/native
           ls -al eng/native
 
+      - name: Upload combined filesystem
+        uses: actions/upload-artifact@v3
+        with:
+          name: combined-filesystem
+          path: .
+
   call-reusable-workflow:
     needs: combine-and-build
-    uses: Nanook/GrindCore.build/.github/workflows/ci.yaml@main
-    secrets:
-      GRINDCORE_BUILD_READ: ${{ secrets.GRINDCORE_BUILD_READ }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download combined filesystem
+        uses: actions/download-artifact@v3
+        with:
+          name: combined-filesystem
+          path: .
+
+      - name: Run reusable workflow
+        uses: Nanook/GrindCore.build/.github/workflows/ci.yaml@main
+        secrets:
+          GRINDCORE_BUILD_READ: ${{ secrets.GRINDCORE_BUILD_READ }}
