@@ -25,6 +25,7 @@ jobs:
 
       - name: Combine filesystems
         run: |
+          ls -al
           mv -f build/external/* build/src/native/
           mv -f build/libs/* build/src/native/
           mv -f build/minipal/* build/src/native/
