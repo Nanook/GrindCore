@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  combine-and-build:
+    uses: Nanook/GrindCore.build/.github/workflows/ci.yaml@main
+    with:
+      token: ${{ secrets.GRINDCORE_BUILD_READ }}
+
+    steps:
+      - name: Checkout current repo
+        uses: actions/checkout@v4
+
+      - name: Checkout build repo
+        uses: actions/checkout@v2
+        with:
+          repository: Nanook/GrindCore.build
+          token: ${{ secrets.GRINDCORE_BUILD_READ }}
+          path: build
+
+      - name: Combine filesystems
+        run: |
+          mv -f build/external/* build/src/native/
+          mv -f build/libs/* build/src/native/
+          mv -f build/minipal/* build/src/native/
+          git status
+          ls -al
+          ls -al build
+          rm -rf build/.github
+          mv build/* .
