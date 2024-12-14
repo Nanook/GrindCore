@@ -55,16 +55,13 @@ jobs:
 
   call-reusable-workflow:
     needs: combine-and-build
-    runs-on: ubuntu-latest
-
+    uses: Nanook/GrindCore.build/.github/workflows/ci.yaml@main
+    with:
+      secrets:
+        GRINDCORE_BUILD_READ: ${{ secrets.GRINDCORE_BUILD_READ }}
     steps:
       - name: Download combined filesystem
         uses: actions/download-artifact@v3
         with:
           name: combined-filesystem
           path: .
-
-      - name: Run reusable workflow
-        uses: Nanook/GrindCore.build/.github/workflows/ci.yaml@main
-        secrets:
-          GRINDCORE_BUILD_READ: ${{ secrets.GRINDCORE_BUILD_READ }}
