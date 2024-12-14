@@ -8,7 +8,6 @@ on:
     branches:
       - main
 
-ss
 jobs:
   combine-and-build:
     runs-on: ubuntu-latest
