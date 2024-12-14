@@ -29,11 +29,16 @@ jobs:
           mv -f external/* build/src/native/
           mv -f libs/* build/src/native/
           mv -f minipal/* build/src/native/
-          git status
           ls -al
           ls -al build
           rm -rf build/.github
           mv build/* .
+          echo ------
+          ls -al
+          echo ------src
+          ls -al src
+          echo ------src
+          ls -al eng
 
   call-reusable-workflow:
     needs: combine-and-build
