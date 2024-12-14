@@ -26,11 +26,11 @@ jobs:
       - name: Combine filesystems
         run: |
           ls -al
-          mv -f external/* build/src/native/
-          mv -f libs/* build/src/native/
-          mv -f minipal/* build/src/native/
-          mv -f build/.github/workflows/ci.yaml .github/workflows/ci-build.yaml
+          mv -f external/* build/src/native/external
+          mv -f libs/* build/src/native/libs
+          mv -f minipal/* build/src/native/minipal
           rm -rf build/.github
+          rm -rf build/.git
           mv build/* .
           echo ------
           ls -al
