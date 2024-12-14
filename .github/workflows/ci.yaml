@@ -32,20 +32,20 @@ jobs:
           rm -rf build/.github
           rm -rf build/.git
           mv build/* .
-          echo "------"
-          ls -al
-          echo "------.github/workflows"
-          ls -al .github/workflows
-          echo "------src/native"
-          ls -al src/native
-          echo "------src/native/external"
-          ls -al src/native/external
-          echo "------src/native/libs"
-          ls -al src/native/libs
-          echo "------eng"
-          ls -al eng
-          echo "------eng/native"
-          ls -al eng/native
+          # echo "------"
+          # ls -al
+          # echo "------.github/workflows"
+          # ls -al .github/workflows
+          # echo "------src/native"
+          # ls -al src/native
+          # echo "------src/native/external"
+          # ls -al src/native/external
+          # echo "------src/native/libs"
+          # ls -al src/native/libs
+          # echo "------eng"
+          # ls -al eng
+          # echo "------eng/native"
+          # ls -al eng/native
 
       - name: Upload combined filesystem
         uses: actions/upload-artifact@v3
