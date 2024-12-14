@@ -32,19 +32,20 @@ jobs:
           ls -al
           ls -al build
           rm -rf build/.github
-          mv build/* .
-          echo ------
-          ls -al
-          echo ------src/native
-          ls -al src/native
-          echo ------src/native/external
-          ls -al src/native/external
-          echo ------src/native/libs
-          ls -al src/native/libs
-          echo ------eng
-          ls -al eng
-          echo ------eng/native
-          ls -al eng/native
+          cd build
+          # mv build/* .
+          # echo ------
+          # ls -al
+          # echo ------src/native
+          # ls -al src/native
+          # echo ------src/native/external
+          # ls -al src/native/external
+          # echo ------src/native/libs
+          # ls -al src/native/libs
+          # echo ------eng
+          # ls -al eng
+          # echo ------eng/native
+          # ls -al eng/native
 
   call-reusable-workflow:
     needs: combine-and-build
