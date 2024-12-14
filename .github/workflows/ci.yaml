@@ -10,9 +10,7 @@ on:
 
 jobs:
   combine-and-build:
-    uses: Nanook/GrindCore.build/.github/workflows/ci.yaml@main
-    with:
-      token: ${{ secrets.GRINDCORE_BUILD_READ }}
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout current repo
@@ -35,3 +33,8 @@ jobs:
           ls -al build
           rm -rf build/.github
           mv build/* .
+
+      - name: Call reusable workflow
+        uses: Nanook/GrindCore.build/.github/workflows/ci.yaml@main
+        with:
+          token: ${{ secrets.GRINDCORE_BUILD_READ }}
