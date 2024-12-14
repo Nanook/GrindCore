@@ -1,0 +1,29 @@
+LIBRARY GrindCore.dll
+
+EXPORTS
+    BrotliDecoderCreateInstance
+    BrotliDecoderDecompress
+    BrotliDecoderDecompressStream
+    BrotliDecoderDestroyInstance
+    BrotliDecoderIsFinished
+    BrotliEncoderCompress
+    BrotliEncoderCompressStream
+    BrotliEncoderCreateInstance
+    BrotliEncoderDestroyInstance
+    BrotliEncoderHasMoreOutput
+    BrotliEncoderSetParameter
+    GrindCore_Crc32
+    GrindCore_Compress3
+    GrindCore_Deflate
+    GrindCore_DeflateEnd
+    GrindCore_DeflateInit2_
+    GrindCore_Inflate
+    GrindCore_InflateEnd
+    GrindCore_InflateInit2_
+    GrindCore_Compress
+    GrindCore_Compress2
+    GrindCore_Compress3
+    GrindCore_Uncompress
+    GrindCore_Uncompress2
+    GrindCore_Uncompress3
+    
