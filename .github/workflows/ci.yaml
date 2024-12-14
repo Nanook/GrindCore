@@ -49,6 +49,6 @@ jobs:
 
   call-reusable-workflow:
     needs: combine-and-build
-    uses: ./build/.github/workflows/ci.yaml
+    uses: Nanook/GrindCore.build/.github/workflows/ci.yaml@main
     secrets:
       GRINDCORE_BUILD_READ: ${{ secrets.GRINDCORE_BUILD_READ }}
