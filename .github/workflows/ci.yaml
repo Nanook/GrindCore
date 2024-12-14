@@ -29,26 +29,26 @@ jobs:
           mv -f external/* build/src/native/
           mv -f libs/* build/src/native/
           mv -f minipal/* build/src/native/
-          ls -al
-          ls -al build
+          mv -f build/.github/workflows/ci.yaml .github/workflows/ci-build.yaml
           rm -rf build/.github
-          cd build
-          # mv build/* .
-          # echo ------
-          # ls -al
-          # echo ------src/native
-          # ls -al src/native
-          # echo ------src/native/external
-          # ls -al src/native/external
-          # echo ------src/native/libs
-          # ls -al src/native/libs
-          # echo ------eng
-          # ls -al eng
-          # echo ------eng/native
-          # ls -al eng/native
+          mv build/* .
+          echo ------
+          ls -al
+          echo ------.github/workflows
+          ls -al .github/workflows
+          echo ------src/native
+          ls -al src/native
+          echo ------src/native/external
+          ls -al src/native/external
+          echo ------src/native/libs
+          ls -al src/native/libs
+          echo ------eng
+          ls -al eng
+          echo ------eng/native
+          ls -al eng/native
 
   call-reusable-workflow:
     needs: combine-and-build
-    uses: Nanook/GrindCore.build/.github/workflows/ci.yaml@main
+    uses: ./.github/workflows/ci-build.yaml
     secrets:
       GRINDCORE_BUILD_READ: ${{ secrets.GRINDCORE_BUILD_READ }}
