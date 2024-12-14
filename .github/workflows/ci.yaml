@@ -35,10 +35,16 @@ jobs:
           mv build/* .
           echo ------
           ls -al
-          echo ------src
-          ls -al src
-          echo ------src
+          echo ------src/native
+          ls -al src/native
+          echo ------src/native/external
+          ls -al src/native/external
+          echo ------src/native/libs
+          ls -al src/native/libs
+          echo ------eng
           ls -al eng
+          echo ------eng/native
+          ls -al eng/native
 
   call-reusable-workflow:
     needs: combine-and-build
