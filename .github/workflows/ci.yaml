@@ -59,6 +59,6 @@ jobs:
 
   call-reusable-workflow:
     needs: combine-and-build
-    uses: .github/workflows/build/ci.yaml
+    uses: .github/workflows/build/ci.yaml@v1
     secrets:
       GRINDCORE_BUILD_READ: ${{ secrets.GRINDCORE_BUILD_READ }}
