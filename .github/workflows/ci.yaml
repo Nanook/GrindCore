@@ -25,9 +25,8 @@ jobs:
 
       - name: Combine filesystems
         run: |
-          mkdir .github/workflows/build
           ls -al
-          ls -al .github/workflows/build/.
+          mv build/.github/workflows/ci.yaml .github/workflows/ci-build.yaml
           rsync -a external/ build/src/native/external/
           rsync -a libs/ build/src/native/libs/
           rsync -a minipal/ build/src/native/minipal/
@@ -38,8 +37,6 @@ jobs:
           ls -al
           echo "------.github/workflows"
           ls -al .github/workflows
-          echo "------.github/workflows/build"
-          mv build/.github/workflows/ci.yaml / .github/workflows/build/.
           echo "------src/native"
           ls -al src/native
           echo "------src/native/external"
@@ -59,6 +56,6 @@ jobs:
 
   call-reusable-workflow:
     needs: combine-and-build
-    uses: .github/workflows/build/ci.yaml@v1
+    uses: .github/workflows/ci-build.yaml@v1
     secrets:
       GRINDCORE_BUILD_READ: ${{ secrets.GRINDCORE_BUILD_READ }}
