@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Nanook/GrindCore.build
-          token: ${{ secrets.GRINDCORE_BUILD_CONTENTS_READ }}
+          token: ${{ secrets.BUILD_READ }}
           path: build
 
       - name: Combine filesystems
@@ -42,4 +42,4 @@ jobs:
     needs: combine-and-build
     uses: Nanook/GrindCore.build/.github/workflows/ci.yaml@main
     secrets:
-      GRINDCORE_BUILD_READ: ${{ secrets.GRINDCORE_BUILD_CONTENTS_READ }}
+      GRINDCORE_BUILD_READ: ${{ secrets.BUILD_READ }}
