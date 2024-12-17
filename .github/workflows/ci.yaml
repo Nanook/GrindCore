@@ -38,8 +38,8 @@ jobs:
           name: combined-filesystem
           path: .
 
-  call-reusable-workflow:
-    needs: combine-and-build
-    uses: Nanook/GrindCore.build/.github/workflows/ci.yaml@main
-    secrets:
-      GRINDCORE_BUILD_READ: ${{ secrets.BUILD_READ }}
+  # call-reusable-workflow:
+  #   needs: combine-and-build
+  #   uses: Nanook/GrindCore.build/.github/workflows/ci.yaml@main
+  #   secrets:
+  #     GRINDCORE_BUILD_READ: ${{ secrets.BUILD_READ }}
