@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch: # Add this line to enable manual triggering
 
 jobs:
   combine-and-build:
@@ -38,8 +39,8 @@ jobs:
           name: combined-filesystem
           path: .
 
-  # call-reusable-workflow:
-  #   needs: combine-and-build
-  #   uses: Nanook/GrindCore.build/.github/workflows/ci.yaml@main
-  #   secrets:
-  #     GRINDCORE_BUILD_READ: ${{ secrets.BUILD_READ }}
+  call-reusable-workflow:
+    needs: combine-and-build
+    uses: Nanook/GrindCore.build/.github/workflows/ci.yaml@main
+    secrets:
+      GRINDCORE_BUILD_READ: ${{ secrets.BUILD_READ }}
