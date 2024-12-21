@@ -1,6 +1,32 @@
 LIBRARY GrindCore.dll
 
 EXPORTS
+    MD2_Init
+    MD2_Update
+    MD2_Final
+    MD4_Init
+    MD4_Update
+    MD4_Final
+    MD5_Init
+    MD5_Update
+    MD5_Final
+    SHA3_Init
+    SHA3_Update
+    SHA3_Final
+    SHA384_Init
+    SHA384_Update
+    SHA384_Final
+    SHA512_Init
+    SHA512_Update
+    SHA512_Final
+    blake3_version
+    blake3_hasher_init
+    blake3_hasher_init_keyed
+    blake3_hasher_init_derive_key
+    blake3_hasher_init_derive_key_raw
+    blake3_hasher_update
+    blake3_hasher_finalize
+    blake3_hasher_finalize_seek
     BrotliDecoderCreateInstance
     BrotliDecoderDecompress
     BrotliDecoderDecompressStream
