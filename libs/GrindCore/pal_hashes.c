@@ -89,7 +89,7 @@ FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_SHA512_Final(void *res, SHA512
 }
 
 // Wrapper functions for Blake3
-FUNCTIONEXPORT const char* FUNCTIONCALLINGCONVENCTION SZ_blake3_version() {
+FUNCTIONEXPORT const char* FUNCTIONCALLINGCONVENCTION SZ_blake3_version(void) {
     return blake3_version();
 }
 
