@@ -1,3 +1,5 @@
+message(STATUS "Including hashes.cmake")
+
 include_directories(BEFORE "${CMAKE_CURRENT_LIST_DIR}/hashes")
 
 set (HASHES_SOURCES_BASE
@@ -9,4 +11,6 @@ set (HASHES_SOURCES_BASE
     sha512.c
 )
 
-addprefix(HASHES_SOURCES "${CMAKE_CURRENT_LIST_DIR}/hashes" "${HASHES_SOURCES_BASE}")
+list(TRANSFORM HASHES_SOURCES_BASE PREPEND "${CMAKE_CURRENT_LIST_DIR}/hashes/")
+
+set(HASHES_SOURCES ${HASHES_SOURCES_BASE})

@@ -4,20 +4,25 @@ include(${CMAKE_CURRENT_LIST_DIR}/extra_libs.cmake)
 
 set(NATIVECOMPRESSION_SOURCES
     pal_zlib.c
+    pal_hashes.c
 )
 
 if (NOT CLR_CMAKE_TARGET_BROWSER AND NOT CLR_CMAKE_TARGET_WASI)
 
-    if (CLR_CMAKE_USE_SYSTEM_BROTLI)
-        add_definitions(-DFEATURE_USE_SYSTEM_BROTLI)
-    else ()
+    # Nanook hashes
+
+    # if (CLR_CMAKE_USE_SYSTEM_BROTLI)
+    #     add_definitions(-DFEATURE_USE_SYSTEM_BROTLI)
+    # else ()
         include(${CLR_SRC_NATIVE_DIR}/external/brotli.cmake)
+        include(${CLR_SRC_NATIVE_DIR}/external/hashes.cmake) # Nanook
 
         set (NATIVECOMPRESSION_SOURCES
             ${NATIVECOMPRESSION_SOURCES}
             ${BROTLI_SOURCES}
+            ${HASHES_SOURCES} # Nanook
         )
-    endif ()
+    # endif ()
 
     set (NATIVECOMPRESSION_SOURCES
         ${NATIVECOMPRESSION_SOURCES}
@@ -52,6 +57,7 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
 
     if (GEN_SHARED_LIB)
         add_definitions(-DBROTLI_SHARED_COMPILATION)
+        add_definitions(-DHASHES_SHARED_COMPILATION) # Nanook
 
         add_library(GrindCore
             SHARED
@@ -76,7 +82,7 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
             set_property(TARGET GrindCore APPEND_STRING PROPERTY LINK_FLAGS ${EXPORTS_LINKER_OPTION})
             set_property(TARGET GrindCore APPEND_STRING PROPERTY LINK_DEPENDS ${EXPORTS_FILE})
 
-            if (NOT CLR_CMAKE_USE_SYSTEM_BROTLI)
+            # if (NOT CLR_CMAKE_USE_SYSTEM_BROTLI)
                 add_custom_command(TARGET GrindCore POST_BUILD
                     COMMENT "Verifying GrindCore entry points against entrypoints.c "
                     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../verify-entrypoints.sh
@@ -85,7 +91,7 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
                         ${CMAKE_NM}
                     VERBATIM
                 )
-            endif ()
+            # endif ()
         endif ()
 
         install_with_stripped_symbols (GrindCore PROGRAMS .)

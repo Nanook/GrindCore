@@ -9,42 +9,36 @@
 #include <brotli/encode.h>
 #include <brotli/port.h>
 #include <brotli/types.h>
-
-#include <blake3.h>
-#include <md2.h>
-#include <md4.h>
-#include <md5.h>
-#include <sha3.h>
-#include <sha512.h>
+#include "pal_hashes.h"
 
 static const Entry s_compressionNative[] =
 {
-    DllImportEntry(MD2_Init)
-    DllImportEntry(MD2_Update)
-    DllImportEntry(MD2_Final)
-    DllImportEntry(MD4_Init)
-    DllImportEntry(MD4_Update)
-    DllImportEntry(MD4_Final)
-    DllImportEntry(MD5_Init)
-    DllImportEntry(MD5_Update)
-    DllImportEntry(MD5_Final)
-    DllImportEntry(SHA3_Init)
-    DllImportEntry(SHA3_Update)
-    DllImportEntry(SHA3_Final)
-    DllImportEntry(SHA384_Init)
-    DllImportEntry(SHA384_Update)
-    DllImportEntry(SHA384_Final)
-    DllImportEntry(SHA512_Init)
-    DllImportEntry(SHA512_Update)
-    DllImportEntry(SHA512_Final)
-    DllImportEntry(blake3_version)
-    DllImportEntry(blake3_hasher_init)
-    DllImportEntry(blake3_hasher_init_keyed)
-    DllImportEntry(blake3_hasher_init_derive_key)
-    DllImportEntry(blake3_hasher_init_derive_key_raw)
-    DllImportEntry(blake3_hasher_update)
-    DllImportEntry(blake3_hasher_finalize)
-    DllImportEntry(blake3_hasher_finalize_seek)
+    DllImportEntry(SZ_MD2_Init)
+    DllImportEntry(SZ_MD2_Update)
+    DllImportEntry(SZ_MD2_Final)
+    DllImportEntry(SZ_MD4_Init)
+    DllImportEntry(SZ_MD4_Update)
+    DllImportEntry(SZ_MD4_Final)
+    DllImportEntry(SZ_MD5_Init)
+    DllImportEntry(SZ_MD5_Update)
+    DllImportEntry(SZ_MD5_Final)
+    DllImportEntry(SZ_SHA3_Init)
+    DllImportEntry(SZ_SHA3_Update)
+    DllImportEntry(SZ_SHA3_Final)
+    DllImportEntry(SZ_SHA384_Init)
+    DllImportEntry(SZ_SHA384_Update)
+    DllImportEntry(SZ_SHA384_Final)
+    DllImportEntry(SZ_SHA512_Init)
+    DllImportEntry(SZ_SHA512_Update)
+    DllImportEntry(SZ_SHA512_Final)
+    DllImportEntry(SZ_blake3_version)
+    DllImportEntry(SZ_blake3_hasher_init)
+    DllImportEntry(SZ_blake3_hasher_init_keyed)
+    DllImportEntry(SZ_blake3_hasher_init_derive_key)
+    DllImportEntry(SZ_blake3_hasher_init_derive_key_raw)
+    DllImportEntry(SZ_blake3_hasher_update)
+    DllImportEntry(SZ_blake3_hasher_finalize)
+    DllImportEntry(SZ_blake3_hasher_finalize_seek)
     DllImportEntry(BrotliDecoderCreateInstance)
     DllImportEntry(BrotliDecoderDecompress)
     DllImportEntry(BrotliDecoderDecompressStream)

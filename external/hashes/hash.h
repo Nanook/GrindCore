@@ -38,17 +38,18 @@
 #ifndef __hash_h__
 #define __hash_h__
 
+#include <stdint.h>
 #include <string.h>
 
 #include "../7zTypes.h"
 
-#ifndef uint32_t
-typedef UInt32 uint32_t;
-#endif
+// #ifndef uint32_t
+// typedef UInt32 uint32_t;
+// #endif
 
-#ifndef uint64_t
-typedef UInt64 uint64_t;
-#endif
+// #ifndef uint64_t
+// typedef UInt64 uint64_t;
+// #endif
 
 #ifndef min
 #define min(a,b) (((a)>(b))?(b):(a))
