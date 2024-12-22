@@ -1,7 +1,3 @@
-message(STATUS "Including hashes.cmake")
-
-include_directories(BEFORE "${CMAKE_CURRENT_LIST_DIR}/hashes")
-
 set (HASHES_SOURCES_BASE
     blake3.c
     md2.c
