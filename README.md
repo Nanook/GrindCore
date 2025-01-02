@@ -30,6 +30,7 @@ DotNet Native Compression and Hashing for:
 ### Hashing
 
 - Blake3, Blake2sp
+- MD5, MD4, MD2
 - SHA1
 - SHA2 (SHA256, SHA384, SHA512)
 - SHA3 (SHA3-224, SHA3-256, SHA3-384, SHA3-512)
