@@ -22,7 +22,7 @@ if (USE_X86_ASM)
         Sha256Opt.asm
     )
 else ()
-    set(APPEND C_SOURCES_BASE
+    list(APPEND C_SOURCES_BASE
         Sha1Opt.c
         Sha256Opt.c
      )
