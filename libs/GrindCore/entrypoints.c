@@ -64,6 +64,7 @@ static const Entry s_compressionNative[] =
     DllImportEntry(SZ_Sha256_Init)
     DllImportEntry(SZ_Sha256_Update)
     DllImportEntry(SZ_Sha256_Final)
+    DllImportEntry(SZ_Sha256Prepare)
     DllImportEntry(SZ_SHA384_Init)
     DllImportEntry(SZ_SHA384_Update)
     DllImportEntry(SZ_SHA384_Final)
@@ -88,12 +89,12 @@ static const Entry s_compressionNative[] =
     DllImportEntry(DN8_ZLib_Inflate)
     DllImportEntry(DN8_ZLib_InflateEnd)
     DllImportEntry(DN8_ZLib_InflateInit2_)
-    DllImportEntry(DN8_ZLib_Compress3)
-    DllImportEntry(DN8_ZLib_Uncompress3)
     DllImportEntry(DN8_ZLib_Compress)
     DllImportEntry(DN8_ZLib_Compress2)
+    DllImportEntry(DN8_ZLib_Compress3)
     DllImportEntry(DN8_ZLib_Uncompress)
     DllImportEntry(DN8_ZLib_Uncompress2)
+    DllImportEntry(DN8_ZLib_Uncompress3)
 };
 
 EXTERN_C const void* CompressionResolveDllImport(const char* name);

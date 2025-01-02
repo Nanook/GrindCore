@@ -26,9 +26,9 @@ set(ZLIB_SOURCES_BASE
 # enable custom zlib allocator
 add_definitions(-DMY_ZCALLOC)
 if(HOST_WIN32 OR CLR_CMAKE_TARGET_WIN32)
-    set(ZLIB_SOURCES_BASE ${ZLIB_SOURCES_BASE} ../../libs/GrindCore/zlib_allocator_win.c)
+    set(ZLIB_SOURCES_BASE ${ZLIB_SOURCES_BASE} ../../../libs/GrindCore/zlib_allocator_win.c)
 else()
-    set(ZLIB_SOURCES_BASE ${ZLIB_SOURCES_BASE} ../../libs/GrindCore/zlib_allocator_unix.c)
+    set(ZLIB_SOURCES_BASE ${ZLIB_SOURCES_BASE} ../../../libs/GrindCore/zlib_allocator_unix.c)
 endif()
 
 addprefix(ZLIB_SOURCES "${CMAKE_CURRENT_LIST_DIR}/zlib"  "${ZLIB_SOURCES_BASE}")

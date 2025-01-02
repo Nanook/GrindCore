@@ -71,9 +71,9 @@ EXPORTS
   DN8_ZLib_Inflate
   DN8_ZLib_InflateEnd
   DN8_ZLib_InflateInit2_
-  DN8_ZLib_Compress3
-  DN8_ZLib_Uncompress3
   DN8_ZLib_Compress
   DN8_ZLib_Compress2
+  DN8_ZLib_Compress3
   DN8_ZLib_Uncompress
   DN8_ZLib_Uncompress2
+  DN8_ZLib_Uncompress3
