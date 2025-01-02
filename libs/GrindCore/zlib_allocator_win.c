@@ -8,9 +8,9 @@
 #include <crtdbg.h> /* _ASSERTE */
 
 #ifdef INTERNAL_ZLIB_INTEL
-#include <external/zlib-intel/zutil.h>
+#include <external/dotnet8_0/zlib-intel/zutil.h>
 #else
-#include <external/zlib/zutil.h>
+#include <external/dotnet8_0/zlib/zutil.h>
 #endif
 
 /* A custom allocator for zlib that provides some defense-in-depth over standard malloc / free.

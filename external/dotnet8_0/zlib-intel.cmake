@@ -15,7 +15,7 @@ set(ZLIB_SOURCES_BASE
     trees.c
     x86.c
     zutil.c
-    ../../libs/GrindCore/zlib_allocator_win.c
+    ../../../libs/GrindCore/zlib_allocator_win.c
 )
 
 # enable custom zlib allocator

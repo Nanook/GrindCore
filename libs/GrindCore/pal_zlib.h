@@ -84,7 +84,7 @@ Initializes the PAL_ZStream so the Deflate function can be invoked on it.
 
 Returns a PAL_ErrorCode indicating success or an error number on failure.
 */
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION GrindCore_DeflateInit2_(
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_DeflateInit2_(
     PAL_ZStream* stream, int32_t level, int32_t method, int32_t windowBits, int32_t memLevel, int32_t strategy);
 
 /*
@@ -93,21 +93,21 @@ compressed bytes in nextOut.
 
 Returns a PAL_ErrorCode indicating success or an error number on failure.
 */
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION GrindCore_Deflate(PAL_ZStream* stream, int32_t flush);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_Deflate(PAL_ZStream* stream, int32_t flush);
 
 /*
 All dynamically allocated data structures for this stream are freed.
 
 Returns a PAL_ErrorCode indicating success or an error number on failure.
 */
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION GrindCore_DeflateEnd(PAL_ZStream* stream);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_DeflateEnd(PAL_ZStream* stream);
 
 /*
 Initializes the PAL_ZStream so the Inflate function can be invoked on it.
 
 Returns a PAL_ErrorCode indicating success or an error number on failure.
 */
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION GrindCore_InflateInit2_(PAL_ZStream* stream, int32_t windowBits);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_InflateInit2_(PAL_ZStream* stream, int32_t windowBits);
 
 /*
 Inflates (uncompresses) the bytes in the PAL_ZStream's nextIn buffer and puts the
@@ -115,14 +115,14 @@ uncompressed bytes in nextOut.
 
 Returns a PAL_ErrorCode indicating success or an error number on failure.
 */
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION GrindCore_Inflate(PAL_ZStream* stream, int32_t flush);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_Inflate(PAL_ZStream* stream, int32_t flush);
 
 /*
 All dynamically allocated data structures for this stream are freed.
 
 Returns a PAL_ErrorCode indicating success or an error number on failure.
 */
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION GrindCore_InflateEnd(PAL_ZStream* stream);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_InflateEnd(PAL_ZStream* stream);
 
 /*
 Update a running CRC-32 with the bytes buffer[0..len-1] and return the
@@ -130,12 +130,12 @@ updated CRC-32.
 
 Returns the updated CRC-32.
 */
-FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION GrindCore_Crc32(uint32_t crc, uint8_t* buffer, int32_t len);
+FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_Crc32(uint32_t crc, uint8_t* buffer, int32_t len);
 
 // Nanook
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION GrindCore_Compress(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen);
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION GrindCore_Compress2(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen, int32_t level);
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION GrindCore_Compress3(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen, int32_t level, int32_t windowBits, int32_t memLevel, int32_t strategy);
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION GrindCore_Uncompress(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen);
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION GrindCore_Uncompress2(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t* sourceLen);
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION GrindCore_Uncompress3(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t* sourceLen);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_Compress(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_Compress2(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen, int32_t level);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_Compress3(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen, int32_t level, int32_t windowBits, int32_t memLevel, int32_t strategy);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_Uncompress(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_Uncompress2(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t* sourceLen);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_Uncompress3(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t* sourceLen);

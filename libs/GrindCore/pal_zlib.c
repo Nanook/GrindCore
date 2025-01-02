@@ -10,9 +10,9 @@
         #define c_static_assert(e) static_assert((e),"")
     #endif
     #ifdef INTERNAL_ZLIB_INTEL
-        #include <external/zlib-intel/zlib.h>
+        #include <external/dotnet8_0/zlib-intel/zlib.h>
     #else
-        #include <external/zlib/zlib.h>
+        #include <external/dotnet8_0/zlib/zlib.h>
     #endif
 #else
     #include "pal_utilities.h"
@@ -111,7 +111,7 @@ static z_stream* GetCurrentZStream(PAL_ZStream* stream)
     return zStream;
 }
 
-int32_t GrindCore_DeflateInit2_(
+int32_t DN8_ZLib_DeflateInit2_(
     PAL_ZStream* stream, int32_t level, int32_t method, int32_t windowBits, int32_t memLevel, int32_t strategy)
 {
     assert(stream != NULL);
@@ -127,7 +127,7 @@ int32_t GrindCore_DeflateInit2_(
     return result;
 }
 
-int32_t GrindCore_Deflate(PAL_ZStream* stream, int32_t flush)
+int32_t DN8_ZLib_Deflate(PAL_ZStream* stream, int32_t flush)
 {
     assert(stream != NULL);
 
@@ -138,7 +138,7 @@ int32_t GrindCore_Deflate(PAL_ZStream* stream, int32_t flush)
     return result;
 }
 
-int32_t GrindCore_DeflateEnd(PAL_ZStream* stream)
+int32_t DN8_ZLib_DeflateEnd(PAL_ZStream* stream)
 {
     assert(stream != NULL);
 
@@ -149,7 +149,7 @@ int32_t GrindCore_DeflateEnd(PAL_ZStream* stream)
     return result;
 }
 
-int32_t GrindCore_InflateInit2_(PAL_ZStream* stream, int32_t windowBits)
+int32_t DN8_ZLib_InflateInit2_(PAL_ZStream* stream, int32_t windowBits)
 {
     assert(stream != NULL);
 
@@ -164,7 +164,7 @@ int32_t GrindCore_InflateInit2_(PAL_ZStream* stream, int32_t windowBits)
     return result;
 }
 
-int32_t GrindCore_Inflate(PAL_ZStream* stream, int32_t flush)
+int32_t DN8_ZLib_Inflate(PAL_ZStream* stream, int32_t flush)
 {
     assert(stream != NULL);
 
@@ -175,7 +175,7 @@ int32_t GrindCore_Inflate(PAL_ZStream* stream, int32_t flush)
     return result;
 }
 
-int32_t GrindCore_InflateEnd(PAL_ZStream* stream)
+int32_t DN8_ZLib_InflateEnd(PAL_ZStream* stream)
 {
     assert(stream != NULL);
 
@@ -186,7 +186,7 @@ int32_t GrindCore_InflateEnd(PAL_ZStream* stream)
     return result;
 }
 
-uint32_t GrindCore_Crc32(uint32_t crc, uint8_t* buffer, int32_t len)
+uint32_t DN8_ZLib_Crc32(uint32_t crc, uint8_t* buffer, int32_t len)
 {
     assert(buffer != NULL);
 
@@ -196,7 +196,7 @@ uint32_t GrindCore_Crc32(uint32_t crc, uint8_t* buffer, int32_t len)
 }
 
 // Nanook
-int32_t GrindCore_Compress(uint8_t *dest, uint32_t *destLen, const uint8_t *source, uint32_t sourceLen)
+int32_t DN8_ZLib_Compress(uint8_t *dest, uint32_t *destLen, const uint8_t *source, uint32_t sourceLen)
 {
     uLongf uLongfDestLen = *destLen;
     int32_t result = (int32_t)compress(dest, &uLongfDestLen, source, sourceLen);
@@ -204,7 +204,7 @@ int32_t GrindCore_Compress(uint8_t *dest, uint32_t *destLen, const uint8_t *sour
     return result;
 }
 
-int32_t GrindCore_Compress2(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen, int32_t level)
+int32_t DN8_ZLib_Compress2(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen, int32_t level)
 {
     uLongf uLongfDestLen = *destLen;
     int32_t result = (int32_t)compress2(dest, &uLongfDestLen, source, sourceLen, level);
@@ -212,7 +212,7 @@ int32_t GrindCore_Compress2(uint8_t* dest, uint32_t* destLen, const uint8_t* sou
     return result;
 }
 
-int32_t GrindCore_Compress3(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen, int32_t level, int32_t windowBits, int32_t memLevel, int32_t strategy)
+int32_t DN8_ZLib_Compress3(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen, int32_t level, int32_t windowBits, int32_t memLevel, int32_t strategy)
 {
     uLongf uLongfDestLen = *destLen;
     int32_t result = (int32_t)compress3(dest, &uLongfDestLen, source, sourceLen, level, windowBits, memLevel, strategy);
@@ -220,7 +220,7 @@ int32_t GrindCore_Compress3(uint8_t* dest, uint32_t* destLen, const uint8_t* sou
     return (uint32_t)result;
 }
 
-int32_t GrindCore_Uncompress(uint8_t *dest, uint32_t *destLen, const uint8_t *source, uint32_t sourceLen)
+int32_t DN8_ZLib_Uncompress(uint8_t *dest, uint32_t *destLen, const uint8_t *source, uint32_t sourceLen)
 {
     uLongf uLongfDestLen = *destLen;
     int32_t result = (int32_t)uncompress(dest, &uLongfDestLen, source, sourceLen);
@@ -228,7 +228,7 @@ int32_t GrindCore_Uncompress(uint8_t *dest, uint32_t *destLen, const uint8_t *so
     return result;
 }
 
-int32_t GrindCore_Uncompress2(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t* sourceLen)
+int32_t DN8_ZLib_Uncompress2(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t* sourceLen)
 {
     uLongf uLongfDestLen = *destLen;
     uLong uLongSourceLen = *sourceLen;
@@ -238,7 +238,7 @@ int32_t GrindCore_Uncompress2(uint8_t* dest, uint32_t* destLen, const uint8_t* s
     return result;
 }
 
-int32_t GrindCore_Uncompress3(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t* sourceLen)
+int32_t DN8_ZLib_Uncompress3(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t* sourceLen)
 {
     uLongf uLongfDestLen = *destLen;
     uLong uLongSourceLen = *sourceLen;

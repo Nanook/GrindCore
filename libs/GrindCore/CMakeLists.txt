@@ -4,7 +4,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/extra_libs.cmake)
 
 set(NATIVECOMPRESSION_SOURCES
     pal_zlib.c
-    pal_hashes.c
+    pal_mcmilk.c
 )
 
 if (NOT CLR_CMAKE_TARGET_BROWSER AND NOT CLR_CMAKE_TARGET_WASI)
@@ -14,8 +14,8 @@ if (NOT CLR_CMAKE_TARGET_BROWSER AND NOT CLR_CMAKE_TARGET_WASI)
     # if (CLR_CMAKE_USE_SYSTEM_BROTLI)
     #     add_definitions(-DFEATURE_USE_SYSTEM_BROTLI)
     # else ()
-        include(${CLR_SRC_NATIVE_DIR}/external/brotli.cmake)
-        include(${CLR_SRC_NATIVE_DIR}/external/hashes.cmake) # Nanook
+        include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/brotli.cmake)
+        include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk.cmake) # Nanook
 
         set (NATIVECOMPRESSION_SOURCES
             ${NATIVECOMPRESSION_SOURCES}
@@ -35,7 +35,7 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
     append_extra_compression_libs(NATIVE_LIBS_EXTRA)
 
     # Nanook - if (CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
-        include(${CLR_SRC_NATIVE_DIR}/external/zlib.cmake)
+        include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib.cmake)
         add_definitions(-DINTERNAL_ZLIB)
         set(NATIVECOMPRESSION_SOURCES ${ZLIB_SOURCES} ${NATIVECOMPRESSION_SOURCES})
     # endif()
@@ -109,10 +109,10 @@ else ()
     endif ()
 
     if (CLR_CMAKE_HOST_ARCH_I386 OR CLR_CMAKE_HOST_ARCH_AMD64)
-        include(${CLR_SRC_NATIVE_DIR}/external/zlib-intel.cmake)
+        include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib-intel.cmake)
         add_definitions(-DINTERNAL_ZLIB_INTEL)
     else ()
-        include(${CLR_SRC_NATIVE_DIR}/external/zlib.cmake)
+        include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib.cmake)
     endif ()
 
     add_definitions(-DINTERNAL_ZLIB)

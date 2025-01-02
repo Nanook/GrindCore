@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <external/zlib/zutil.h>
+#include <external/dotnet8_0/zlib/zutil.h>
 
 /* A custom allocator for zlib that provides some defense-in-depth over standard malloc / free.
  * (non-Windows version)
