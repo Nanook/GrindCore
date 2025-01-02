@@ -17,9 +17,9 @@
 #include <external/mcmilk/C/hashes/blake3.h>
 #include <external/mcmilk/C/hashes/sha3.h>
 #include <external/mcmilk/C/hashes/sha512.h>
-#include <external/mcmilk/C/sha1.h>
-#include <external/mcmilk/C/sha256.h>
-#include <external/mcmilk/C/blake2.h>
+#include <external/mcmilk/C/Sha1.h>
+#include <external/mcmilk/C/Sha256.h>
+#include <external/mcmilk/C/Blake2.h>
 #include <external/mcmilk/C/zstd/xxhash.h>
 
 // XXH32
