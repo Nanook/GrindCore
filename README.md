@@ -23,7 +23,10 @@ DotNet Native Compression and Hashing for:
 
 ### Compression
 
-- ZLib, Deflate
+- ZLib-NG
+- ZLib
+- GZip
+- Deflate
 - Brotli
 - Zip
 

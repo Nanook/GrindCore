@@ -4,7 +4,8 @@
 #include <minipal/entrypoints.h>
 
 // Include GrindCore headers
-#include "pal_zlib.h"
+#include "pal_zlib_v1_3_1.h"
+#include "pal_zlib-ng_v2_2_1.h"
 #include <brotli/decode.h>
 #include <brotli/encode.h>
 #include <brotli/port.h>
@@ -82,19 +83,32 @@ static const Entry s_compressionNative[] =
     DllImportEntry(BrotliEncoderDestroyInstance)
     DllImportEntry(BrotliEncoderHasMoreOutput)
     DllImportEntry(BrotliEncoderSetParameter)
-    DllImportEntry(DN8_ZLib_Crc32)
-    DllImportEntry(DN8_ZLib_Deflate)
-    DllImportEntry(DN8_ZLib_DeflateEnd)
-    DllImportEntry(DN8_ZLib_DeflateInit2_)
-    DllImportEntry(DN8_ZLib_Inflate)
-    DllImportEntry(DN8_ZLib_InflateEnd)
-    DllImportEntry(DN8_ZLib_InflateInit2_)
-    DllImportEntry(DN8_ZLib_Compress)
-    DllImportEntry(DN8_ZLib_Compress2)
-    DllImportEntry(DN8_ZLib_Compress3)
-    DllImportEntry(DN8_ZLib_Uncompress)
-    DllImportEntry(DN8_ZLib_Uncompress2)
-    DllImportEntry(DN8_ZLib_Uncompress3)
+    DllImportEntry(DN8_ZLib_v1_3_1_Crc32)
+    DllImportEntry(DN8_ZLib_v1_3_1_Deflate)
+    DllImportEntry(DN8_ZLib_v1_3_1_DeflateEnd)
+    DllImportEntry(DN8_ZLib_v1_3_1_DeflateInit2_)
+    DllImportEntry(DN8_ZLib_v1_3_1_Inflate)
+    DllImportEntry(DN8_ZLib_v1_3_1_InflateEnd)
+    DllImportEntry(DN8_ZLib_v1_3_1_InflateInit2_)
+    DllImportEntry(DN8_ZLib_v1_3_1_Compress)
+    DllImportEntry(DN8_ZLib_v1_3_1_Compress2)
+    DllImportEntry(DN8_ZLib_v1_3_1_Compress3)
+    DllImportEntry(DN8_ZLib_v1_3_1_Uncompress)
+    DllImportEntry(DN8_ZLib_v1_3_1_Uncompress2)
+    DllImportEntry(DN8_ZLib_v1_3_1_Uncompress3)
+    DllImportEntry(DN9_ZLibNg_v2_2_1_Crc32)
+    DllImportEntry(DN9_ZLibNg_v2_2_1_Deflate)
+    DllImportEntry(DN9_ZLibNg_v2_2_1_DeflateEnd)
+    DllImportEntry(DN9_ZLibNg_v2_2_1_DeflateInit2_)
+    DllImportEntry(DN9_ZLibNg_v2_2_1_Inflate)
+    DllImportEntry(DN9_ZLibNg_v2_2_1_InflateEnd)
+    DllImportEntry(DN9_ZLibNg_v2_2_1_InflateInit2_)
+    DllImportEntry(DN9_ZLibNg_v2_2_1_Compress)
+    DllImportEntry(DN9_ZLibNg_v2_2_1_Compress2)
+    DllImportEntry(DN9_ZLibNg_v2_2_1_Compress3)
+    DllImportEntry(DN9_ZLibNg_v2_2_1_Uncompress)
+    DllImportEntry(DN9_ZLibNg_v2_2_1_Uncompress2)
+    DllImportEntry(DN9_ZLibNg_v2_2_1_Uncompress3)
 };
 
 EXTERN_C const void* CompressionResolveDllImport(const char* name);

@@ -1,9 +1,12 @@
 project(GrindCore C)
 
+include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/../_deps)
+
 include(${CMAKE_CURRENT_LIST_DIR}/extra_libs.cmake)
 
 set(NATIVECOMPRESSION_SOURCES
-    pal_zlib.c
+    pal_zlib-ng_v2_2_1.c
+    pal_zlib_v1_3_1.c
     pal_mcmilk.c
 )
 
@@ -14,7 +17,7 @@ if (NOT CLR_CMAKE_TARGET_BROWSER AND NOT CLR_CMAKE_TARGET_WASI)
     # if (CLR_CMAKE_USE_SYSTEM_BROTLI)
     #     add_definitions(-DFEATURE_USE_SYSTEM_BROTLI)
     # else ()
-        include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/brotli.cmake)
+        include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/brotli_v1_0_9.cmake)
         include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk.cmake) # Nanook
 
         set (NATIVECOMPRESSION_SOURCES
@@ -35,9 +38,11 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
     append_extra_compression_libs(NATIVE_LIBS_EXTRA)
 
     # Nanook - if (CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
-        include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib.cmake)
-        add_definitions(-DINTERNAL_ZLIB)
+        include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib_v1_3_1.cmake)
+        include(${CLR_SRC_NATIVE_DIR}/external/dotnet9_0/zlib-ng_v2_2_1.cmake)
+        # add_definitions(-DINTERNAL_ZLIB)
         set(NATIVECOMPRESSION_SOURCES ${ZLIB_SOURCES} ${NATIVECOMPRESSION_SOURCES})
+
     # endif()
 
     # Disable implicit fallthrough warning for Zlib and Brotli
@@ -108,14 +113,17 @@ else ()
         include (GenerateExportHeader)
     endif ()
 
-    if (CLR_CMAKE_HOST_ARCH_I386 OR CLR_CMAKE_HOST_ARCH_AMD64)
-        include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib-intel.cmake)
-        add_definitions(-DINTERNAL_ZLIB_INTEL)
-    else ()
-        include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib.cmake)
-    endif ()
+    # if (CLR_CMAKE_HOST_ARCH_I386 OR CLR_CMAKE_HOST_ARCH_AMD64)
+    #     include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib-intel_v1_2_13.cmake)
+    #     add_definitions(-DINTERNAL_ZLIB_INTEL)
+    # else ()
+    #     include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib_v1_3_1.cmake)
+    #endif ()
 
-    add_definitions(-DINTERNAL_ZLIB)
+    include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib_v1_3_1.cmake)
+    include(${CLR_SRC_NATIVE_DIR}/external/dotnet9_0/zlib-ng_v2_2_1.cmake)
+
+    # add_definitions(-DINTERNAL_ZLIB)
     set(NATIVECOMPRESSION_SOURCES ${ZLIB_SOURCES} ${NATIVECOMPRESSION_SOURCES})
 
     if (GEN_SHARED_LIB)
