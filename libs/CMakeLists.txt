@@ -140,6 +140,7 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
         endif ()
     endif ()
 
+    # Nanook - Remove other libs we don't use
     # add_subdirectory(System.Native)
     # add_subdirectory(System.Globalization.Native)
 

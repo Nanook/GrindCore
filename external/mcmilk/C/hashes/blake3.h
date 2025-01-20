@@ -141,6 +141,11 @@ static unsigned int highest_one(uint64_t x) {
   _BitScanReverse64(&index, x);
   return index;
 #elif defined(_MSC_VER) && defined(IS_X86_32)
+
+// Nanook - Added 3 pragma statements to allow win-x86 to build without code change
+#pragma warning(push)
+#pragma warning(disable : 4242)
+
   if(x >> 32) {
     unsigned long index;
     _BitScanReverse(&index, x >> 32);
@@ -150,6 +155,8 @@ static unsigned int highest_one(uint64_t x) {
     _BitScanReverse(&index, x);
     return index;
   }
+#pragma warning(pop)
+
 #else
   unsigned int c = 0;
   if(x & 0xffffffff00000000ULL) { x >>= 32; c += 32; }

@@ -1229,7 +1229,7 @@ ZEXTERN uLong ZEXPORT zlibCompileFlags(void);
    you need special options.
 */
 
-// Nanook
+// Nanook - Expose more functionality
 ZEXTERN int ZEXPORT compress3(Bytef *dest,   uLongf *destLen,
                               const Bytef *source, uLong sourceLen,
                               int level, int windowBits, int memLevel, int strategy);
@@ -1272,7 +1272,7 @@ ZEXTERN uLong ZEXPORT compressBound(uLong sourceLen);
    compress() or compress2() call to allocate the destination buffer.
 */
 
-// Nanook
+// Nanook - Expose more functionality
 ZEXTERN int ZEXPORT uncompress3(Bytef *dest,   uLongf *destLen,
                                 const Bytef *source, uLong *sourceLen);
 ZEXTERN int ZEXPORT uncompress(Bytef *dest,   uLongf *destLen,

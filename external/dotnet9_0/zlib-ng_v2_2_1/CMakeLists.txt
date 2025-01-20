@@ -1172,9 +1172,6 @@ if (ZLIB_COMPAT)
     endif()
 endif()
 
-# Nanook
-set(ZLIBNG_BIN ${CMAKE_CURRENT_BINARY_DIR} PARENT_SCOPE)
-
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${ARCHDIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/arch/generic)

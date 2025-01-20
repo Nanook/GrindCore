@@ -37,7 +37,8 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
     set(NATIVE_LIBS_EXTRA)
     append_extra_compression_libs(NATIVE_LIBS_EXTRA)
 
-    # Nanook - if (CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
+    # Nanook - remove IF
+    # if (CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
         include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib_v1_3_1.cmake)
         include(${CLR_SRC_NATIVE_DIR}/external/dotnet9_0/zlib-ng_v2_2_1.cmake)
         # add_definitions(-DINTERNAL_ZLIB)

@@ -1226,7 +1226,7 @@ ZEXTERN uLong ZEXPORT zlibCompileFlags OF((void));
    you need special options.
 */
 
-// Nanook
+// Nanook - Expose more functionality
 ZEXTERN int ZEXPORT compress3 OF((Bytef *dest,   uLongf *destLen,
                                   const Bytef *source, uLong sourceLen,
                                   int level, int windowBits, int memLevel, int strategy));
@@ -1271,7 +1271,7 @@ ZEXTERN uLong ZEXPORT compressBound OF((uLong sourceLen));
 */
 ZEXTERN uLong ZEXPORT compressBound OF((uLong sourceLen));
 
-// Nanook
+// Nanook - Expose more functionality
 ZEXTERN int ZEXPORT uncompress3 OF((Bytef *dest,   uLongf *destLen,
                                     const Bytef *source, uLong *sourceLen));
 

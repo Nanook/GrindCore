@@ -132,7 +132,7 @@ Returns the updated CRC-32.
 */
 FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_Crc32(uint32_t crc, uint8_t* buffer, int32_t len);
 
-// Nanook
+// Nanook - Expose more functionality
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_Compress(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen);
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_Compress2(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen, int32_t level);
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_Compress3(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen, int32_t level, int32_t windowBits, int32_t memLevel, int32_t strategy);

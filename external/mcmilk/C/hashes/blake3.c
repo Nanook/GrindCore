@@ -505,7 +505,11 @@ void blake3_hasher_update(blake3_hasher *self, const void *input,
   // Because we might need to break up the input to form powers of 2, or to
   // evenly divide what we already have, this part runs in a loop.
   while (input_len > BLAKE3_CHUNK_LEN) {
+// Nanook - Added 3 pragma statements to allow win-x86 to build without code change
+#pragma warning(push)
+#pragma warning(disable : 4242)
     size_t subtree_len = round_down_to_power_of_2(input_len);
+#pragma warning(pop)
     uint64_t count_so_far = self->chunk.chunk_counter * BLAKE3_CHUNK_LEN;
     // Shrink the subtree_len until it evenly divides the count so far. We know
     // that subtree_len itself is a power of 2, so we can use a bitmasking

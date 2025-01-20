@@ -28,7 +28,7 @@
    memory, Z_BUF_ERROR if there was not enough room in the output buffer,
    Z_STREAM_ERROR if the level parameter is invalid.
 */
-// Nanook
+// Nanook - Expose more functionality
 int ZEXPORT PREFIX(compress3)(unsigned char *dest, z_uintmax_t *destLen, const unsigned char *source,
                         z_uintmax_t sourceLen, int level, int windowBits, int memLevel, int strategy) {
     PREFIX3(stream) stream;
