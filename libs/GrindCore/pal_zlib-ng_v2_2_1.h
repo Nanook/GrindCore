@@ -12,6 +12,7 @@
     #define FUNCTIONEXPORT PALEXPORT
     #define FUNCTIONCALLINGCONVENCTION
 #endif
+#include "pal_zlib_types.h"
 
 /*
 A structure that holds the input and output values for the zlib functions.

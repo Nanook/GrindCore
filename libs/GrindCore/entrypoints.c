@@ -4,8 +4,8 @@
 #include <minipal/entrypoints.h>
 
 // Include GrindCore headers
-#include "pal_zlib_v1_3_1.h"
 #include "pal_zlib-ng_v2_2_1.h"
+#include "pal_zlib_v1_3_1.h"
 #include <brotli/decode.h>
 #include <brotli/encode.h>
 #include <brotli/port.h>

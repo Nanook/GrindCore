@@ -4,26 +4,32 @@ include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/../_deps)
 
 include(${CMAKE_CURRENT_LIST_DIR}/extra_libs.cmake)
 
+include(${CLR_SRC_NATIVE_DIR}/external/dotnet9_0/zlib-ng_v2_2_1.cmake)
+include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib_v1_3_1.cmake)
+include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk.cmake) # Nanook
+
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/../Common/pal_config.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/pal_config.h)
+
 set(NATIVECOMPRESSION_SOURCES
     pal_zlib-ng_v2_2_1.c
     pal_zlib_v1_3_1.c
     pal_mcmilk.c
+    ${ZLIB_SOURCES} # v1_3_1
+    ${HASHES_SOURCES} # Nanook
 )
 
 if (NOT CLR_CMAKE_TARGET_BROWSER AND NOT CLR_CMAKE_TARGET_WASI)
-
-    # Nanook hashes
 
     # if (CLR_CMAKE_USE_SYSTEM_BROTLI)
     #     add_definitions(-DFEATURE_USE_SYSTEM_BROTLI)
     # else ()
         include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/brotli_v1_0_9.cmake)
-        include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk.cmake) # Nanook
 
         set (NATIVECOMPRESSION_SOURCES
             ${NATIVECOMPRESSION_SOURCES}
             ${BROTLI_SOURCES}
-            ${HASHES_SOURCES} # Nanook
         )
     # endif ()
 
@@ -37,27 +43,8 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
     set(NATIVE_LIBS_EXTRA)
     append_extra_compression_libs(NATIVE_LIBS_EXTRA)
 
-    # Nanook - remove IF
-    # if (CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
-        include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib_v1_3_1.cmake)
-        include(${CLR_SRC_NATIVE_DIR}/external/dotnet9_0/zlib-ng_v2_2_1.cmake)
-        # add_definitions(-DINTERNAL_ZLIB)
-        set(NATIVECOMPRESSION_SOURCES ${ZLIB_SOURCES} ${NATIVECOMPRESSION_SOURCES})
-
-    # endif()
-
     # Disable implicit fallthrough warning for Zlib and Brotli
     set(FLAGS -Wno-implicit-fallthrough)
-
-    # Disable no strict prototypes warning for Zlib
-    # https://github.com/madler/zlib/issues/633
-    set(FLAGS "${FLAGS} -Wno-strict-prototypes")
-
-    # Delete this suppression once brotli is upgraded to vNext (current latest v1.0.9
-    # does not contain upstream fix: https://github.com/google/brotli/commit/0a3944c)
-    if (NOT CLR_CMAKE_TARGET_WASI)
-        set(FLAGS "${FLAGS} -Wno-vla-parameter")
-    endif ()
 
     set_source_files_properties(${NATIVECOMPRESSION_SOURCES} PROPERTIES COMPILE_FLAGS ${FLAGS})
 
@@ -88,16 +75,14 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
             set_property(TARGET GrindCore APPEND_STRING PROPERTY LINK_FLAGS ${EXPORTS_LINKER_OPTION})
             set_property(TARGET GrindCore APPEND_STRING PROPERTY LINK_DEPENDS ${EXPORTS_FILE})
 
-            # if (NOT CLR_CMAKE_USE_SYSTEM_BROTLI)
-                add_custom_command(TARGET GrindCore POST_BUILD
-                    COMMENT "Verifying GrindCore entry points against entrypoints.c "
-                    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../verify-entrypoints.sh
-                        $<TARGET_FILE:GrindCore>
-                        ${CMAKE_CURRENT_SOURCE_DIR}/entrypoints.c
-                        ${CMAKE_NM}
-                    VERBATIM
-                )
-            # endif ()
+            add_custom_command(TARGET GrindCore POST_BUILD
+                COMMENT "Verifying GrindCore entry points against entrypoints.c"
+                COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../verify-entrypoints.sh
+                    $<TARGET_FILE:GrindCore>
+                    ${CMAKE_CURRENT_SOURCE_DIR}/entrypoints.c
+                    ${CMAKE_NM}
+                VERBATIM
+            )
         endif ()
 
         install_with_stripped_symbols (GrindCore PROGRAMS .)
@@ -108,24 +93,16 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
         ${NATIVECOMPRESSION_SOURCES}
     )
 
+    # if (NOT CLR_CMAKE_USE_SYSTEM_ZLIB)
+        target_link_libraries(GrindCore-Static PRIVATE zlibstatic)
+        # target_link_libraries(GrindCore-Static PRIVATE zlibstatic)
+    # endif()
+
     set_target_properties(GrindCore-Static PROPERTIES OUTPUT_NAME GrindCore CLEAN_DIRECT_OUTPUT 1)
 else ()
     if (GEN_SHARED_LIB)
         include (GenerateExportHeader)
     endif ()
-
-    # if (CLR_CMAKE_HOST_ARCH_I386 OR CLR_CMAKE_HOST_ARCH_AMD64)
-    #     include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib-intel_v1_2_13.cmake)
-    #     add_definitions(-DINTERNAL_ZLIB_INTEL)
-    # else ()
-    #     include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib_v1_3_1.cmake)
-    #endif ()
-
-    include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib_v1_3_1.cmake)
-    include(${CLR_SRC_NATIVE_DIR}/external/dotnet9_0/zlib-ng_v2_2_1.cmake)
-
-    # add_definitions(-DINTERNAL_ZLIB)
-    set(NATIVECOMPRESSION_SOURCES ${ZLIB_SOURCES} ${NATIVECOMPRESSION_SOURCES})
 
     if (GEN_SHARED_LIB)
         add_definitions(-DVER_FILEDESCRIPTION_STR="GrindCore")
@@ -135,6 +112,11 @@ else ()
             GrindCore.def
             ${VERSION_FILE_RC_PATH}
         )
+
+        # if (NOT CLR_CMAKE_USE_SYSTEM_ZLIB)
+            ## target_link_libraries(GrindCore PRIVATE zlib)
+            target_link_libraries(GrindCore PRIVATE zlib) # ng
+        # endif()
     endif ()
 
     if (NOT GEN_SHARED_LIB AND NOT CLR_CMAKE_TARGET_MACCATALYST AND NOT CLR_CMAKE_TARGET_IOS AND NOT CLR_CMAKE_TARGET_TVOS AND NOT CLR_CMAKE_TARGET_ANDROID AND NOT CLR_CMAKE_TARGET_BROWSER AND NOT CLR_CMAKE_TARGET_WASI)
@@ -146,19 +128,36 @@ else ()
         ${NATIVECOMPRESSION_SOURCES}
     )
 
+    # if (NOT CLR_CMAKE_USE_SYSTEM_ZLIB)
+        target_link_libraries(GrindCore-Static PRIVATE zlibstatic)
+        # target_link_libraries(GrindCore-Static PRIVATE zlibstatic)
+    # endif()
+
     if(STATIC_LIBS_ONLY)
         add_library(GrindCore.Aot
             STATIC
             ${NATIVECOMPRESSION_SOURCES}
         )
-        target_compile_options(GrindCore.Aot PRIVATE /guard:cf-)
-        target_compile_options(GrindCore.Aot PRIVATE /GL-)
+
+        # if (NOT CLR_CMAKE_USE_SYSTEM_ZLIB)
+            target_link_libraries(GrindCore.Aot PRIVATE zlibstatic)
+            # target_link_libraries(GrindCore.Aot PRIVATE zlibstatic)
+        # endif()
+
+        set_target_properties(GrindCore.Aot PROPERTIES CLR_CONTROL_FLOW_GUARD OFF)
+        set_target_properties(GrindCore.Aot PROPERTIES INTERPROCEDURAL_OPTIMIZATION OFF)
 
         add_library(GrindCore.Aot.GuardCF
             STATIC
             ${NATIVECOMPRESSION_SOURCES}
         )
-        target_compile_options(GrindCore.Aot.GuardCF PRIVATE /GL-)
+
+        # if (NOT CLR_CMAKE_USE_SYSTEM_ZLIB)
+            target_link_libraries(GrindCore.Aot.GuardCF PRIVATE zlibstatic)
+            # target_link_libraries(GrindCore.Aot.GuardCF PRIVATE zlibstatic)
+        # endif()
+
+        set_target_properties(GrindCore.Aot.GuardCF PROPERTIES INTERPROCEDURAL_OPTIMIZATION OFF)
     endif()
 
     if (GEN_SHARED_LIB)
@@ -179,5 +178,10 @@ else ()
     endif()
 
 endif ()
+
+if((NOT CLR_CMAKE_USE_SYSTEM_ZLIB) AND STATIC_LIBS_ONLY)
+    install_static_library(zlib aotsdk nativeaot)
+    # install_static_library(zlib aotsdk nativeaot)
+endif()
 
 install (TARGETS GrindCore-Static DESTINATION ${STATIC_LIB_DESTINATION} COMPONENT libs)

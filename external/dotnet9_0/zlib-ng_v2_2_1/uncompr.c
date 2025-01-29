@@ -75,7 +75,7 @@ int Z_EXPORT PREFIX(uncompress2)(unsigned char *dest, z_uintmax_t *destLen, cons
            err;
 }
 
-int Z_EXPORT PREFIX(uncompres3)(unsigned char *dest, z_uintmax_t *destLen, const unsigned char *source, z_uintmax_t *sourceLen) {
+int Z_EXPORT PREFIX(uncompress3)(unsigned char *dest, z_uintmax_t *destLen, const unsigned char *source, z_uintmax_t *sourceLen) {
     return PREFIX(uncompress2)(dest, destLen, source, sourceLen);
 }
 

@@ -3,7 +3,6 @@
 
 #include <assert.h>
 #include <stdlib.h>
-#include "pal_zlib_v1_3_1.h"
 #include "pal_zlib-ng_v2_2_1.h"
 
 // #ifdef INTERNAL_ZLIB
@@ -15,7 +14,7 @@
     // #else
     //    #include <external/dotnet8_0/zlib_v1_3_1/zlib.h>
         //#include <../../artifacts/obj/native/linux-x64/_deps/fetchzlibng-build/zlib.h>
-        #include <fetchzlibng-build/zlib.h>
+        #include "fetchzlibng-build/zlib.h"
     // #endif
 // #else
 //     #include "pal_utilities.h"
