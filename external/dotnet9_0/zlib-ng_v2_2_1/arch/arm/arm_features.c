@@ -108,15 +108,8 @@ void Z_INTERNAL arm_check_features(struct arm_cpu_features *features) {
     features->has_simd = 0; /* never available */
     features->has_neon = 1; /* always available */
 #else
-    printf("Before setting features->has_simd\n");
     features->has_simd = arm_has_simd();
-    printf("After setting features->has_simd\n");
-
-    printf("Before setting features->has_neon\n");
-    features->has_neon = arm_has_neon();
-    printf("After setting features->has_neon\n");
+    // features->has_neon = arm_has_neon();
 #endif
-    printf("Before setting features->has_crc32\n");
     features->has_crc32 = arm_has_crc32();
-    printf("After setting features->has_crc32\n");
 }
