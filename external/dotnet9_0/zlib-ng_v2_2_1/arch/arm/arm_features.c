@@ -116,7 +116,7 @@ void Z_INTERNAL arm_check_features(struct arm_cpu_features *features) {
     features->has_neon = arm_has_neon();
     printf("After setting features->has_neon\n");
 #endif
-printf("Before setting features->has_crc32\n");
-features->has_crc32 = arm_has_crc32();
-printf("After setting features->has_crc32\n");
-
+    printf("Before setting features->has_crc32\n");
+    features->has_crc32 = arm_has_crc32();
+    printf("After setting features->has_crc32\n");
+}
