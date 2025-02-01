@@ -2,6 +2,8 @@
     "files.associations": {
         "pal_mcmilk.h": "c",
         "port.h": "c",
-        "types.h": "c"
+        "types.h": "c",
+        "charconv": "c",
+        "xmemory": "c"
     }
 }

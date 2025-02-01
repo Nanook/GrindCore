@@ -13,7 +13,6 @@
     //     #include <external/dotnet8_0/zlib-intel_v1_2_13/zlib.h>
     // #else
         #include "external/dotnet8_0/zlib_v1_3_1/zlib.h"
-//        #include <external/dotnet9_0/zlib-ng_v2_2_1/zlib.h>
     // #endif
 // #else
 //     #include "pal_utilities.h"

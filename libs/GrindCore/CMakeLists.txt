@@ -51,11 +51,11 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
             ${VERSION_FILE_PATH}
         )
 
-#        target_link_libraries(GrindCore PRIVATE zlib_v1_3_1 zlib ${NATIVE_LIBS_EXTRA})
-        target_link_libraries(GrindCore
-            PRIVATE
-            ${NATIVE_LIBS_EXTRA}
-        )
+        target_link_libraries(GrindCore PRIVATE zlib_v1_3_1 zlib ${NATIVE_LIBS_EXTRA})
+        # target_link_libraries(GrindCore
+        #     PRIVATE
+        #     ${NATIVE_LIBS_EXTRA}
+        # )
 
         if (NOT CLR_CMAKE_TARGET_MACCATALYST AND NOT CLR_CMAKE_TARGET_IOS AND NOT CLR_CMAKE_TARGET_TVOS AND NOT CLR_CMAKE_TARGET_ANDROID)
             set(DEF_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/GrindCore_unixexports.src)
