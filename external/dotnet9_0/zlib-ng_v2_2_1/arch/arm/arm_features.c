@@ -109,7 +109,7 @@ void Z_INTERNAL arm_check_features(struct arm_cpu_features *features) {
     features->has_neon = 1; /* always available */
 #else
     features->has_simd = arm_has_simd();
-    // features->has_neon = arm_has_neon();
+    features->has_neon = arm_has_neon();
 #endif
     features->has_crc32 = arm_has_crc32();
 }

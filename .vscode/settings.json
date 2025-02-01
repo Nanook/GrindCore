@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "pal_mcmilk.h": "c"
+        "pal_mcmilk.h": "c",
+        "port.h": "c",
+        "types.h": "c"
     }
 }

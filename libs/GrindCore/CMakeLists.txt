@@ -1,7 +1,5 @@
 project(GrindCore C)
 
-include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/../_deps)
-
 include(${CMAKE_CURRENT_LIST_DIR}/extra_libs.cmake)
 
 include(${CLR_SRC_NATIVE_DIR}/external/dotnet9_0/zlib-ng_v2_2_1.cmake)
@@ -16,22 +14,17 @@ set(NATIVECOMPRESSION_SOURCES
     pal_zlib-ng_v2_2_1.c
     pal_zlib_v1_3_1.c
     pal_mcmilk.c
-    ${ZLIB_SOURCES} # v1_3_1
     ${HASHES_SOURCES} # Nanook
 )
 
 if (NOT CLR_CMAKE_TARGET_BROWSER AND NOT CLR_CMAKE_TARGET_WASI)
 
-    # if (CLR_CMAKE_USE_SYSTEM_BROTLI)
-    #     add_definitions(-DFEATURE_USE_SYSTEM_BROTLI)
-    # else ()
-        include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/brotli_v1_0_9.cmake)
+    include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/brotli_v1_0_9.cmake)
 
-        set (NATIVECOMPRESSION_SOURCES
-            ${NATIVECOMPRESSION_SOURCES}
-            ${BROTLI_SOURCES}
-        )
-    # endif ()
+    set (NATIVECOMPRESSION_SOURCES
+        ${NATIVECOMPRESSION_SOURCES}
+        ${BROTLI_SOURCES}
+    )
 
     set (NATIVECOMPRESSION_SOURCES
         ${NATIVECOMPRESSION_SOURCES}
@@ -58,6 +51,7 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
             ${VERSION_FILE_PATH}
         )
 
+#        target_link_libraries(GrindCore PRIVATE zlib_v1_3_1 zlib ${NATIVE_LIBS_EXTRA})
         target_link_libraries(GrindCore
             PRIVATE
             ${NATIVE_LIBS_EXTRA}
@@ -93,18 +87,13 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
         ${NATIVECOMPRESSION_SOURCES}
     )
 
-    # if (NOT CLR_CMAKE_USE_SYSTEM_ZLIB)
-        target_link_libraries(GrindCore-Static PRIVATE zlibstatic)
-        # target_link_libraries(GrindCore-Static PRIVATE zlibstatic)
-    # endif()
+    # Link the necessary zlib versions
+    target_link_libraries(GrindCore-Static PRIVATE zlibstatic_v1_3_1 zlib)
 
     set_target_properties(GrindCore-Static PROPERTIES OUTPUT_NAME GrindCore CLEAN_DIRECT_OUTPUT 1)
 else ()
     if (GEN_SHARED_LIB)
         include (GenerateExportHeader)
-    endif ()
-
-    if (GEN_SHARED_LIB)
         add_definitions(-DVER_FILEDESCRIPTION_STR="GrindCore")
         add_library(GrindCore
             SHARED
@@ -113,10 +102,7 @@ else ()
             ${VERSION_FILE_RC_PATH}
         )
 
-        # if (NOT CLR_CMAKE_USE_SYSTEM_ZLIB)
-            ## target_link_libraries(GrindCore PRIVATE zlib)
-            target_link_libraries(GrindCore PRIVATE zlib) # ng
-        # endif()
+        target_link_libraries(GrindCore PRIVATE zlib_v1_3_1 zlib)
     endif ()
 
     if (NOT GEN_SHARED_LIB AND NOT CLR_CMAKE_TARGET_MACCATALYST AND NOT CLR_CMAKE_TARGET_IOS AND NOT CLR_CMAKE_TARGET_TVOS AND NOT CLR_CMAKE_TARGET_ANDROID AND NOT CLR_CMAKE_TARGET_BROWSER AND NOT CLR_CMAKE_TARGET_WASI)
@@ -128,10 +114,8 @@ else ()
         ${NATIVECOMPRESSION_SOURCES}
     )
 
-    # if (NOT CLR_CMAKE_USE_SYSTEM_ZLIB)
-        target_link_libraries(GrindCore-Static PRIVATE zlibstatic)
-        # target_link_libraries(GrindCore-Static PRIVATE zlibstatic)
-    # endif()
+    # Link the necessary zlib versions
+    target_link_libraries(GrindCore-Static PRIVATE zlibstatic_v1_3_1 zlib)
 
     if(STATIC_LIBS_ONLY)
         add_library(GrindCore.Aot
@@ -139,10 +123,7 @@ else ()
             ${NATIVECOMPRESSION_SOURCES}
         )
 
-        # if (NOT CLR_CMAKE_USE_SYSTEM_ZLIB)
-            target_link_libraries(GrindCore.Aot PRIVATE zlibstatic)
-            # target_link_libraries(GrindCore.Aot PRIVATE zlibstatic)
-        # endif()
+        target_link_libraries(GrindCore.Aot PRIVATE zlibstatic_v1_3_1 zlib)
 
         set_target_properties(GrindCore.Aot PROPERTIES CLR_CONTROL_FLOW_GUARD OFF)
         set_target_properties(GrindCore.Aot PROPERTIES INTERPROCEDURAL_OPTIMIZATION OFF)
@@ -152,13 +133,13 @@ else ()
             ${NATIVECOMPRESSION_SOURCES}
         )
 
-        # if (NOT CLR_CMAKE_USE_SYSTEM_ZLIB)
-            target_link_libraries(GrindCore.Aot.GuardCF PRIVATE zlibstatic)
-            # target_link_libraries(GrindCore.Aot.GuardCF PRIVATE zlibstatic)
-        # endif()
+        target_link_libraries(GrindCore.Aot.GuardCF PRIVATE zlibstatic_v1_3_1 zlib)
 
         set_target_properties(GrindCore.Aot.GuardCF PROPERTIES INTERPROCEDURAL_OPTIMIZATION OFF)
-    endif()
+
+        install_static_library(GrindCore.Aot aotsdk nativeaot)
+        install_static_library(GrindCore.Aot.GuardCF aotsdk nativeaot)
+    endif ()
 
     if (GEN_SHARED_LIB)
         GENERATE_EXPORT_HEADER( GrindCore
@@ -171,17 +152,11 @@ else ()
         install (TARGETS GrindCore DESTINATION .)
         install (FILES $<TARGET_PDB_FILE:GrindCore> DESTINATION .)
     endif ()
-
-    if(STATIC_LIBS_ONLY)
-        install_static_library(GrindCore.Aot aotsdk nativeaot)
-        install_static_library(GrindCore.Aot.GuardCF aotsdk nativeaot)
-    endif()
-
 endif ()
 
 if((NOT CLR_CMAKE_USE_SYSTEM_ZLIB) AND STATIC_LIBS_ONLY)
+    install_static_library(zlib_v1_3_1 aotsdk nativeaot)
     install_static_library(zlib aotsdk nativeaot)
-    # install_static_library(zlib aotsdk nativeaot)
 endif()
 
 install (TARGETS GrindCore-Static DESTINATION ${STATIC_LIB_DESTINATION} COMPONENT libs)

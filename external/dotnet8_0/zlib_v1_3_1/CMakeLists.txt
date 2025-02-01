@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.4.4...3.15.0)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 
-project(zlib C)
+project(zlib_v1.3.1 C)
 
 set(VERSION "1.3.1")
 
-option(ZLIB_BUILD_EXAMPLES "Enable Zlib Examples" ON)
+option(ZLIB_BUILD_EXAMPLES "Enable Zlib Examples" OFF)
 
 set(INSTALL_BIN_DIR "${CMAKE_INSTALL_PREFIX}/bin" CACHE PATH "Installation directory for executables")
 set(INSTALL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib" CACHE PATH "Installation directory for libraries")
@@ -23,13 +23,8 @@ check_include_file(sys/types.h HAVE_SYS_TYPES_H)
 check_include_file(stdint.h    HAVE_STDINT_H)
 check_include_file(stddef.h    HAVE_STDDEF_H)
 
-#
 # Check to see if we have large file support
-#
 set(CMAKE_REQUIRED_DEFINITIONS -D_LARGEFILE64_SOURCE=1)
-# We add these other definitions here because CheckTypeSize.cmake
-# in CMake 2.4.x does not automatically do so and we want
-# compatibility with CMake 2.4.x.
 if(HAVE_SYS_TYPES_H)
     list(APPEND CMAKE_REQUIRED_DEFINITIONS -DHAVE_SYS_TYPES_H)
 endif()
@@ -45,17 +40,13 @@ if(HAVE_OFF64_T)
 endif()
 set(CMAKE_REQUIRED_DEFINITIONS) # clear variable
 
-#
 # Check for fseeko
-#
 check_function_exists(fseeko HAVE_FSEEKO)
 if(NOT HAVE_FSEEKO)
     add_definitions(-DNO_FSEEKO)
 endif()
 
-#
 # Check for unistd.h
-#
 check_include_file(unistd.h Z_HAVE_UNISTD_H)
 
 if(MSVC)
@@ -66,34 +57,29 @@ if(MSVC)
 endif()
 
 if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
-    # If we're doing an out of source build and the user has a zconf.h
-    # in their source tree...
     if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h)
         message(STATUS "Renaming")
         message(STATUS "    ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h")
         message(STATUS "to 'zconf.h.included' because this file is included with zlib")
         message(STATUS "but CMake generates it automatically in the build directory.")
         file(RENAME ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h.included)
-  endif()
+    endif()
 endif()
 
-set(ZLIB_PC ${CMAKE_CURRENT_BINARY_DIR}/zlib.pc)
-configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/zlib.pc.cmakein
-		${ZLIB_PC} @ONLY)
-configure_file(	${CMAKE_CURRENT_SOURCE_DIR}/zconf.h.cmakein
-		${CMAKE_CURRENT_BINARY_DIR}/zconf.h @ONLY)
+set(ZLIB_PC_V1_3_1 ${CMAKE_CURRENT_BINARY_DIR}/zlib.pc)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/zlib.pc.cmakein ${ZLIB_PC_V1_3_1} @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/zconf.h.cmakein ${CMAKE_CURRENT_BINARY_DIR}/zconf.h @ONLY)
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR})
-
 
 #============================================================================
 # zlib
 #============================================================================
 
-set(ZLIB_PUBLIC_HDRS
+set(ZLIB_PUBLIC_HDRS_V1_3_1
     ${CMAKE_CURRENT_BINARY_DIR}/zconf.h
     zlib.h
 )
-set(ZLIB_PRIVATE_HDRS
+set(ZLIB_PRIVATE_HDRS_V1_3_1
     crc32.h
     deflate.h
     gzguts.h
@@ -104,7 +90,7 @@ set(ZLIB_PRIVATE_HDRS
     trees.h
     zutil.h
 )
-set(ZLIB_SRCS
+set(ZLIB_SRCS_V1_3_1
     adler32.c
     compress.c
     crc32.c
@@ -123,15 +109,12 @@ set(ZLIB_SRCS
 )
 
 if(NOT MINGW)
-    set(ZLIB_DLL_SRCS
-        win32/zlib1.rc # If present will override custom build rule below.
-    )
+    set(ZLIB_DLL_SRCS_V1_3_1 win32/zlib1.rc)
 endif()
 
 # parse the full version number from zlib.h and include in ZLIB_FULL_VERSION
 file(READ ${CMAKE_CURRENT_SOURCE_DIR}/zlib.h _zlib_h_contents)
-string(REGEX REPLACE ".*#define[ \t]+ZLIB_VERSION[ \t]+\"([-0-9A-Za-z.]+)\".*"
-    "\\1" ZLIB_FULL_VERSION ${_zlib_h_contents})
+string(REGEX REPLACE ".*#define[ \t]+ZLIB_VERSION[ \t]+\"([-0-9A-Za-z.]+)\".*" "\\1" ZLIB_FULL_VERSION ${_zlib_h_contents})
 
 if(MINGW)
     # This gets us DLL resource information when compiling on MinGW.
@@ -146,15 +129,12 @@ if(MINGW)
                             -I ${CMAKE_CURRENT_BINARY_DIR}
                             -o ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj
                             -i ${CMAKE_CURRENT_SOURCE_DIR}/win32/zlib1.rc)
-    set(ZLIB_DLL_SRCS ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj)
+    set(ZLIB_DLL_SRCS_V1_3_1 ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj)
 endif(MINGW)
 
-add_library(zlib SHARED ${ZLIB_SRCS} ${ZLIB_DLL_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
-target_include_directories(zlib PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
-add_library(zlibstatic STATIC ${ZLIB_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
-target_include_directories(zlibstatic PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
-set_target_properties(zlib PROPERTIES DEFINE_SYMBOL ZLIB_DLL)
-set_target_properties(zlib PROPERTIES SOVERSION 1)
+add_library(zlibstatic_v1_3_1 STATIC ${ZLIB_SRCS_V1_3_1})
+target_include_directories(zlibstatic_v1_3_1 PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+set_target_properties(zlibstatic_v1_3_1 PROPERTIES OUTPUT_NAME "zlib_v1_3_1")
 
 if(NOT CYGWIN)
     # This property causes shared libraries on Linux to have the full version
@@ -164,34 +144,27 @@ if(NOT CYGWIN)
     #
     # This has no effect with MSVC, on that platform the version info for
     # the DLL comes from the resource file win32/zlib1.rc
-    set_target_properties(zlib PROPERTIES VERSION ${ZLIB_FULL_VERSION})
+    set_target_properties(zlib_v1.3.1 PROPERTIES VERSION ${ZLIB_FULL_VERSION})
 endif()
 
 if(UNIX)
-    # On unix-like platforms the library is almost always called libz
-   set_target_properties(zlib zlibstatic PROPERTIES OUTPUT_NAME z)
-   if(NOT APPLE AND NOT(CMAKE_SYSTEM_NAME STREQUAL AIX))
-     set_target_properties(zlib PROPERTIES LINK_FLAGS "-Wl,--version-script,\"${CMAKE_CURRENT_SOURCE_DIR}/zlib.map\"")
-   endif()
+    set_target_properties(zlibstatic_v1_3_1 PROPERTIES OUTPUT_NAME z)
 elseif(BUILD_SHARED_LIBS AND WIN32)
-    # Creates zlib1.dll when building shared library version
-    set_target_properties(zlib PROPERTIES SUFFIX "1.dll")
+    set_target_properties(zlibstatic_v1_3_1 PROPERTIES SUFFIX "1.dll")
 endif()
 
-if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL )
-    install(TARGETS zlib zlibstatic
-        RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
-        ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
-        LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )
+if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL)
+    install(TARGETS zlibstatic_v1_3_1
+        ARCHIVE DESTINATION "${INSTALL_LIB_DIR}")
 endif()
-if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL )
-    install(FILES ${ZLIB_PUBLIC_HDRS} DESTINATION "${INSTALL_INC_DIR}")
+if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL)
+    install(FILES ${ZLIB_PUBLIC_HDRS_V1_3_1} DESTINATION "${INSTALL_INC_DIR}")
 endif()
-if(NOT SKIP_INSTALL_FILES AND NOT SKIP_INSTALL_ALL )
+if(NOT SKIP_INSTALL_FILES AND NOT SKIP_INSTALL_ALL)
     install(FILES zlib.3 DESTINATION "${INSTALL_MAN_DIR}/man3")
 endif()
-if(NOT SKIP_INSTALL_FILES AND NOT SKIP_INSTALL_ALL )
-    install(FILES ${ZLIB_PC} DESTINATION "${INSTALL_PKGCONFIG_DIR}")
+if(NOT SKIP_INSTALL_FILES AND NOT SKIP_INSTALL_ALL)
+    install(FILES ${ZLIB_PC_V1_3_1} DESTINATION "${INSTALL_PKGCONFIG_DIR}")
 endif()
 
 #============================================================================
@@ -199,20 +172,20 @@ endif()
 #============================================================================
 if(ZLIB_BUILD_EXAMPLES)
     add_executable(example test/example.c)
-    target_link_libraries(example zlib)
+    target_link_libraries(example zlibstatic_v1_3_1)
     add_test(example example)
 
     add_executable(minigzip test/minigzip.c)
-    target_link_libraries(minigzip zlib)
+    target_link_libraries(minigzip zlibstatic_v1_3_1)
 
     if(HAVE_OFF64_T)
         add_executable(example64 test/example.c)
-        target_link_libraries(example64 zlib)
+        target_link_libraries(example64 zlibstatic_v1_3_1)
         set_target_properties(example64 PROPERTIES COMPILE_FLAGS "-D_FILE_OFFSET_BITS=64")
         add_test(example64 example64)
 
         add_executable(minigzip64 test/minigzip.c)
-        target_link_libraries(minigzip64 zlib)
+        target_link_libraries(minigzip64 zlibstatic_v1_3_1)
         set_target_properties(minigzip64 PROPERTIES COMPILE_FLAGS "-D_FILE_OFFSET_BITS=64")
     endif()
 endif()
