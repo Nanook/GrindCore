@@ -122,7 +122,7 @@ int32_t DN9_ZLibNg_v2_2_1_DeflateInit2_(
     if (result == PAL_Z_OK)
     {
         z_stream* zStream = GetCurrentZStream(stream);
-        result = deflateInit2(zStream, level, method, windowBits, memLevel, strategy);
+        result = Z_v2_2_1_deflateInit2(zStream, level, method, windowBits, memLevel, strategy);
         TransferStateToPalZStream(zStream, stream);
     }
 
@@ -134,7 +134,7 @@ int32_t DN9_ZLibNg_v2_2_1_Deflate(PAL_ZStream* stream, int32_t flush)
     assert(stream != NULL);
 
     z_stream* zStream = GetCurrentZStream(stream);
-    int32_t result = deflate(zStream, flush);
+    int32_t result = Z_v2_2_1_deflate(zStream, flush);
     TransferStateToPalZStream(zStream, stream);
 
     return result;
@@ -145,7 +145,7 @@ int32_t DN9_ZLibNg_v2_2_1_DeflateEnd(PAL_ZStream* stream)
     assert(stream != NULL);
 
     z_stream* zStream = GetCurrentZStream(stream);
-    int32_t result = deflateEnd(zStream);
+    int32_t result = Z_v2_2_1_deflateEnd(zStream);
     End(stream);
 
     return result;
@@ -159,7 +159,7 @@ int32_t DN9_ZLibNg_v2_2_1_InflateInit2_(PAL_ZStream* stream, int32_t windowBits)
     if (result == PAL_Z_OK)
     {
         z_stream* zStream = GetCurrentZStream(stream);
-        result = inflateInit2(zStream, windowBits);
+        result = Z_v2_2_1_inflateInit2(zStream, windowBits);
         TransferStateToPalZStream(zStream, stream);
     }
 
@@ -171,7 +171,7 @@ int32_t DN9_ZLibNg_v2_2_1_Inflate(PAL_ZStream* stream, int32_t flush)
     assert(stream != NULL);
 
     z_stream* zStream = GetCurrentZStream(stream);
-    int32_t result = inflate(zStream, flush);
+    int32_t result = Z_v2_2_1_inflate(zStream, flush);
     TransferStateToPalZStream(zStream, stream);
 
     return result;
@@ -182,7 +182,7 @@ int32_t DN9_ZLibNg_v2_2_1_InflateEnd(PAL_ZStream* stream)
     assert(stream != NULL);
 
     z_stream* zStream = GetCurrentZStream(stream);
-    int32_t result = inflateEnd(zStream);
+    int32_t result = Z_v2_2_1_inflateEnd(zStream);
     End(stream);
 
     return result;
@@ -192,7 +192,7 @@ uint32_t DN9_ZLibNg_v2_2_1_Crc32(uint32_t crc, uint8_t* buffer, int32_t len)
 {
     assert(buffer != NULL);
 
-    unsigned long result = crc32(crc, buffer, len);
+    unsigned long result = Z_v2_2_1_crc32(crc, buffer, len);
     assert(result <= UINT32_MAX);
     return (uint32_t)result;
 }
@@ -200,7 +200,7 @@ uint32_t DN9_ZLibNg_v2_2_1_Crc32(uint32_t crc, uint8_t* buffer, int32_t len)
 int32_t DN9_ZLibNg_v2_2_1_Compress(uint8_t *dest, uint32_t *destLen, const uint8_t *source, uint32_t sourceLen)
 {
     uLongf uLongfDestLen = *destLen;
-    int32_t result = (int32_t)compress(dest, &uLongfDestLen, source, sourceLen);
+    int32_t result = (int32_t)Z_v2_2_1_compress(dest, &uLongfDestLen, source, sourceLen);
     *destLen = (uint32_t)uLongfDestLen;
     return result;
 }
@@ -208,7 +208,7 @@ int32_t DN9_ZLibNg_v2_2_1_Compress(uint8_t *dest, uint32_t *destLen, const uint8
 int32_t DN9_ZLibNg_v2_2_1_Compress2(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen, int32_t level)
 {
     uLongf uLongfDestLen = *destLen;
-    int32_t result = (int32_t)compress2(dest, &uLongfDestLen, source, sourceLen, level);
+    int32_t result = (int32_t)Z_v2_2_1_compress2(dest, &uLongfDestLen, source, sourceLen, level);
     *destLen = (uint32_t)uLongfDestLen;
     return result;
 }
@@ -216,7 +216,7 @@ int32_t DN9_ZLibNg_v2_2_1_Compress2(uint8_t* dest, uint32_t* destLen, const uint
 int32_t DN9_ZLibNg_v2_2_1_Compress3(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen, int32_t level, int32_t windowBits, int32_t memLevel, int32_t strategy)
 {
     uLongf uLongfDestLen = *destLen;
-    int32_t result = (int32_t)compress3(dest, &uLongfDestLen, source, sourceLen, level, windowBits, memLevel, strategy);
+    int32_t result = (int32_t)Z_v2_2_1_compress3(dest, &uLongfDestLen, source, sourceLen, level, windowBits, memLevel, strategy);
     *destLen = (uint32_t)uLongfDestLen;
     return (uint32_t)result;
 }
@@ -224,7 +224,7 @@ int32_t DN9_ZLibNg_v2_2_1_Compress3(uint8_t* dest, uint32_t* destLen, const uint
 int32_t DN9_ZLibNg_v2_2_1_Uncompress(uint8_t *dest, uint32_t *destLen, const uint8_t *source, uint32_t sourceLen)
 {
     uLongf uLongfDestLen = *destLen;
-    int32_t result = (int32_t)uncompress(dest, &uLongfDestLen, source, sourceLen);
+    int32_t result = (int32_t)Z_v2_2_1_uncompress(dest, &uLongfDestLen, source, sourceLen);
     *destLen = (uint32_t)uLongfDestLen;
     return result;
 }
@@ -233,7 +233,7 @@ int32_t DN9_ZLibNg_v2_2_1_Uncompress2(uint8_t* dest, uint32_t* destLen, const ui
 {
     uLongf uLongfDestLen = *destLen;
     uLong uLongSourceLen = *sourceLen;
-    int32_t result = (int32_t)uncompress2(dest, &uLongfDestLen, source, &uLongSourceLen);
+    int32_t result = (int32_t)Z_v2_2_1_uncompress2(dest, &uLongfDestLen, source, &uLongSourceLen);
     *destLen = (uint32_t)uLongfDestLen;
     *sourceLen = (uint32_t)uLongSourceLen;
     return result;
@@ -243,7 +243,7 @@ int32_t DN9_ZLibNg_v2_2_1_Uncompress3(uint8_t* dest, uint32_t* destLen, const ui
 {
     uLongf uLongfDestLen = *destLen;
     uLong uLongSourceLen = *sourceLen;
-    int32_t result = (int32_t)uncompress3(dest, &uLongfDestLen, source, &uLongSourceLen);
+    int32_t result = (int32_t)Z_v2_2_1_uncompress3(dest, &uLongfDestLen, source, &uLongSourceLen);
     *destLen = (uint32_t)uLongfDestLen;
     *sourceLen = (uint32_t)uLongSourceLen;
     return result;

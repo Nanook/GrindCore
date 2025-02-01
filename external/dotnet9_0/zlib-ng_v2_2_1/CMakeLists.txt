@@ -93,7 +93,8 @@ option(WITH_INFLATE_STRICT "Build with strict inflate distance checking" OFF)
 option(WITH_INFLATE_ALLOW_INVALID_DIST "Build with zero fill for inflate invalid distances" OFF)
 option(WITH_UNALIGNED "Support unaligned reads on platforms that support it" ON)
 
-set(ZLIB_SYMBOL_PREFIX "" CACHE STRING "Give this prefix to all publicly exported symbols.
+# nanook
+set(ZLIB_SYMBOL_PREFIX "Z_v2_2_1_" CACHE STRING "Give this prefix to all publicly exported symbols.
 Useful when embedding into a larger library.
 Default is no prefix (empty prefix).")
 
