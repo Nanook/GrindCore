@@ -4,7 +4,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/extra_libs.cmake)
 
 include(${CLR_SRC_NATIVE_DIR}/external/dotnet9_0/zlib-ng_v2_2_1.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib_v1_3_1.cmake)
-include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk.cmake) # Nanook
+include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk.cmake)
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/../Common/pal_config.h.in
@@ -14,16 +14,17 @@ set(NATIVECOMPRESSION_SOURCES
     pal_zlib-ng_v2_2_1.c
     pal_zlib_v1_3_1.c
     pal_mcmilk.c
-    ${HASHES_SOURCES} # Nanook
+    ${HASHES_SOURCES}
 )
 
 if (NOT CLR_CMAKE_TARGET_BROWSER AND NOT CLR_CMAKE_TARGET_WASI)
 
-    include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/brotli_v1_0_9.cmake)
+    include(${CLR_SRC_NATIVE_DIR}/external/dotnet9_0/brotli_v1_1_0.cmake)
 
     set (NATIVECOMPRESSION_SOURCES
         ${NATIVECOMPRESSION_SOURCES}
         ${BROTLI_SOURCES}
+        pal_brotli_v1_1_0.c
     )
 
     set (NATIVECOMPRESSION_SOURCES
@@ -115,7 +116,7 @@ else ()
     )
 
     # Link the necessary zlib versions
-    target_link_libraries(GrindCore-Static PRIVATE zlibstatic_v1_3_1 zlib)
+    target_link_libraries(GrindCore-Static PRIVATE brotli_v1_1_0 zlibstatic_v1_3_1 zlib)
 
     if(STATIC_LIBS_ONLY)
         add_library(GrindCore.Aot
@@ -123,7 +124,7 @@ else ()
             ${NATIVECOMPRESSION_SOURCES}
         )
 
-        target_link_libraries(GrindCore.Aot PRIVATE zlibstatic_v1_3_1 zlib)
+        target_link_libraries(GrindCore.Aot PRIVATE brotli_v1_1_0 zlibstatic_v1_3_1 zlib)
 
         set_target_properties(GrindCore.Aot PROPERTIES CLR_CONTROL_FLOW_GUARD OFF)
         set_target_properties(GrindCore.Aot PROPERTIES INTERPROCEDURAL_OPTIMIZATION OFF)
@@ -133,7 +134,7 @@ else ()
             ${NATIVECOMPRESSION_SOURCES}
         )
 
-        target_link_libraries(GrindCore.Aot.GuardCF PRIVATE zlibstatic_v1_3_1 zlib)
+        target_link_libraries(GrindCore.Aot.GuardCF PRIVATE brotli_v1_1_0 zlibstatic_v1_3_1 zlib)
 
         set_target_properties(GrindCore.Aot.GuardCF PROPERTIES INTERPROCEDURAL_OPTIMIZATION OFF)
 

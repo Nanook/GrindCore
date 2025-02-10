@@ -4,6 +4,8 @@
         "port.h": "c",
         "types.h": "c",
         "charconv": "c",
-        "xmemory": "c"
+        "xmemory": "c",
+        "decode.h": "c",
+        "encode.h": "c"
     }
 }

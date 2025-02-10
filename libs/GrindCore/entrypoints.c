@@ -6,10 +6,7 @@
 // Include GrindCore headers
 #include "pal_zlib-ng_v2_2_1.h"
 #include "pal_zlib_v1_3_1.h"
-#include <brotli/decode.h>
-#include <brotli/encode.h>
-#include <brotli/port.h>
-#include <brotli/types.h>
+#include "pal_brotli_v1_1_0.h"
 #include "pal_mcmilk.h"
 
 static const Entry s_compressionNative[] =
@@ -72,17 +69,18 @@ static const Entry s_compressionNative[] =
     DllImportEntry(SZ_SHA512_Init)
     DllImportEntry(SZ_SHA512_Update)
     DllImportEntry(SZ_SHA512_Final)
-    DllImportEntry(BrotliDecoderCreateInstance)
-    DllImportEntry(BrotliDecoderDecompress)
-    DllImportEntry(BrotliDecoderDecompressStream)
-    DllImportEntry(BrotliDecoderDestroyInstance)
-    DllImportEntry(BrotliDecoderIsFinished)
-    DllImportEntry(BrotliEncoderCompress)
-    DllImportEntry(BrotliEncoderCompressStream)
-    DllImportEntry(BrotliEncoderCreateInstance)
-    DllImportEntry(BrotliEncoderDestroyInstance)
-    DllImportEntry(BrotliEncoderHasMoreOutput)
-    DllImportEntry(BrotliEncoderSetParameter)
+    DllImportEntry(DN9_BRT_v1_1_0_BrotliDecoderCreateInstance)     
+    DllImportEntry(DN9_BRT_v1_1_0_BrotliDecoderDecompress)
+    DllImportEntry(DN9_BRT_v1_1_0_BrotliDecoderDecompressStream)
+    DllImportEntry(DN9_BRT_v1_1_0_BrotliDecoderDestroyInstance)
+    DllImportEntry(DN9_BRT_v1_1_0_BrotliDecoderIsFinished)
+    DllImportEntry(DN9_BRT_v1_1_0_BrotliEncoderCompress)
+    DllImportEntry(DN9_BRT_v1_1_0_BrotliEncoderCompressStream)
+    DllImportEntry(DN9_BRT_v1_1_0_BrotliEncoderCreateInstance)
+    DllImportEntry(DN9_BRT_v1_1_0_BrotliEncoderDestroyInstance)
+    DllImportEntry(DN9_BRT_v1_1_0_BrotliEncoderHasMoreOutput)
+    DllImportEntry(DN9_BRT_v1_1_0_BrotliEncoderMaxCompressedSize)
+    DllImportEntry(DN9_BRT_v1_1_0_BrotliEncoderSetParameter)
     DllImportEntry(DN8_ZLib_v1_3_1_Crc32)
     DllImportEntry(DN8_ZLib_v1_3_1_Deflate)
     DllImportEntry(DN8_ZLib_v1_3_1_DeflateEnd)
