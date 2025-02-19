@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <stdlib.h>
-#include "pal_mcmilk.h"
+#include "pal_mcmilk_hashes.h"
 
 /////////////////////////////////////////
 // XXH32
