@@ -1,0 +1,2 @@
+1.0.1
+https://github.com/mcmilk/7-Zip-zstd/tree/master/C/fast-lzma2
