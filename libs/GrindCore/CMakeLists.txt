@@ -2,6 +2,10 @@ project(GrindCore C)
 
 include(${CMAKE_CURRENT_LIST_DIR}/extra_libs.cmake)
 
+if (IS_X64 or IS_ARM64)
+    add_definitions(-DZ7_LZMA_DEC_OPT)
+endif ()
+
 include(${CLR_SRC_NATIVE_DIR}/external/dotnet9_0/zlib-ng_v2_2_1.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib_v1_3_1.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-hashes.cmake)
