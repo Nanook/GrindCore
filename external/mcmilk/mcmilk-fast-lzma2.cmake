@@ -5,12 +5,15 @@ if (USE_ASM)
     if (IS_X64)
         set (USE_X86_ASM 1)
         set (USE_X64_ASM 1)
+        add_definitions(-DZ7_LZMA_DEC_OPT)
     elseif (IS_X86)
         set(USE_X86_ASM 1)
     elseif (IS_ARM64)
         set (USE_ARM64_ASM 1)
+        add_definitions(-DZ7_LZMA_DEC_OPT)
     endif () # arm
 endif ()
+
 
 # Set source files based on the condition
 if (USE_X86_ASM) # also USE_X64_ASM
