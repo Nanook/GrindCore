@@ -16,20 +16,20 @@ endif ()
 
 
 # Set source files based on the condition
-if (USE_X86_ASM) # also USE_X64_ASM
+if (USE_X64_ASM) # X86 fails
     set (FL2_ASM_SOURCES_BASE
         x86/7zCrcOpt.asm
         x86/LzmaDecOpt.asm
     )
-elseif (USE_ARM64_ASM)
-    set (FL2_ASM_SOURCES_BASE
-        arm64/LzmaDecOpt.S
-        arm64/7zAsm.S
-    )
-    set (FL2_C_SOURCES_BASE
-        7zCrcOpt.c
-     )
-else () # arm
+# elseif (USE_ARM64_ASM)
+#     set (FL2_ASM_SOURCES_BASE
+#         arm64/LzmaDecOpt.S
+#         arm64/7zAsm.S
+#     )
+#     set (FL2_C_SOURCES_BASE
+#         7zCrcOpt.c
+#      )
+else () # everything else or USE_ASM is not set
     set (FL2_C_SOURCES_BASE
         7zCrcOpt.c
         LzmaDec.c
