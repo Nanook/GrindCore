@@ -2,10 +2,13 @@ project(GrindCore C)
 
 include(${CMAKE_CURRENT_LIST_DIR}/extra_libs.cmake)
 
+# add_definitions(-DZ7_LZMA_PROB32) # LZMA : can increase the speed on some CPUs, but memory usage for CLzmaDec::probs will be doubled in that case
+
 include(${CLR_SRC_NATIVE_DIR}/external/dotnet9_0/zlib-ng_v2_2_1.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib_v1_3_1.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-hashes.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-fast-lzma2.cmake)
+include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-lzma.cmake)
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/../Common/pal_config.h.in
@@ -17,6 +20,8 @@ set(NATIVECOMPRESSION_SOURCES
     pal_mcmilk_hashes.c
     ${HASHES_SOURCES}
     ${FL2_SOURCES}
+    ${LZMA_SOURCES}
+    pal_mcmilk_lzma_v24_07.c
 )
 
 if (NOT CLR_CMAKE_TARGET_BROWSER AND NOT CLR_CMAKE_TARGET_WASI)

@@ -6,6 +6,7 @@
 #include "pal_brotli_v1_1_0.h"
 #include "pal_mcmilk_hashes.h"
 #include "../../C/fast-lzma2/fast-lzma2.h"
+#include "pal_mcmilk_lzma_v24_07.h"
 
 static const Entry s_compressionNative[] =
 {
@@ -166,6 +167,46 @@ static const Entry s_compressionNative[] =
     DllImportEntry(DN9_ZLibNg_v2_2_1_Uncompress)
     DllImportEntry(DN9_ZLibNg_v2_2_1_Uncompress2)
     DllImportEntry(DN9_ZLibNg_v2_2_1_Uncompress3)
+    DllImportEntry(S7_Lzma2_v24_07_Dec_Construct)
+    DllImportEntry(S7_Lzma2_v24_07_Dec_FreeProbs)
+    DllImportEntry(S7_Lzma2_v24_07_Dec_Free)
+    DllImportEntry(S7_Lzma2_v24_07_Dec_AllocateProbs)
+    DllImportEntry(S7_Lzma2_v24_07_Dec_Allocate)
+    DllImportEntry(S7_Lzma2_v24_07_Dec_Init)
+    DllImportEntry(S7_Lzma2_v24_07_Dec_DecodeToDic)
+    DllImportEntry(S7_Lzma2_v24_07_Dec_DecodeToBuf)
+    DllImportEntry(S7_Lzma2_v24_07_Dec_Parse)
+    DllImportEntry(S7_Lzma2_v24_07_Decode)
+    DllImportEntry(S7_Lzma2_v24_07_Enc_Construct)
+    DllImportEntry(S7_Lzma2_v24_07_Enc_Normalize)
+    DllImportEntry(S7_Lzma2_v24_07_Enc_Create)
+    DllImportEntry(S7_Lzma2_v24_07_Enc_Destroy)
+    DllImportEntry(S7_Lzma2_v24_07_Enc_SetProps)
+    DllImportEntry(S7_Lzma2_v24_07_Enc_SetDataSize)
+    DllImportEntry(S7_Lzma2_v24_07_Enc_WriteProperties)
+    DllImportEntry(S7_Lzma2_v24_07_Enc_Encode2)
+    DllImportEntry(S7_Lzma_v24_07_Dec_Construct)
+    DllImportEntry(S7_Lzma_v24_07_Dec_Init)
+    DllImportEntry(S7_Lzma_v24_07_Dec_AllocateProbs)
+    DllImportEntry(S7_Lzma_v24_07_Dec_FreeProbs)
+    DllImportEntry(S7_Lzma_v24_07_Dec_Allocate)
+    DllImportEntry(S7_Lzma_v24_07_Dec_Free)
+    DllImportEntry(S7_Lzma_v24_07_Dec_DecodeToDic)
+    DllImportEntry(S7_Lzma_v24_07_Dec_DecodeToBuf)
+    DllImportEntry(S7_Lzma_v24_07_Dec_LzmaDecode)
+    DllImportEntry(S7_Lzma_v24_07_EncProps_Init)
+    DllImportEntry(S7_Lzma_v24_07_EncProps_Normalize)
+    DllImportEntry(S7_Lzma_v24_07_EncProps_GetDictSize)
+    DllImportEntry(S7_Lzma_v24_07_Enc_Create)
+    DllImportEntry(S7_Lzma_v24_07_Enc_Destroy)
+    DllImportEntry(S7_Lzma_v24_07_Enc_SetProps)
+    DllImportEntry(S7_Lzma_v24_07_Enc_SetDataSize)
+    DllImportEntry(S7_Lzma_v24_07_Enc_WriteProperties)
+    DllImportEntry(S7_Lzma_v24_07_Enc_IsWriteEndMark)
+    DllImportEntry(S7_Lzma_v24_07_Enc_Encode)
+    DllImportEntry(S7_Lzma_v24_07_Enc_MemEncode)
+    DllImportEntry(S7_Lzma_v24_07_Enc_LzmaEncode)
+    DllImportEntry(S7_Lzma_v24_07_Enc_LzmaCodeOneMemBlock)
 };
 
 EXTERN_C const void* CompressionResolveDllImport(const char* name);
