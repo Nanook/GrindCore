@@ -20,6 +20,28 @@
 
 EXTERN_C_BEGIN
 
+typedef struct
+{
+    ISeqInStream vt;
+    Byte* buffer;       // Pointer to the byte buffer
+    UInt64 size;        // Total size of the buffer
+    UInt64 pos;         // Current position in the buffer
+    UInt64 remaining;   // Remaining bytes in the buffer
+    UInt64 processed;   // Total bytes processed (running total)
+    int finished;
+    int count;
+    size_t lastSize;
+} CBufferInStream;
+
+typedef struct
+{
+  ISeqInStream vt;
+  ISeqInStreamPtr realStream;
+  UInt64 limit;
+  UInt64 processed;
+  int finished;
+} CLimitedSeqInStream;
+
 FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Dec_Construct(CLzma2Dec *p);
 FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Dec_FreeProbs(CLzma2Dec *p);
 FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Dec_Free(CLzma2Dec *p);
@@ -131,7 +153,14 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_LzmaEncode(
     const CLzmaEncProps *props, uint8_t *propsEncoded, size_t *propsSize, int writeEndMark, ICompressProgressPtr progress);
 
 // Nanook
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_LzmaCodeOneMemBlock(CLzmaEncHandle p, uint32_t reInit, uint8_t *dest, size_t *destLen, const uint8_t *src, size_t srcLen, uint32_t desiredPackSize, uint32_t *unpackSize);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_LzmaCodeMultiCallPrepare(CLzmaEncHandle p, UInt32 *blockSize, UInt32 *dictSize, uint32_t final);
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_LzmaCodeMultiCall(CLzmaEncHandle p, uint8_t *dest, size_t *destLen, CBufferInStream *srcStream, int32_t limit, uint32_t* availableBytes, uint32_t final);
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Enc_EncodeMultiCallPrepare(CLzma2EncHandle p);
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Enc_EncodeMultiCall(CLzma2EncHandle p, uint8_t *outBuf, size_t *outBufSize, CBufferInStream *srcStream, CLimitedSeqInStream *limitedInStream, uint32_t init, uint32_t final);
+
 
 EXTERN_C_END
 

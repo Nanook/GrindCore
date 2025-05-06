@@ -4,10 +4,10 @@
 
 #include "pal_mcmilk_lzma_v24_07.h"
 
-SRes LzmaEnc_MemPrepare(CLzmaEncHandle p, const Byte *src, SizeT srcLen,
-    UInt32 keepWindowSize, ISzAllocPtr alloc, ISzAllocPtr allocBig);
-SRes LzmaEnc_CodeOneMemBlock(CLzmaEncHandle p, BoolInt reInit,
-    Byte *dest, size_t *destLen, UInt32 desiredPackSize, UInt32 *unpackSize);
+SRes LzmaEnc_LzmaCodeMultiCallPrepare(CLzmaEncHandle p, UInt32 *blockSize, UInt32 *dictSize, ISzAllocPtr alloc, ISzAllocPtr allocBig);
+SRes LzmaEnc_LzmaCodeMultiCall(CLzmaEncHandle p, Byte *dest, size_t *destLen, ISeqInStreamPtr inStream, UInt32 limit, UInt64 pos, UInt32* availableBytes, BoolInt final);
+SRes Lzma2Enc_EncodeMultiCallPrepare(CLzma2EncHandle p);
+SRes Lzma2Enc_EncodeMultiCall(CLzma2EncHandle p, Byte *outBuf, size_t *outBufSize, ISeqInStreamPtr inStream, CLimitedSeqInStream *limitedInStream, BoolInt init, BoolInt final);
 
 /* Constructs the LZMA2 decoder. */
 FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Dec_Construct(CLzma2Dec *p)
@@ -130,6 +130,7 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Enc_Encode2(CL
 {
     return Lzma2Enc_Encode2(p, 0, outBuf, outBufSize, 0, inData, inDataSize, progress);
 }
+
 
 
 /* ---------- CLzmaDecHandle Interface ---------- */
@@ -270,12 +271,64 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_LzmaEncode(
     return LzmaEncode(dest, destLen, src, srcLen, props, propsEncoded, propsSize, writeEndMark, progress, &g_AlignedAlloc, &g_BigAlloc);
 }
 
-// Nanook
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_LzmaCodeOneMemBlock(CLzmaEncHandle p, uint32_t reInit, uint8_t *dest, size_t *destLen, const uint8_t *src, size_t srcLen, uint32_t desiredPackSize, uint32_t *unpackSize)
+// Nanook - circular buffer. Assumes that the buffer is > blocksize (even by just 1 byte)
+static SRes BufferInStream_Read(ISeqInStreamPtr pp, void* data, size_t* size)
 {
-    SRes res = LzmaEnc_MemPrepare(p, src, srcLen, 0, &g_AlignedAlloc, &g_BigAlloc);
+    Z7_CONTAINER_FROM_VTBL_TO_DECL_VAR_pp_vt_p(CBufferInStream)
+    p->count++;
+    p->lastSize = *size;
+    size_t size2 = *size;
 
-    SRes res2 = LzmaEnc_CodeOneMemBlock(p, reInit, dest, destLen, desiredPackSize, unpackSize);
+    if (p->remaining == 0)
+    {
+        *size = 0;
+        p->finished = 1;
+        return SZ_OK;
+    }
 
-    return res2;
+    if (size2 > p->remaining)
+        size2 = (size_t)p->remaining;
+
+    size_t firstChunk = 0;
+    if (p->pos + size2 >= p->size)
+    {
+        firstChunk = (size_t)(p->size - p->pos); // Bytes until the end of the buffer
+        memcpy(data, (Byte*)(p->buffer + p->pos), firstChunk);
+        p->pos = 0; // reset
+    }
+    if (size2 - firstChunk != 0)
+    {
+        memcpy((Byte*)data + firstChunk, (Byte*)(p->buffer + p->pos), size2 - firstChunk);
+        p->pos += size2 - firstChunk;
+    }
+
+    p->remaining -= size2;
+    p->processed += size2;
+
+    *size = size2;
+
+    return SZ_OK;
+}
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_LzmaCodeMultiCallPrepare(CLzmaEncHandle p, UInt32 *blockSize, UInt32 *dictSize, uint32_t final)
+{
+    return LzmaEnc_LzmaCodeMultiCallPrepare(p, blockSize, dictSize, &g_AlignedAlloc, &g_BigAlloc);
+}
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_LzmaCodeMultiCall(CLzmaEncHandle p, uint8_t *dest, size_t *destLen, CBufferInStream *srcStream, int32_t limit, uint32_t* availableBytes, uint32_t final)
+{
+    srcStream->vt.Read = BufferInStream_Read;
+    return LzmaEnc_LzmaCodeMultiCall(p, dest, destLen, &srcStream->vt, limit, srcStream->pos, availableBytes, final);
+}
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Enc_EncodeMultiCallPrepare(CLzma2EncHandle p)
+{
+    return Lzma2Enc_EncodeMultiCallPrepare(p);
+}
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Enc_EncodeMultiCall(CLzma2EncHandle p, uint8_t *outBuf, size_t *outBufSize, CBufferInStream *srcStream, CLimitedSeqInStream *limitedInStream, uint32_t init, uint32_t final)
+{
+    srcStream->vt.Read = BufferInStream_Read;
+    SRes res = Lzma2Enc_EncodeMultiCall(p, outBuf, outBufSize, &srcStream->vt, limitedInStream, init, final);
+    return res;
 }

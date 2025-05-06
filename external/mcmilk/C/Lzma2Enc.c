@@ -110,7 +110,7 @@ static void Lzma2EncInt_InitBlock(CLzma2EncInt *p)
   p->needInitProp = True;
 }
 
-
+SRes LzmaEnc_SetStreamLzma2(CLzmaEncHandle p, ISeqInStreamPtr inStream);
 SRes LzmaEnc_PrepareForLzma2(CLzmaEncHandle p, ISeqInStreamPtr inStream, UInt32 keepWindowSize,
     ISzAllocPtr alloc, ISzAllocPtr allocBig);
 SRes LzmaEnc_MemPrepare(CLzmaEncHandle p, const Byte *src, SizeT srcLen,
@@ -495,14 +495,14 @@ Byte Lzma2Enc_WriteProperties(CLzma2EncHandle p)
 
 
 static SRes Lzma2Enc_EncodeMt1(
-    CLzma2Enc *me,
-    CLzma2EncInt *p,
-    ISeqOutStreamPtr outStream,
-    Byte *outBuf, size_t *outBufSize,
-    ISeqInStreamPtr inStream,
-    const Byte *inData, size_t inDataSize,
-    int finished,
-    ICompressProgressPtr progress)
+  CLzma2Enc *me,
+  CLzma2EncInt *p,
+  ISeqOutStreamPtr outStream,
+  Byte *outBuf, size_t *outBufSize,
+  ISeqInStreamPtr inStream,
+  const Byte *inData, size_t inDataSize,
+  int finished,
+  ICompressProgressPtr progress)
 {
   UInt64 unpackTotal = 0;
   UInt64 packTotal = 0;
@@ -592,11 +592,11 @@ static SRes Lzma2Enc_EncodeMt1(
       size_t packSize = LZMA2_CHUNK_SIZE_COMPRESSED_MAX;
       if (outBuf)
         packSize = outLim - (size_t)packTotal;
-      
+
       res = Lzma2EncInt_EncodeSubblock(p,
           outBuf ? outBuf + (size_t)packTotal : me->tempBufLzma, &packSize,
           outBuf ? NULL : outStream);
-      
+
       if (res != SZ_OK)
         break;
 
@@ -616,7 +616,7 @@ static SRes Lzma2Enc_EncodeMt1(
       if (packSize == 0)
         break;
     }
-    
+
     LzmaEnc_Finish(p->enc);
     
     unpackTotal += p->srcPos;
@@ -800,6 +800,96 @@ SRes Lzma2Enc_Encode2(CLzma2EncHandle p,
       inStream, inData, inDataSize,
       True, /* finished */
       progress);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Nanook - added code to allow write driven solid encoding
+typedef struct
+{
+  ISeqOutStream vt;
+  Byte *data;
+  size_t rem;
+  BoolInt overflow;
+} CLzma2Enc_SeqOutStreamBuf;
+
+static size_t SeqOutStreamBuf_Write(ISeqOutStreamPtr pp, const void *data, size_t size)
+{
+  Z7_CONTAINER_FROM_VTBL_TO_DECL_VAR_pp_vt_p(CLzma2Enc_SeqOutStreamBuf)
+  if (p->rem < size)
+  {
+    size = p->rem;
+    p->overflow = True;
+  }
+  if (size != 0)
+  {
+    memcpy(p->data, data, size);
+    p->rem -= size;
+    p->data += size;
+  }
+  return size;
+}
+
+SRes Lzma2Enc_EncodeMultiCallPrepare(CLzma2EncHandle p)
+{
+  {
+    unsigned i;
+    for (i = 0; i < MTCODER_THREADS_MAX; i++)
+    {
+      p->coders[i].enc = NULL;
+      p->coders[i].propsAreSet = False;
+    }
+  }
+
+  p->mtCoder_WasConstructed = False;
+  {
+    unsigned i;
+    for (i = 0; i < MTCODER_BLOCKS_MAX; i++)
+      p->outBufs[i] = NULL;
+    p->outBufSize = 0;
+  }
+
+  p->coders[0].enc = LzmaEnc_Create(p->alloc);
+  if (!p->coders[0].enc)
+    return SZ_ERROR_MEM;
+
+  RINOK(Lzma2EncInt_InitStream(&p->coders[0], &p->props))
+
+  SRes res = SZ_OK;
+
+  Lzma2EncInt_InitBlock(&p->coders[0]);
+  
+  LzmaEnc_SetDataSize(p->coders[0].enc, LZMA2_ENC_PROPS_BLOCK_SIZE_SOLID);
+
+  RINOK(LzmaEnc_PrepareForLzma2(p->coders[0].enc,
+      0,
+      LZMA2_KEEP_WINDOW_SIZE,
+      p->alloc,
+      p->allocBig))
+
+  return res;
+}
+
+SRes Lzma2Enc_EncodeMultiCall(CLzma2EncHandle p, Byte *outBuf, size_t *outBufSize, ISeqInStreamPtr inStream, CLimitedSeqInStream *limitedInStream, BoolInt init, BoolInt final)
+{
+
+  // set the instream - nothing else - uses multicall
+  limitedInStream->realStream = inStream;
+  limitedInStream->vt.Read = LimitedSeqInStream_Read;
+  LimitedSeqInStream_Init(limitedInStream); // defaults to new solid block
+  RINOK(LzmaEnc_SetStreamLzma2(p->coders[0].enc, &limitedInStream->vt));
+
+  if (init) // new block
+    RINOK(Lzma2EncInt_InitStream(&p->coders[0], &p->props))
+
+  SRes res = Lzma2EncInt_EncodeSubblock(&p->coders[0], outBuf, outBufSize, NULL);
+
+  if (final)
+  {
+    LzmaEnc_Finish((CLzmaEncHandle)(void *)p);
+    LzmaEnc_SetStreamLzma2(p->coders[0].enc, 0); // blank it to prevent errors from Free (as c# created the stream)
+  }
+
+  return res;
 }
 
 #undef PRF

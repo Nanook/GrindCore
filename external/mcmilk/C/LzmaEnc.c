@@ -21,7 +21,7 @@
 #endif
 
 /* the following LzmaEnc_* declarations is internal LZMA interface for LZMA2 encoder */
-
+SRes LzmaEnc_SetStreamLzma2(CLzmaEncHandle p, ISeqInStreamPtr inStream);
 SRes LzmaEnc_PrepareForLzma2(CLzmaEncHandle p, ISeqInStreamPtr inStream, UInt32 keepWindowSize,
     ISzAllocPtr alloc, ISzAllocPtr allocBig);
 SRes LzmaEnc_MemPrepare(CLzmaEncHandle p, const Byte *src, SizeT srcLen,
@@ -483,6 +483,8 @@ struct CLzmaEnc
   #ifndef Z7_ST
   Byte pad2[128];
   #endif
+
+  UInt32 multicallMode;
 };
 
 
@@ -2676,10 +2678,15 @@ static SRes LzmaEnc_CodeOneBlock(CLzmaEnc *p, UInt32 maxPackSize, UInt32 maxUnpa
   }
 
   p->nowPos64 += nowPos32 - startPos32;
-  return Flush(p, nowPos32);
+
+  if (p->multicallMode == 2) // Nanook - flush the encoded bytes out only
+  {
+   RangeEnc_FlushStream(&p->rc);
+   return CheckErrors(p);
+  }
+
+  return Flush(p, nowPos32); 
 }
-
-
 
 #define kBigHashDicLimit ((UInt32)1 << 24)
 
@@ -2954,24 +2961,24 @@ const Byte *LzmaEnc_GetCurBuf(CLzmaEncHandle p)
 SRes LzmaEnc_CodeOneMemBlock(CLzmaEncHandle p, BoolInt reInit,
     Byte *dest, size_t *destLen, UInt32 desiredPackSize, UInt32 *unpackSize)
 {
-  // GET_CLzmaEnc_p
-  UInt64 nowPos64;
-  SRes res;
-  CLzmaEnc_SeqOutStreamBuf outStream;
+    // GET_CLzmaEnc_p
+    UInt64 nowPos64;
+    SRes res;
+    CLzmaEnc_SeqOutStreamBuf outStream;
 
-  outStream.vt.Write = SeqOutStreamBuf_Write;
-  outStream.data = dest;
-  outStream.rem = *destLen;
-  outStream.overflow = False;
+    outStream.vt.Write = SeqOutStreamBuf_Write;
+    outStream.data = dest;
+    outStream.rem = *destLen;
+    outStream.overflow = False;
 
-  p->writeEndMark = False;
-  p->finished = False;
-  p->result = SZ_OK;
+    p->writeEndMark = False;
+    p->finished = False;
+    p->result = SZ_OK;
 
-  if (reInit)
-    LzmaEnc_Init(p);
-  LzmaEnc_InitPrices(p);
-  RangeEnc_Init(&p->rc);
+    if (reInit)
+      LzmaEnc_Init(p);
+    LzmaEnc_InitPrices(p);
+    RangeEnc_Init(&p->rc);
   p->rc.outStream = &outStream.vt;
   nowPos64 = p->nowPos64;
   
@@ -3142,3 +3149,67 @@ void LzmaEnc_GetLzThreads(CLzmaEncHandle p, HANDLE lz_threads[2])
 }
 #endif
 */
+
+////////////////////////////////////////////////////////////////////////////////
+// Nanook - added code to allow write driven solid encoding
+
+SRes LzmaEnc_SetStreamLzma2(CLzmaEncHandle p,
+  ISeqInStreamPtr inStream)
+{
+// GET_CLzmaEnc_p
+MatchFinder_SET_STREAM(&MFB, inStream)
+return SZ_OK;
+}
+
+SRes LzmaEnc_LzmaCodeMultiCallPrepare(CLzmaEncHandle p, UInt32 *blockSize, UInt32 *dictSize, ISzAllocPtr alloc, ISzAllocPtr allocBig)
+{
+  UInt32 limit = *blockSize;
+  *blockSize = 0;
+
+  p->multicallMode = 1; // prepare
+  SRes res;
+
+  res = LzmaEnc_Prepare(p, 0, 0, alloc, allocBig);
+
+  *dictSize = p->dictSize;
+  *blockSize = p->matchFinderBase.blockSize;
+
+  return res;
+}
+
+SRes LzmaEnc_LzmaCodeMultiCall(CLzmaEncHandle p, Byte *dest, size_t *destLen, ISeqInStreamPtr inStream, UInt32 limit, UInt64 pos, UInt32* availableBytes, BoolInt final)
+{
+  SRes res = SZ_OK;
+
+  #ifndef Z7_ST
+  Byte allocaDummy[0x300];
+  allocaDummy[0] = 0;
+  allocaDummy[1] = allocaDummy[0];
+  #endif
+
+  CLzmaEnc_SeqOutStreamBuf outStream;
+
+  outStream.vt.Write = SeqOutStreamBuf_Write;
+  outStream.data = dest;
+  outStream.rem = *destLen;
+  outStream.overflow = False;
+  p->rc.outStream = &outStream.vt;
+  MatchFinder_SET_STREAM(&MFB, inStream)
+
+  if (pos == 0) {
+    p->matchFinder.Init(p->matchFinderObj);
+    p->needInit = 0;
+  }
+
+  p->multicallMode = !final ? 2 : 3; // encode multicall
+
+  res = LzmaEnc_CodeOneBlock(p, limit, limit); //0=full flush, 1=output flush only 
+
+  *destLen -= outStream.rem;
+  *availableBytes = p->matchFinder.GetNumAvailableBytes(p->matchFinderObj);
+
+  if (p->multicallMode == 3)
+    LzmaEnc_Finish((CLzmaEncHandle)(void *)p);
+
+  return res;
+}

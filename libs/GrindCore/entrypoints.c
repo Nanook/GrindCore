@@ -185,6 +185,8 @@ static const Entry s_compressionNative[] =
     DllImportEntry(S7_Lzma2_v24_07_Enc_SetDataSize)
     DllImportEntry(S7_Lzma2_v24_07_Enc_WriteProperties)
     DllImportEntry(S7_Lzma2_v24_07_Enc_Encode2)
+    DllImportEntry(S7_Lzma2_v24_07_Enc_EncodeMultiCall)
+    DllImportEntry(S7_Lzma2_v24_07_Enc_EncodeMultiCallPrepare)
     DllImportEntry(S7_Lzma_v24_07_Dec_Construct)
     DllImportEntry(S7_Lzma_v24_07_Dec_Init)
     DllImportEntry(S7_Lzma_v24_07_Dec_AllocateProbs)
@@ -206,7 +208,8 @@ static const Entry s_compressionNative[] =
     DllImportEntry(S7_Lzma_v24_07_Enc_Encode)
     DllImportEntry(S7_Lzma_v24_07_Enc_MemEncode)
     DllImportEntry(S7_Lzma_v24_07_Enc_LzmaEncode)
-    DllImportEntry(S7_Lzma_v24_07_Enc_LzmaCodeOneMemBlock)
+    DllImportEntry(S7_Lzma_v24_07_Enc_LzmaCodeMultiCall)
+    DllImportEntry(S7_Lzma_v24_07_Enc_LzmaCodeMultiCallPrepare)
 };
 
 EXTERN_C const void* CompressionResolveDllImport(const char* name);

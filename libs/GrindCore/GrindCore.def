@@ -170,6 +170,8 @@ EXPORTS
   S7_Lzma2_v24_07_Enc_SetDataSize
   S7_Lzma2_v24_07_Enc_WriteProperties
   S7_Lzma2_v24_07_Enc_Encode2
+  S7_Lzma2_v24_07_Enc_EncodeMultiCall
+  S7_Lzma2_v24_07_Enc_EncodeMultiCallPrepare
   S7_Lzma_v24_07_Dec_Construct
   S7_Lzma_v24_07_Dec_Init
   S7_Lzma_v24_07_Dec_AllocateProbs
@@ -191,4 +193,5 @@ EXPORTS
   S7_Lzma_v24_07_Enc_Encode
   S7_Lzma_v24_07_Enc_MemEncode
   S7_Lzma_v24_07_Enc_LzmaEncode
-  S7_Lzma_v24_07_Enc_LzmaCodeOneMemBlock
+  S7_Lzma_v24_07_Enc_LzmaCodeMultiCall
+  S7_Lzma_v24_07_Enc_LzmaCodeMultiCallPrepare
