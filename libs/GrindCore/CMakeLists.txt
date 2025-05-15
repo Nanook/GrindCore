@@ -9,6 +9,7 @@ include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib_v1_3_1.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-hashes.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-fast-lzma2.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-lzma.cmake)
+include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-lz4.cmake)
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/../Common/pal_config.h.in
@@ -21,7 +22,9 @@ set(NATIVECOMPRESSION_SOURCES
     ${HASHES_SOURCES}
     ${FL2_SOURCES}
     ${LZMA_SOURCES}
+    ${LZ4_SOURCES}
     pal_mcmilk_lzma_v24_07.c
+    pal_mcmilk_lz4_v1_9_4.c
 )
 
 if (NOT CLR_CMAKE_TARGET_BROWSER AND NOT CLR_CMAKE_TARGET_WASI)

@@ -7,6 +7,7 @@
 #include "pal_mcmilk_hashes.h"
 #include "../../C/fast-lzma2/fast-lzma2.h"
 #include "pal_mcmilk_lzma_v24_07.h"
+#include "pal_mcmilk_lz4_v1_9_4.h"
 
 static const Entry s_compressionNative[] =
 {
@@ -210,6 +211,27 @@ static const Entry s_compressionNative[] =
     DllImportEntry(S7_Lzma_v24_07_Enc_LzmaEncode)
     DllImportEntry(S7_Lzma_v24_07_Enc_LzmaCodeMultiCall)
     DllImportEntry(S7_Lzma_v24_07_Enc_LzmaCodeMultiCallPrepare)
+    DllImportEntry(SZ_Lz4_v1_9_4_Init)
+    DllImportEntry(SZ_Lz4_v1_9_4_End)
+    DllImportEntry(SZ_Lz4_v1_9_4_TransferStateToPalLZ4Stream)
+    DllImportEntry(SZ_Lz4_v1_9_4_GetCurrentLZ4Stream)
+    DllImportEntry(SZ_Lz4_v1_9_4_CompressFastContinue)
+    DllImportEntry(SZ_Lz4_v1_9_4_DecompressSafeContinue)
+    DllImportEntry(SZ_Lz4_v1_9_4_LoadDict)
+    DllImportEntry(SZ_Lz4_v1_9_4_SaveDict)
+    DllImportEntry(SZ_Lz4F_v1_9_4_CreateCompressionContext)
+    DllImportEntry(SZ_Lz4F_v1_9_4_FreeCompressionContext)
+    DllImportEntry(SZ_Lz4F_v1_9_4_CompressBegin)
+    DllImportEntry(SZ_Lz4F_v1_9_4_CompressUpdate)
+    DllImportEntry(SZ_Lz4F_v1_9_4_Flush)
+    DllImportEntry(SZ_Lz4F_v1_9_4_CompressEnd)
+    DllImportEntry(SZ_Lz4F_v1_9_4_CreateDecompressionContext)
+    DllImportEntry(SZ_Lz4F_v1_9_4_FreeDecompressionContext)
+    DllImportEntry(SZ_Lz4F_v1_9_4_GetFrameInfo)
+    DllImportEntry(SZ_Lz4F_v1_9_4_Decompress)
+    DllImportEntry(SZ_Lz4F_v1_9_4_ResetDecompressionContext)
+    DllImportEntry(SZ_Lz4F_v1_9_4_CompressBound)
+    DllImportEntry(SZ_Lz4F_v1_9_4_CompressFrameBound)
 };
 
 EXTERN_C const void* CompressionResolveDllImport(const char* name);
