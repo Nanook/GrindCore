@@ -15,6 +15,7 @@
 
 #define LZ4_STATIC_LINKING_ONLY
 #include "external/mcmilk/C/lz4/lz4.h"
+#include "external/mcmilk/C/lz4/lz4hc.h"
 #include "external/mcmilk/C/lz4/lz4frame.h"
 
 // Define error codes for consistency
@@ -28,6 +29,11 @@ typedef struct {
     void* internalState;
 } SZ_Lz4_v1_9_4_Stream;
 
+size_t LZ4F_uncompressedUpdate(LZ4F_cctx* cctxPtr,
+                               void* dstBuffer, size_t dstCapacity,
+                         const void* srcBuffer, size_t srcSize,
+                         const LZ4F_compressOptions_t* compressOptionsPtr);
+                         
 /* Initializes the LZ4 streaming object. */
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_9_4_Init(SZ_Lz4_v1_9_4_Stream* stream);
 
@@ -110,6 +116,32 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_9_4_DecompressPartia
     int dictSize);
 
 /////////////////////////////////////////////////////////////////////
+// High Compression Methods
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_9_4_CompressHC(
+    const char* src,
+    char* dst,
+    int srcSize,
+    int dstCapacity,
+    int compressionLevel);
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_9_4_CompressHC_ExtState(
+    void* stateHC,
+    const char* src,
+    char* dst,
+    int srcSize,
+    int maxDstSize,
+    int compressionLevel);
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_9_4_CompressHC_DestSize(
+    void* stateHC,
+    const char* src,
+    char* dst,
+    int* srcSizePtr,
+    int targetDstSize,
+    int compressionLevel);
+
+/////////////////////////////////////////////////////////////////////
 // Frame Methods
 
 // LZ4 Frame Compression Structure
@@ -121,6 +153,13 @@ typedef struct {
 typedef struct {
     void* internalState;
 } SZ_Lz4F_v1_9_4_DecompressionContext;
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4F_v1_9_4_CompressHC_Stream(
+    SZ_Lz4F_v1_9_4_CompressionContext* ctx,
+    void* dstBuffer, size_t dstCapacity,
+    const void* srcBuffer, int srcSize,
+    int compressionLevel,
+    const LZ4F_compressOptions_t* cOptPtr);
 
 // Computes the maximum compressed size for a given input size using LZ4 Frame
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_Lz4F_v1_9_4_CompressFrameBound(size_t srcSize, const LZ4F_preferences_t* prefsPtr);

@@ -15,6 +15,8 @@ DotNet Native Compression and Hashing for:
 
 - https://github.com/Nanook/GrindCore.net
 
+This wrapper/interop provides dotnet compatible Streaming and Block compression as well as hashing compatible with HashAlgorithm. 
+
 ### Available in nuget:
 
 - https://www.nuget.org/packages/GrindCore
@@ -24,11 +26,13 @@ DotNet Native Compression and Hashing for:
 ### Compression
 
 - Brotli v1.1.0 (From DotNet 9.0)
+- LZ4 v1.9.4 (From 7Zip-mcmilk)
 - Lzma v24.7.0 (From 7Zip-mcmilk)
 - Lzma2 v24.7.0 (From 7Zip-mcmilk)
 - Fast-Lzma2 v1.0.1 (From 7Zip-mcmilk)
 - ZLib v1.3.1 [GZip, ZLib, Deflate] (From DotNet 8.0)
 - ZLib-NG v2.2.1 [GZip, ZLib, Deflate] (From DotNet 9.0)
+- ZStd v1.5.6 (From 7Zip-mcmilk)
 
 ### Hashing
 
@@ -38,5 +42,3 @@ DotNet Native Compression and Hashing for:
 - SHA2 [SHA256, SHA384, SHA512]
 - SHA3 [SHA3-224, SHA3-256, SHA3-384, SHA3-512]
 - XXHash [XXH32, XXH64]
-
-Lots more functionality to be added

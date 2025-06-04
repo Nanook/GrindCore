@@ -1272,7 +1272,7 @@ ZEXTERN uLong ZEXPORT compressBound OF((uLong sourceLen));
 
 // Nanook - Expose more functionality
 ZEXTERN int ZEXPORT uncompress3 OF((Bytef *dest,   uLongf *destLen,
-                                    const Bytef *source, uLong *sourceLen));
+                                    const Bytef *source, uLong *sourceLen, int windowBits));
 
 ZEXTERN int ZEXPORT uncompress OF((Bytef *dest,   uLongf *destLen,
                                    const Bytef *source, uLong sourceLen));

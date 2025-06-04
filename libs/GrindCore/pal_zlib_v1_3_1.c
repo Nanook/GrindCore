@@ -237,11 +237,11 @@ int32_t DN8_ZLib_v1_3_1_Uncompress2(uint8_t* dest, uint32_t* destLen, const uint
     return result;
 }
 
-int32_t DN8_ZLib_v1_3_1_Uncompress3(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t* sourceLen)
+int32_t DN8_ZLib_v1_3_1_Uncompress3(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t* sourceLen, int32_t windowBits)
 {
     uLongf uLongfDestLen = *destLen;
     uLong uLongSourceLen = *sourceLen;
-    int32_t result = (int32_t)uncompress3(dest, &uLongfDestLen, source, &uLongSourceLen);
+    int32_t result = (int32_t)uncompress3(dest, &uLongfDestLen, source, &uLongSourceLen, windowBits);
     *destLen = (uint32_t)uLongfDestLen;
     *sourceLen = (uint32_t)uLongSourceLen;
     return result;

@@ -378,6 +378,9 @@ struct CLzma2Enc
   Byte *outBufs[MTCODER_BLOCKS_MAX];
 
   #endif
+
+  //Nanook
+  CLimitedSeqInStream inStream;
 };
 
 
@@ -831,6 +834,9 @@ static size_t SeqOutStreamBuf_Write(ISeqOutStreamPtr pp, const void *data, size_
 
 SRes Lzma2Enc_EncodeMultiCallPrepare(CLzma2EncHandle p)
 {
+  if (p->coders != NULL && p->coders[0].enc != NULL)
+    LzmaEnc_Destroy(p->coders[0].enc, p->alloc, p->allocBig);
+
   {
     unsigned i;
     for (i = 0; i < MTCODER_THREADS_MAX; i++)
@@ -848,6 +854,10 @@ SRes Lzma2Enc_EncodeMultiCallPrepare(CLzma2EncHandle p)
     p->outBufSize = 0;
   }
 
+  // set the instream - nothing else - uses multicall
+  p->inStream.vt.Read = LimitedSeqInStream_Read;
+  LimitedSeqInStream_Init(&p->inStream); // defaults to new solid block
+
   p->coders[0].enc = LzmaEnc_Create(p->alloc);
   if (!p->coders[0].enc)
     return SZ_ERROR_MEM;
@@ -861,7 +871,7 @@ SRes Lzma2Enc_EncodeMultiCallPrepare(CLzma2EncHandle p)
   LzmaEnc_SetDataSize(p->coders[0].enc, LZMA2_ENC_PROPS_BLOCK_SIZE_SOLID);
 
   RINOK(LzmaEnc_PrepareForLzma2(p->coders[0].enc,
-      0,
+      &p->inStream.vt,
       LZMA2_KEEP_WINDOW_SIZE,
       p->alloc,
       p->allocBig))
@@ -869,25 +879,15 @@ SRes Lzma2Enc_EncodeMultiCallPrepare(CLzma2EncHandle p)
   return res;
 }
 
-SRes Lzma2Enc_EncodeMultiCall(CLzma2EncHandle p, Byte *outBuf, size_t *outBufSize, ISeqInStreamPtr inStream, CLimitedSeqInStream *limitedInStream, BoolInt init, BoolInt final)
+SRes Lzma2Enc_EncodeMultiCall(CLzma2EncHandle p, Byte *outBuf, size_t *outBufSize, ISeqInStreamPtr inStream, BoolInt init, BoolInt final)
 {
-
   // set the instream - nothing else - uses multicall
-  limitedInStream->realStream = inStream;
-  limitedInStream->vt.Read = LimitedSeqInStream_Read;
-  LimitedSeqInStream_Init(limitedInStream); // defaults to new solid block
-  RINOK(LzmaEnc_SetStreamLzma2(p->coders[0].enc, &limitedInStream->vt));
-
-  if (init) // new block
-    RINOK(Lzma2EncInt_InitStream(&p->coders[0], &p->props))
+  p->inStream.realStream = inStream;
 
   SRes res = Lzma2EncInt_EncodeSubblock(&p->coders[0], outBuf, outBufSize, NULL);
 
   if (final)
-  {
     LzmaEnc_Finish((CLzmaEncHandle)(void *)p);
-    LzmaEnc_SetStreamLzma2(p->coders[0].enc, 0); // blank it to prevent errors from Free (as c# created the stream)
-  }
 
   return res;
 }

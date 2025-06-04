@@ -1269,7 +1269,7 @@ Z_EXTERN int Z_EXPORT uncompress(unsigned char *dest, unsigned long *destLen, co
 */
 
 Z_EXTERN int Z_EXPORT uncompress3 (unsigned char *dest,         unsigned long *destLen,
-                                 const unsigned char *source, unsigned long *sourceLen);
+                                 const unsigned char *source, unsigned long *sourceLen, int windowBits);
 
 Z_EXTERN int Z_EXPORT uncompress2 (unsigned char *dest,         unsigned long *destLen,
                                  const unsigned char *source, unsigned long *sourceLen);

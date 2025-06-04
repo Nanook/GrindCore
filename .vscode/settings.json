@@ -26,6 +26,8 @@
         "xloctime": "c",
         "xstring": "c",
         "xutility": "c",
-        "alloc.h": "c"
-    }
+        "alloc.h": "c",
+        "stdlib.h": "c"
+    },
+    "cmake.ignoreCMakeListsMissing": true
 }

@@ -56,7 +56,7 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_9_4_CompressFastCont
     LZ4_stream_t* lz4Stream = (LZ4_stream_t*)stream->internalState;
     int compressedSize = LZ4_compress_fast_continue(lz4Stream, src, dst, srcSize, dstCapacity, acceleration);
 
-    return (compressedSize > 0) ? compressedSize : SZ_Lz4_v1_9_4_COMPRESSFAIL;
+    return (compressedSize >= 0) ? compressedSize : SZ_Lz4_v1_9_4_COMPRESSFAIL;
 }
 
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_9_4_DecompressSafeContinue(
@@ -72,7 +72,7 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_9_4_DecompressSafeCo
     LZ4_streamDecode_t* lz4StreamDecode = (LZ4_streamDecode_t*)stream->internalState;
     int decompressedSize = LZ4_decompress_safe_continue(lz4StreamDecode, src, dst, compressedSize, dstCapacity);
 
-    return (decompressedSize > 0) ? decompressedSize : SZ_Lz4_v1_9_4_DECOMPRESSFAIL;
+    return (decompressedSize >= 0) ? decompressedSize : SZ_Lz4_v1_9_4_DECOMPRESSFAIL;
 }
 
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_9_4_LoadDict(
@@ -86,7 +86,7 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_9_4_LoadDict(
     LZ4_stream_t* lz4Stream = (LZ4_stream_t*)stream->internalState;
     int result = LZ4_loadDict(lz4Stream, dictionary, dictSize);
 
-    return (result > 0) ? SZ_Lz4_v1_9_4_OK : SZ_Lz4_v1_9_4_ERROR;
+    return (result >= 0) ? SZ_Lz4_v1_9_4_OK : SZ_Lz4_v1_9_4_ERROR;
 }
 
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_9_4_SaveDict(
@@ -100,7 +100,7 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_9_4_SaveDict(
     LZ4_stream_t* lz4Stream = (LZ4_stream_t*)stream->internalState;
     int savedSize = LZ4_saveDict(lz4Stream, safeBuffer, maxDictSize);
 
-    return (savedSize > 0) ? savedSize : SZ_Lz4_v1_9_4_ERROR;
+    return (savedSize >= 0) ? savedSize : SZ_Lz4_v1_9_4_ERROR;
 }
 
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_9_4_AttachDict(
@@ -157,11 +157,87 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_9_4_DecompressPartia
         return SZ_Lz4_v1_9_4_ERROR;
 
     int decompressedSize = LZ4_decompress_safe_partial_usingDict(src, dst, compressedSize, targetOutputSize, maxOutputSize, dictStart, dictSize);
-    return (decompressedSize > 0) ? decompressedSize : SZ_Lz4_v1_9_4_DECOMPRESSFAIL;
+    return (decompressedSize >= 0) ? decompressedSize : SZ_Lz4_v1_9_4_DECOMPRESSFAIL;
+}
+
+/////////////////////////////////////////////////////////////////////
+// High Compression Methods
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_9_4_CompressHC(
+    const char* src,
+    char* dst,
+    int srcSize,
+    int dstCapacity,
+    int compressionLevel)
+{
+    if (src == NULL || dst == NULL)
+        return SZ_Lz4_v1_9_4_ERROR;
+
+    int compressedSize = LZ4_compress_HC(src, dst, srcSize, dstCapacity, compressionLevel);
+
+    return (compressedSize > 0) ? compressedSize : SZ_Lz4_v1_9_4_COMPRESSFAIL;
+}
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_9_4_CompressHC_ExtState(
+    void* stateHC,
+    const char* src,
+    char* dst,
+    int srcSize,
+    int maxDstSize,
+    int compressionLevel)
+{
+    if (stateHC == NULL || src == NULL || dst == NULL)
+        return SZ_Lz4_v1_9_4_ERROR;
+
+    int compressedSize = LZ4_compress_HC_extStateHC(stateHC, src, dst, srcSize, maxDstSize, compressionLevel);
+
+    return (compressedSize > 0) ? compressedSize : SZ_Lz4_v1_9_4_COMPRESSFAIL;
+}
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_9_4_CompressHC_DestSize(
+    void* stateHC,
+    const char* src,
+    char* dst,
+    int* srcSizePtr,
+    int targetDstSize,
+    int compressionLevel)
+{
+    if (stateHC == NULL || src == NULL || dst == NULL || srcSizePtr == NULL)
+        return SZ_Lz4_v1_9_4_ERROR;
+
+    int compressedSize = LZ4_compress_HC_destSize(stateHC, src, dst, srcSizePtr, targetDstSize, compressionLevel);
+
+    return (compressedSize > 0) ? compressedSize : SZ_Lz4_v1_9_4_COMPRESSFAIL;
 }
 
 /////////////////////////////////////////////////////////////////////
 // Frame Methods
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4F_v1_9_4_CompressHC_Stream(
+    SZ_Lz4F_v1_9_4_CompressionContext* ctx,
+    void* dstBuffer, size_t dstCapacity,
+    const void* srcBuffer, int srcSize,  // Change srcSize to int
+    int compressionLevel,
+    const LZ4F_compressOptions_t* cOptPtr)
+{
+    if (ctx == NULL || ctx->internalState == NULL || dstBuffer == NULL || srcBuffer == NULL) 
+        return SZ_Lz4_v1_9_4_ERROR;
+
+    // Ensure HC streaming context is correctly handled
+    LZ4_streamHC_t* hcStream = (LZ4_streamHC_t*)ctx->internalState;
+    if (hcStream == NULL) 
+        return SZ_Lz4_v1_9_4_ERROR;
+
+    // Reset stream with the requested compression level
+    LZ4_resetStreamHC_fast(hcStream, compressionLevel);
+
+    // Perform HC streaming compression
+    int32_t compressedSize = LZ4_compress_HC_continue(hcStream, srcBuffer, dstBuffer, srcSize, (int)dstCapacity);
+
+    return compressedSize;
+
+    //return (compressedSize > 0) ? compressedSize : SZ_Lz4_v1_9_4_COMPRESSFAIL;
+}
 
 // Returns the upper bound on the size of a compressed frame for a given input size
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_Lz4F_v1_9_4_CompressFrameBound(size_t srcSize, const LZ4F_preferences_t* prefsPtr)

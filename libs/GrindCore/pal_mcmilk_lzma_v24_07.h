@@ -1,5 +1,5 @@
-#ifndef ZIP7_INC_S7_LZMA2_V24_07_DEC_H
-#define ZIP7_INC_S7_LZMA2_V24_07_DEC_H
+#ifndef ZIP7_INC_SZ_LZMA2_V24_07_DEC_H
+#define ZIP7_INC_SZ_LZMA2_V24_07_DEC_H
 
 #ifdef _WIN32
     #include <stdint.h>
@@ -42,36 +42,36 @@ typedef struct
   int finished;
 } CLimitedSeqInStream;
 
-FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Dec_Construct(CLzma2Dec *p);
-FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Dec_FreeProbs(CLzma2Dec *p);
-FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Dec_Free(CLzma2Dec *p);
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Dec_AllocateProbs(CLzma2Dec *p, uint8_t prop);
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Dec_Allocate(CLzma2Dec *p, uint8_t prop);
-FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Dec_Init(CLzma2Dec *p);
+FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Dec_Construct(CLzma2Dec *p);
+FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Dec_FreeProbs(CLzma2Dec *p);
+FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Dec_Free(CLzma2Dec *p);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Dec_AllocateProbs(CLzma2Dec *p, uint8_t prop);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Dec_Allocate(CLzma2Dec *p, uint8_t prop);
+FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Dec_Init(CLzma2Dec *p);
 
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Dec_DecodeToDic(CLzma2Dec *p, size_t dicLimit,
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Dec_DecodeToDic(CLzma2Dec *p, size_t dicLimit,
     const uint8_t *src, size_t *srcLen, int32_t finishMode, int32_t *status);
 
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Dec_DecodeToBuf(CLzma2Dec *p, uint8_t *dest, size_t *destLen,
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Dec_DecodeToBuf(CLzma2Dec *p, uint8_t *dest, size_t *destLen,
     const uint8_t *src, size_t *srcLen, int32_t finishMode, int32_t *status);
     
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Dec_Parse(CLzma2Dec *p, size_t outSize, 
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Dec_Parse(CLzma2Dec *p, size_t outSize, 
     const uint8_t *src, size_t *srcLen, int checkFinishBlock);
 
-#define S7_Lzma2_v24_07_Dec_GetUnpackExtra(p)  ((p)->isExtraMode ? (p)->unpackSize : 0)
+#define SZ_Lzma2_v24_07_Dec_GetUnpackExtra(p)  ((p)->isExtraMode ? (p)->unpackSize : 0)
 
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Decode(uint8_t *dest, size_t *destLen, const uint8_t *src, size_t *srcLen,
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Decode(uint8_t *dest, size_t *destLen, const uint8_t *src, size_t *srcLen,
     uint8_t prop, int32_t finishMode, int32_t *status);
 
 
-FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Enc_Construct(CLzma2EncProps *p);
-FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Enc_Normalize(CLzma2EncProps *p);
-FUNCTIONEXPORT CLzma2EncHandle FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Enc_Create(void);
-FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Enc_Destroy(CLzma2EncHandle p);
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Enc_SetProps(CLzma2EncHandle p, const CLzma2EncProps *props);
-FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Enc_SetDataSize(CLzma2EncHandle p, UInt64 expectedDataSize);
-FUNCTIONEXPORT Byte FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Enc_WriteProperties(CLzma2EncHandle p);
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Enc_Encode2(CLzma2EncHandle p,
+FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Enc_Construct(CLzma2EncProps *p);
+FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Enc_Normalize(CLzma2EncProps *p);
+FUNCTIONEXPORT CLzma2EncHandle FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Enc_Create(void);
+FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Enc_Destroy(CLzma2EncHandle p);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Enc_SetProps(CLzma2EncHandle p, const CLzma2EncProps *props);
+FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Enc_SetDataSize(CLzma2EncHandle p, UInt64 expectedDataSize);
+FUNCTIONEXPORT Byte FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Enc_WriteProperties(CLzma2EncHandle p);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Enc_Encode2(CLzma2EncHandle p,
     uint8_t *outBuf,
     size_t *outBufSize,
     const uint8_t *inData,
@@ -82,84 +82,84 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Enc_Encode2(CL
 /* ---------- CLzmaDecHandle Interface ---------- */
 
 /* Constructs the LZMA decoder. */
-FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Dec_Construct(CLzmaDec *p);
+FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Dec_Construct(CLzmaDec *p);
 
 /* Initializes the LZMA decoder. */
-FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Dec_Init(CLzmaDec *p);
+FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Dec_Init(CLzmaDec *p);
 
 /* Allocates memory for LZMA decoder properties. */
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Dec_AllocateProbs(CLzmaDec *p, const uint8_t *props, uint32_t propsSize);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Dec_AllocateProbs(CLzmaDec *p, const uint8_t *props, uint32_t propsSize);
 
 /* Frees memory for LZMA decoder properties. */
-FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Dec_FreeProbs(CLzmaDec *p);
+FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Dec_FreeProbs(CLzmaDec *p);
 
 /* Allocates memory for the LZMA decoder. */
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Dec_Allocate(CLzmaDec *p, const uint8_t *props, uint32_t propsSize);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Dec_Allocate(CLzmaDec *p, const uint8_t *props, uint32_t propsSize);
 
 /* Frees memory for the LZMA decoder. */
-FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Dec_Free(CLzmaDec *p);
+FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Dec_Free(CLzmaDec *p);
 
 /* Decodes data to the internal dictionary buffer. */
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Dec_DecodeToDic(CLzmaDec *p, size_t dicLimit,
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Dec_DecodeToDic(CLzmaDec *p, size_t dicLimit,
     const uint8_t *src, size_t *srcLen, ELzmaFinishMode finishMode, ELzmaStatus *status);
 
 /* Decodes data to a buffer. */
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Dec_DecodeToBuf(CLzmaDec *p, uint8_t *dest, size_t *destLen,
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Dec_DecodeToBuf(CLzmaDec *p, uint8_t *dest, size_t *destLen,
     const uint8_t *src, size_t *srcLen, ELzmaFinishMode finishMode, ELzmaStatus *status);
 
 /* Decodes data in one call. */
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Dec_LzmaDecode(uint8_t *dest, size_t *destLen, const uint8_t *src, size_t *srcLen,
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Dec_LzmaDecode(uint8_t *dest, size_t *destLen, const uint8_t *src, size_t *srcLen,
     const uint8_t *propData, uint32_t propSize, ELzmaFinishMode finishMode, ELzmaStatus *status);
 
 /* ---------- CLzmaEncHandle Interface ---------- */
 
 /* Allocates memory for LZMA encoder properties. */
-FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_EncProps_Init(CLzmaEncProps *p);
+FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_EncProps_Init(CLzmaEncProps *p);
 
 /* Normalizes the LZMA encoder properties. */
-FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_EncProps_Normalize(CLzmaEncProps *p);
+FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_EncProps_Normalize(CLzmaEncProps *p);
 
 /* Gets the dictionary size from the LZMA encoder properties. */
-FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_EncProps_GetDictSize(const CLzmaEncProps *props2);
+FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_EncProps_GetDictSize(const CLzmaEncProps *props2);
 
 /* Creates a new LZMA encoder handle. */
-FUNCTIONEXPORT CLzmaEncHandle FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_Create(void);
+FUNCTIONEXPORT CLzmaEncHandle FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Enc_Create(void);
 
 /* Destroys the LZMA encoder handle. */
-FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_Destroy(CLzmaEncHandle p);
+FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Enc_Destroy(CLzmaEncHandle p);
 
 /* Sets properties for the LZMA encoder. */
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_SetProps(CLzmaEncHandle p, const CLzmaEncProps *props);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Enc_SetProps(CLzmaEncHandle p, const CLzmaEncProps *props);
 
 /* Sets the expected data size for the LZMA encoder. */
-FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_SetDataSize(CLzmaEncHandle p, uint64_t expectedDataSize);
+FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Enc_SetDataSize(CLzmaEncHandle p, uint64_t expectedDataSize);
 
 /* Writes properties of the LZMA encoder to a buffer. */
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_WriteProperties(CLzmaEncHandle p, uint8_t *properties, size_t *size);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Enc_WriteProperties(CLzmaEncHandle p, uint8_t *properties, size_t *size);
 
 /* Checks if the LZMA encoder should write an end mark. */
-FUNCTIONEXPORT unsigned FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_IsWriteEndMark(CLzmaEncHandle p);
+FUNCTIONEXPORT unsigned FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Enc_IsWriteEndMark(CLzmaEncHandle p);
 
 /* Encodes data using the LZMA encoder with a streaming interface. */
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_Encode(CLzmaEncHandle p, ISeqOutStreamPtr outStream, ISeqInStreamPtr inStream,
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Enc_Encode(CLzmaEncHandle p, ISeqOutStreamPtr outStream, ISeqInStreamPtr inStream,
     ICompressProgressPtr progress);
 
 /* Encodes data using the LZMA encoder with a memory interface. */
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_MemEncode(CLzmaEncHandle p, uint8_t *dest, size_t *destLen, const uint8_t *src, size_t srcLen,
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Enc_MemEncode(CLzmaEncHandle p, uint8_t *dest, size_t *destLen, const uint8_t *src, size_t srcLen,
     int writeEndMark, ICompressProgressPtr progress);
 
 /* Encodes data using the LZMA encoder in one call. */
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_LzmaEncode(uint8_t *dest, size_t *destLen, const uint8_t *src, size_t srcLen,
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Enc_LzmaEncode(uint8_t *dest, size_t *destLen, const uint8_t *src, size_t srcLen,
     const CLzmaEncProps *props, uint8_t *propsEncoded, size_t *propsSize, int writeEndMark, ICompressProgressPtr progress);
 
 // Nanook
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_LzmaCodeMultiCallPrepare(CLzmaEncHandle p, UInt32 *blockSize, UInt32 *dictSize, uint32_t final);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Enc_LzmaCodeMultiCallPrepare(CLzmaEncHandle p, UInt32 *blockSize, UInt32 *dictSize, uint32_t final);
 
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma_v24_07_Enc_LzmaCodeMultiCall(CLzmaEncHandle p, uint8_t *dest, size_t *destLen, CBufferInStream *srcStream, int32_t limit, uint32_t* availableBytes, uint32_t final);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma_v24_07_Enc_LzmaCodeMultiCall(CLzmaEncHandle p, uint8_t *dest, size_t *destLen, CBufferInStream *srcStream, int32_t limit, uint32_t* availableBytes, uint32_t final);
 
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Enc_EncodeMultiCallPrepare(CLzma2EncHandle p);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Enc_EncodeMultiCallPrepare(CLzma2EncHandle p);
 
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION S7_Lzma2_v24_07_Enc_EncodeMultiCall(CLzma2EncHandle p, uint8_t *outBuf, size_t *outBufSize, CBufferInStream *srcStream, CLimitedSeqInStream *limitedInStream, uint32_t init, uint32_t final);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v24_07_Enc_EncodeMultiCall(CLzma2EncHandle p, uint8_t *outBuf, size_t *outBufSize, CBufferInStream *srcStream, uint32_t init, uint32_t final);
 
 
 EXTERN_C_END
