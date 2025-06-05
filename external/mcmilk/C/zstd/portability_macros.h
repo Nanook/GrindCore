@@ -107,7 +107,7 @@
 #    elif ZSTD_DATAFLOW_SANITIZER
 #      define ZSTD_ASM_SUPPORTED 0
 #    else
-#      define ZSTD_ASM_SUPPORTED 1
+#      define ZSTD_ASM_SUPPORTED 0 // Nanook 1
 #    endif
 #  else
 #    define ZSTD_ASM_SUPPORTED 0
