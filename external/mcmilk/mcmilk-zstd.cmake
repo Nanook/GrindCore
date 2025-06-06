@@ -1,17 +1,3 @@
-# Conditional logic
-if (USE_ASM)
-    if (IS_X64)
-        set (USE_X86_ASM 1)
-        set (USE_X64_ASM 1)
-        add_definitions(-DZSTD_ENABLE_ASM_X86_64_BMI2=1)
-    elseif (IS_X86)
-        set(USE_X86_ASM 1)
-    elseif (IS_ARM64)
-        set (USE_ARM64_ASM 1)
-        add_definitions(-DZSTD_ENABLE_ASM_X86_64_BMI2=1)
-    endif () # arm
-endif ()
-
 set (ZSTD_C_SOURCES_BASE
     debug.c
     entropy_common.c
