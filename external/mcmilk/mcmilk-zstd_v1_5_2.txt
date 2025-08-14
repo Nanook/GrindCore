@@ -1,2 +1,2 @@
-1.5.6
+1.5.2
 https://github.com/mcmilk/7-Zip-zstd/tree/master/C

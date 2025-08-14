@@ -9,6 +9,7 @@
 #include "pal_mcmilk_lzma_v24_07.h"
 #include "pal_mcmilk_lz4_v1_9_4.h"
 #include "pal_mcmilk_zstd_v1_5_6.h"
+#include "pal_mcmilk_zstd_v1_5_2.h"
 
 static const Entry s_compressionNative[] =
 {
@@ -255,6 +256,24 @@ static const Entry s_compressionNative[] =
     DllImportEntry(SZ_ZStd_v1_5_6_SetBlockSize)
     DllImportEntry(SZ_ZStd_v1_5_6_CStreamInSize)
     DllImportEntry(SZ_ZStd_v1_5_6_CStreamOutSize)
+    DllImportEntry(SZ_ZStd_v1_5_2_CreateCompressionContext)
+    DllImportEntry(SZ_ZStd_v1_5_2_FreeCompressionContext)
+    DllImportEntry(SZ_ZStd_v1_5_2_CreateDecompressionContext)
+    DllImportEntry(SZ_ZStd_v1_5_2_FreeDecompressionContext)
+    DllImportEntry(SZ_ZStd_v1_5_2_CreateCompressionDict)
+    DllImportEntry(SZ_ZStd_v1_5_2_FreeCompressionDict)
+    DllImportEntry(SZ_ZStd_v1_5_2_CreateDecompressionDict)
+    DllImportEntry(SZ_ZStd_v1_5_2_FreeDecompressionDict)
+    DllImportEntry(SZ_ZStd_v1_5_2_CompressBlock)
+    DllImportEntry(SZ_ZStd_v1_5_2_DecompressBlock)
+    DllImportEntry(SZ_ZStd_v1_5_2_CompressStream)
+    DllImportEntry(SZ_ZStd_v1_5_2_FlushStream)
+    DllImportEntry(SZ_ZStd_v1_5_2_EndStream)
+    DllImportEntry(SZ_ZStd_v1_5_2_DecompressStream)
+    DllImportEntry(SZ_ZStd_v1_5_2_SetCompressionLevel)
+    DllImportEntry(SZ_ZStd_v1_5_2_SetBlockSize)
+    DllImportEntry(SZ_ZStd_v1_5_2_CStreamInSize)
+    DllImportEntry(SZ_ZStd_v1_5_2_CStreamOutSize)
 };
 
 EXTERN_C const void* CompressionResolveDllImport(const char* name);

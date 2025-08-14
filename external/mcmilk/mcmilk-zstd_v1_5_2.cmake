@@ -1,4 +1,4 @@
-set (ZSTD_C_SOURCES_BASE
+set (ZSTD_V1_5_2_C_SOURCES_BASE
     debug.c
     entropy_common.c
     error_private.c
@@ -33,22 +33,23 @@ set (ZSTD_C_SOURCES_BASE
     zstdmt_compress.c
 )
 
-list (TRANSFORM ZSTD_C_SOURCES_BASE PREPEND    "${CMAKE_CURRENT_LIST_DIR}/C/zstd/")
+list (TRANSFORM ZSTD_V1_5_2_C_SOURCES_BASE PREPEND    "${CMAKE_CURRENT_LIST_DIR}/C/zstd_v1_5_2/")
 
-set (ZSTD_SOURCES
-    ${ZSTD_C_SOURCES_BASE}
+set (ZSTD_SOURCES_V1_5_2
+    ${ZSTD_V1_5_2_C_SOURCES_BASE}
 )
 
-# Create a static library for zstd
-add_library(zstd_static STATIC ${ZSTD_SOURCES})
 
-# Include directories
-target_include_directories(zstd_static PUBLIC ${CMAKE_CURRENT_LIST_DIR}/C/zstd)
+# Create a static library for zstd 1.5.2
+add_library(zstd_v1_5_2_static STATIC ${ZSTD_SOURCES_V1_5_2})
 
-# Suppress implicit-fallthrough warnings for zstd sources if building with GCC or Clang
+# Include directories (match zlib pattern)
+target_include_directories(zstd_v1_5_2_static PUBLIC ${CMAKE_CURRENT_LIST_DIR}/C/zstd_v1_5_2)
+
+# Suppress implicit-fallthrough warnings for zstd 1.5.2 sources if building with GCC or Clang
 if (CMAKE_C_COMPILER_ID MATCHES "Clang|GNU")
     set_source_files_properties(
-        ${ZSTD_SOURCES}
+        ${ZSTD_SOURCES_V1_5_2}
         PROPERTIES COMPILE_FLAGS "-Wno-implicit-fallthrough"
     )
 endif()

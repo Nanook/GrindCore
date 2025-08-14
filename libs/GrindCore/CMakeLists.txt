@@ -11,10 +11,12 @@ include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-fast-lzma2.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-lzma.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-lz4.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-zstd.cmake)
+include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-zstd_v1_5_2.cmake)
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/../Common/pal_config.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/pal_config.h)
+
 
 set(NATIVECOMPRESSION_SOURCES
     pal_zlib-ng_v2_2_1.c
@@ -28,6 +30,7 @@ set(NATIVECOMPRESSION_SOURCES
     pal_mcmilk_lzma_v24_07.c
     pal_mcmilk_lz4_v1_9_4.c
     pal_mcmilk_zstd_v1_5_6.c
+    pal_mcmilk_zstd_v1_5_2.c
 )
 
 if (NOT CLR_CMAKE_TARGET_BROWSER AND NOT CLR_CMAKE_TARGET_WASI)
@@ -96,13 +99,14 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
         install_with_stripped_symbols (GrindCore PROGRAMS .)
     endif ()
 
+
     add_library(GrindCore-Static
         STATIC
         ${NATIVECOMPRESSION_SOURCES}
     )
 
-    # Link the necessary zlib versions
-    target_link_libraries(GrindCore-Static PRIVATE zlibstatic_v1_3_1 zlib)
+    # Link the necessary zlib versions and zstd_v1_5_2 static lib for PAL v1_5_2
+    target_link_libraries(GrindCore-Static PRIVATE zlibstatic_v1_3_1 zlib zstd_v1_5_2_static)
 
     set_target_properties(GrindCore-Static PROPERTIES OUTPUT_NAME GrindCore CLEAN_DIRECT_OUTPUT 1)
 else ()
