@@ -10,8 +10,8 @@ include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-hashes.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-fast-lzma2.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-lzma.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-lz4.cmake)
-include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-zstd.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-zstd_v1_5_2.cmake)
+include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-zstd_v1_5_6.cmake)
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/../Common/pal_config.h.in
@@ -26,7 +26,6 @@ set(NATIVECOMPRESSION_SOURCES
     ${FL2_SOURCES}
     ${LZMA_SOURCES}
     ${LZ4_SOURCES}
-    ${ZSTD_SOURCES}
     pal_mcmilk_lzma_v24_07.c
     pal_mcmilk_lz4_v1_9_4.c
     pal_mcmilk_zstd_v1_5_6.c
@@ -68,7 +67,7 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
             ${VERSION_FILE_PATH}
         )
 
-        target_link_libraries(GrindCore PRIVATE zlib_v1_3_1 zlib ${NATIVE_LIBS_EXTRA})
+        target_link_libraries(GrindCore PRIVATE zstd_v1_5_2 zstd_v1_5_6 zlib_v1_3_1 zlib ${NATIVE_LIBS_EXTRA})
         # target_link_libraries(GrindCore
         #     PRIVATE
         #     ${NATIVE_LIBS_EXTRA}
@@ -106,7 +105,7 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
     )
 
     # Link the necessary zlib versions and zstd_v1_5_2 static lib for PAL v1_5_2
-    target_link_libraries(GrindCore-Static PRIVATE zlibstatic_v1_3_1 zlib zstd_v1_5_2_static)
+    target_link_libraries(GrindCore-Static PRIVATE zlibstatic_v1_3_1 zlib zstd_v1_5_6_static zstd_v1_5_2_static)
 
     set_target_properties(GrindCore-Static PROPERTIES OUTPUT_NAME GrindCore CLEAN_DIRECT_OUTPUT 1)
 else ()
@@ -120,7 +119,7 @@ else ()
             ${VERSION_FILE_RC_PATH}
         )
 
-        target_link_libraries(GrindCore PRIVATE zlib_v1_3_1 zlib)
+        target_link_libraries(GrindCore PRIVATE zstd_v1_5_2 zstd_v1_5_6 zlib_v1_3_1 zlib)
     endif ()
 
     if (NOT GEN_SHARED_LIB AND NOT CLR_CMAKE_TARGET_MACCATALYST AND NOT CLR_CMAKE_TARGET_IOS AND NOT CLR_CMAKE_TARGET_TVOS AND NOT CLR_CMAKE_TARGET_ANDROID AND NOT CLR_CMAKE_TARGET_BROWSER AND NOT CLR_CMAKE_TARGET_WASI)
@@ -133,7 +132,7 @@ else ()
     )
 
     # Link the necessary zlib versions
-    target_link_libraries(GrindCore-Static PRIVATE brotli_v1_1_0 zlibstatic_v1_3_1 zlib)
+    target_link_libraries(GrindCore-Static PRIVATE brotli_v1_1_0 zstd_v1_5_2_static zstd_v1_5_6_static zlibstatic_v1_3_1 zlib)
 
     if(STATIC_LIBS_ONLY)
         add_library(GrindCore.Aot
@@ -141,7 +140,7 @@ else ()
             ${NATIVECOMPRESSION_SOURCES}
         )
 
-        target_link_libraries(GrindCore.Aot PRIVATE brotli_v1_1_0 zlibstatic_v1_3_1 zlib)
+        target_link_libraries(GrindCore.Aot PRIVATE brotli_v1_1_0 zstd_v1_5_2_static zstd_v1_5_6_static zlibstatic_v1_3_1 zlib)
 
         set_target_properties(GrindCore.Aot PROPERTIES CLR_CONTROL_FLOW_GUARD OFF)
         set_target_properties(GrindCore.Aot PROPERTIES INTERPROCEDURAL_OPTIMIZATION OFF)
@@ -151,7 +150,7 @@ else ()
             ${NATIVECOMPRESSION_SOURCES}
         )
 
-        target_link_libraries(GrindCore.Aot.GuardCF PRIVATE brotli_v1_1_0 zlibstatic_v1_3_1 zlib)
+        target_link_libraries(GrindCore.Aot.GuardCF PRIVATE brotli_v1_1_0 zstd_v1_5_2_static zstd_v1_5_6_static zlibstatic_v1_3_1 zlib)
 
         set_target_properties(GrindCore.Aot.GuardCF PROPERTIES INTERPROCEDURAL_OPTIMIZATION OFF)
 

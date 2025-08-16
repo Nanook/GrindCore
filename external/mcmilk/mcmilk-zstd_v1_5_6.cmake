@@ -35,20 +35,20 @@ set (ZSTD_C_SOURCES_BASE
 
 list (TRANSFORM ZSTD_C_SOURCES_BASE PREPEND    "${CMAKE_CURRENT_LIST_DIR}/C/zstd/")
 
-set (ZSTD_SOURCES
+set (ZSTD_SOURCES_V1_5_6
     ${ZSTD_C_SOURCES_BASE}
 )
 
 # Create a static library for zstd
-add_library(zstd_static STATIC ${ZSTD_SOURCES})
+add_library(zstd_v1_5_6 STATIC ${ZSTD_SOURCES_V1_5_6})
 
 # Include directories
-target_include_directories(zstd_static PUBLIC ${CMAKE_CURRENT_LIST_DIR}/C/zstd)
+target_include_directories(zstd_v1_5_6 PUBLIC ${CMAKE_CURRENT_LIST_DIR}/C/zstd)
 
 # Suppress implicit-fallthrough warnings for zstd sources if building with GCC or Clang
 if (CMAKE_C_COMPILER_ID MATCHES "Clang|GNU")
     set_source_files_properties(
-        ${ZSTD_SOURCES}
+        ${ZSTD_SOURCES_V1_5_6}
         PROPERTIES COMPILE_FLAGS "-Wno-implicit-fallthrough"
     )
 endif()

@@ -13,7 +13,6 @@
     #define FUNCTIONCALLINGCONVENCTION
 #endif
 
-//#define ZSTD_NAMESPACE ZSTD_152
 #include "external/mcmilk/C/zstd_v1_5_2/zstd.h"
 #include <stddef.h>
 

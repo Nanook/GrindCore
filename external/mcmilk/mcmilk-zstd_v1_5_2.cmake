@@ -39,12 +39,11 @@ set (ZSTD_SOURCES_V1_5_2
     ${ZSTD_V1_5_2_C_SOURCES_BASE}
 )
 
-
 # Create a static library for zstd 1.5.2
-add_library(zstd_v1_5_2_static STATIC ${ZSTD_SOURCES_V1_5_2})
+add_library(zstd_v1_5_2 STATIC ${ZSTD_SOURCES_V1_5_2})
 
 # Include directories (match zlib pattern)
-target_include_directories(zstd_v1_5_2_static PUBLIC ${CMAKE_CURRENT_LIST_DIR}/C/zstd_v1_5_2)
+target_include_directories(zstd_v1_5_2 PUBLIC ${CMAKE_CURRENT_LIST_DIR}/C/zstd_v1_5_2)
 
 # Suppress implicit-fallthrough warnings for zstd 1.5.2 sources if building with GCC or Clang
 if (CMAKE_C_COMPILER_ID MATCHES "Clang|GNU")
