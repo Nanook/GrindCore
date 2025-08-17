@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\external",
+    "\\external\\facebook",
+    "\\external\\facebook\\zstd_v1_5_2",
+    "\\external\\facebook\\zstd_v1_5_2\\common",
+    "\\external\\facebook\\zstd_v1_5_2\\compress",
+    "\\external\\mcmilk",
+    "\\libs"
+  ],
+  "SelectedNode": "\\external\\facebook\\zstd_v1_5_2\\common\\bitstream.h",
+  "PreviewInSolutionExplorer": false
+}

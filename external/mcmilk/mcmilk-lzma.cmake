@@ -64,3 +64,5 @@ set (LZMA_SOURCES
     ${LZMA_C_SOURCES_BASE}
     ${LZMA_ASM_SOURCES_BASE}
 )
+add_library(lzma_v24_07 STATIC ${LZMA_SOURCES})
+target_include_directories(lzma_v24_07 PUBLIC ${CMAKE_CURRENT_LIST_DIR}/C)

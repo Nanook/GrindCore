@@ -1,0 +1,25 @@
+module libzstd [extern_c] {
+    header "zstd.h"
+    export *
+    config_macros [exhaustive] /* zstd.h */ \
+        ZSTD_v1_5_2_STATIC_LINKING_ONLY, \
+        ZSTDLIB_VISIBLE, \
+        ZSTD_v1_5_2_DLL_EXPORT, \
+        ZSTDLIB_STATIC_API, \
+        ZSTD_v1_5_2_DISABLE_DEPRECATE_WARNINGS, \
+        ZSTD_v1_5_2_CLEVEL_DEFAULT, \
+        /* zdict.h */ ZDICT_STATIC_LINKING_ONLY, \
+        ZDICTLIB_VISIBILITY, \
+        ZDICT_DISABLE_DEPRECATE_WARNINGS, \
+        /* ZSTD_errors.h */ ZSTDERRORLIB_VISIBILITY
+
+    module dictbuilder [extern_c] {
+        header "zdict.h"
+        export *
+    }
+
+    module errors [extern_c] {
+        header "ZSTD_errors.h"
+        export *
+    }
+}

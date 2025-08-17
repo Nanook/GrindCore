@@ -1,4 +1,4 @@
- # IMPORTANT: do not use add_compile_options(), add_definitions() or similar functions here since it will leak to the including projects 
+# IMPORTANT: do not use add_compile_options(), add_definitions() or similar functions here since it will leak to the including projects 
 
 include(FetchContent)
 
@@ -26,10 +26,12 @@ set(SKIP_INSTALL_ALL ON)
 FetchContent_MakeAvailable(fetchzlibng)
 set(SKIP_INSTALL_ALL OFF)
 
-set_property(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/zlib-ng_v2_2_1 PROPERTY MSVC_WARNING_LEVEL 3) # Set the MSVC warning level for all zlib-ng targets to 3.
-target_compile_options(zlib PRIVATE $<$<COMPILE_LANG_AND_ID:C,Clang,AppleClang>:-Wno-unused-command-line-argument>) # Make sure MacOS respects ignoring unused CLI arguments
-target_compile_options(zlib PRIVATE $<$<COMPILE_LANG_AND_ID:C,Clang,AppleClang>:-Wno-logical-op-parentheses>) # place parentheses around the '&&' expression to silence this warning
-target_compile_options(zlib PRIVATE $<$<COMPILE_LANG_AND_ID:C,MSVC>:/wd4127>) # warning C4127: conditional expression is constant
-target_compile_options(zlib PRIVATE $<$<COMPILE_LANG_AND_ID:C,MSVC>:/guard:cf>) # Enable CFG always for zlib-ng so we don't need to build two flavors.
+set_property(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/zlib-ng_v2_2_1 PROPERTY MSVC_WARNING_LEVEL 3)
+target_compile_options(zlib PRIVATE $<$<COMPILE_LANG_AND_ID:C,Clang,AppleClang>:-Wno-unused-command-line-argument>)
+target_compile_options(zlib PRIVATE $<$<COMPILE_LANG_AND_ID:C,Clang,AppleClang>:-Wno-logical-op-parentheses>)
+target_compile_options(zlib PRIVATE $<$<COMPILE_LANG_AND_ID:C,MSVC>:/wd4127>)
+target_compile_options(zlib PRIVATE $<$<COMPILE_LANG_AND_ID:C,MSVC>:/guard:cf>)
 
-set_target_properties(zlib PROPERTIES DEBUG_POSTFIX "") # Workaround: zlib's debug lib name is zlibd.lib
+set_target_properties(zlib PROPERTIES DEBUG_POSTFIX "")
+
+add_library(zlibng_v2_2_1 ALIAS zlib)

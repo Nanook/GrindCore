@@ -52,3 +52,6 @@ set(HASHES_SOURCES
     ${HASHES_SOURCES_BASE}
     ${ZSTD_SOURCES_V1_5_6_BASE}
 )
+
+add_library(hashes STATIC ${HASHES_SOURCES})
+target_include_directories(hashes PUBLIC ${CMAKE_CURRENT_LIST_DIR}/C/hashes)

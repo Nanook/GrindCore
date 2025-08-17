@@ -8,8 +8,8 @@
 #include "../../C/fast-lzma2/fast-lzma2.h"
 #include "pal_mcmilk_lzma_v24_07.h"
 #include "pal_mcmilk_lz4_v1_9_4.h"
-#include "pal_mcmilk_zstd_v1_5_6.h"
-#include "pal_mcmilk_zstd_v1_5_2.h"
+#include "pal_facebook_zstd_v1_5_2.h"
+#include "pal_facebook_zstd_v1_5_7.h"
 
 static const Entry s_compressionNative[] =
 {
@@ -238,24 +238,6 @@ static const Entry s_compressionNative[] =
     DllImportEntry(SZ_Lz4F_v1_9_4_CompressBound)
     DllImportEntry(SZ_Lz4F_v1_9_4_CompressFrameBound)
     DllImportEntry(SZ_Lz4F_v1_9_4_CompressHC_Stream)
-    DllImportEntry(SZ_ZStd_v1_5_6_CreateCompressionContext)
-    DllImportEntry(SZ_ZStd_v1_5_6_FreeCompressionContext)
-    DllImportEntry(SZ_ZStd_v1_5_6_CreateDecompressionContext)
-    DllImportEntry(SZ_ZStd_v1_5_6_FreeDecompressionContext)
-    DllImportEntry(SZ_ZStd_v1_5_6_CreateCompressionDict)
-    DllImportEntry(SZ_ZStd_v1_5_6_FreeCompressionDict)
-    DllImportEntry(SZ_ZStd_v1_5_6_CreateDecompressionDict)
-    DllImportEntry(SZ_ZStd_v1_5_6_FreeDecompressionDict)
-    DllImportEntry(SZ_ZStd_v1_5_6_CompressBlock)
-    DllImportEntry(SZ_ZStd_v1_5_6_DecompressBlock)
-    DllImportEntry(SZ_ZStd_v1_5_6_CompressStream)
-    DllImportEntry(SZ_ZStd_v1_5_6_FlushStream)
-    DllImportEntry(SZ_ZStd_v1_5_6_EndStream)
-    DllImportEntry(SZ_ZStd_v1_5_6_DecompressStream)
-    DllImportEntry(SZ_ZStd_v1_5_6_SetCompressionLevel)
-    DllImportEntry(SZ_ZStd_v1_5_6_SetBlockSize)
-    DllImportEntry(SZ_ZStd_v1_5_6_CStreamInSize)
-    DllImportEntry(SZ_ZStd_v1_5_6_CStreamOutSize)
     DllImportEntry(SZ_ZStd_v1_5_2_CreateCompressionContext)
     DllImportEntry(SZ_ZStd_v1_5_2_FreeCompressionContext)
     DllImportEntry(SZ_ZStd_v1_5_2_CreateDecompressionContext)
@@ -274,6 +256,24 @@ static const Entry s_compressionNative[] =
     DllImportEntry(SZ_ZStd_v1_5_2_SetBlockSize)
     DllImportEntry(SZ_ZStd_v1_5_2_CStreamInSize)
     DllImportEntry(SZ_ZStd_v1_5_2_CStreamOutSize)
+    DllImportEntry(SZ_ZStd_v1_5_7_CreateCompressionContext)
+    DllImportEntry(SZ_ZStd_v1_5_7_FreeCompressionContext)
+    DllImportEntry(SZ_ZStd_v1_5_7_CreateDecompressionContext)
+    DllImportEntry(SZ_ZStd_v1_5_7_FreeDecompressionContext)
+    DllImportEntry(SZ_ZStd_v1_5_7_CreateCompressionDict)
+    DllImportEntry(SZ_ZStd_v1_5_7_FreeCompressionDict)
+    DllImportEntry(SZ_ZStd_v1_5_7_CreateDecompressionDict)
+    DllImportEntry(SZ_ZStd_v1_5_7_FreeDecompressionDict)
+    DllImportEntry(SZ_ZStd_v1_5_7_CompressBlock)
+    DllImportEntry(SZ_ZStd_v1_5_7_DecompressBlock)
+    DllImportEntry(SZ_ZStd_v1_5_7_CompressStream)
+    DllImportEntry(SZ_ZStd_v1_5_7_FlushStream)
+    DllImportEntry(SZ_ZStd_v1_5_7_EndStream)
+    DllImportEntry(SZ_ZStd_v1_5_7_DecompressStream)
+    DllImportEntry(SZ_ZStd_v1_5_7_SetCompressionLevel)
+    DllImportEntry(SZ_ZStd_v1_5_7_SetBlockSize)
+    DllImportEntry(SZ_ZStd_v1_5_7_CStreamInSize)
+    DllImportEntry(SZ_ZStd_v1_5_7_CStreamOutSize)
 };
 
 EXTERN_C const void* CompressionResolveDllImport(const char* name);

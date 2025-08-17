@@ -220,24 +220,6 @@ EXPORTS
   SZ_Lz4F_v1_9_4_CompressBound
   SZ_Lz4F_v1_9_4_CompressFrameBound
   SZ_Lz4F_v1_9_4_CompressHC_Stream
-  SZ_ZStd_v1_5_6_CreateCompressionContext
-  SZ_ZStd_v1_5_6_FreeCompressionContext
-  SZ_ZStd_v1_5_6_CreateDecompressionContext
-  SZ_ZStd_v1_5_6_FreeDecompressionContext
-  SZ_ZStd_v1_5_6_CreateCompressionDict
-  SZ_ZStd_v1_5_6_FreeCompressionDict
-  SZ_ZStd_v1_5_6_CreateDecompressionDict
-  SZ_ZStd_v1_5_6_FreeDecompressionDict
-  SZ_ZStd_v1_5_6_CompressBlock
-  SZ_ZStd_v1_5_6_DecompressBlock
-  SZ_ZStd_v1_5_6_CompressStream
-  SZ_ZStd_v1_5_6_FlushStream
-  SZ_ZStd_v1_5_6_EndStream
-  SZ_ZStd_v1_5_6_DecompressStream
-  SZ_ZStd_v1_5_6_SetCompressionLevel
-  SZ_ZStd_v1_5_6_SetBlockSize
-  SZ_ZStd_v1_5_6_CStreamInSize
-  SZ_ZStd_v1_5_6_CStreamOutSize
   SZ_ZStd_v1_5_2_CreateCompressionContext
   SZ_ZStd_v1_5_2_FreeCompressionContext
   SZ_ZStd_v1_5_2_CreateDecompressionContext
@@ -256,3 +238,21 @@ EXPORTS
   SZ_ZStd_v1_5_2_SetBlockSize
   SZ_ZStd_v1_5_2_CStreamInSize
   SZ_ZStd_v1_5_2_CStreamOutSize
+  SZ_ZStd_v1_5_7_CreateCompressionContext
+  SZ_ZStd_v1_5_7_FreeCompressionContext
+  SZ_ZStd_v1_5_7_CreateDecompressionContext
+  SZ_ZStd_v1_5_7_FreeDecompressionContext
+  SZ_ZStd_v1_5_7_CreateCompressionDict
+  SZ_ZStd_v1_5_7_FreeCompressionDict
+  SZ_ZStd_v1_5_7_CreateDecompressionDict
+  SZ_ZStd_v1_5_7_FreeDecompressionDict
+  SZ_ZStd_v1_5_7_CompressBlock
+  SZ_ZStd_v1_5_7_DecompressBlock
+  SZ_ZStd_v1_5_7_CompressStream
+  SZ_ZStd_v1_5_7_FlushStream
+  SZ_ZStd_v1_5_7_EndStream
+  SZ_ZStd_v1_5_7_DecompressStream
+  SZ_ZStd_v1_5_7_SetCompressionLevel
+  SZ_ZStd_v1_5_7_SetBlockSize
+  SZ_ZStd_v1_5_7_CStreamInSize
+  SZ_ZStd_v1_5_7_CStreamOutSize
