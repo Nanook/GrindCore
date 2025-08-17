@@ -48,7 +48,6 @@ set(GRINDCORE_SOURCES
     pal_zlib-ng_v2_2_1.c
     pal_zlib_v1_3_1.c
     pal_mcmilk_hashes.c
-    pal_mcmilk_fast-lzma2.c
     pal_mcmilk_lzma_v24_07.c
     pal_mcmilk_lz4_v1_9_4.c
     pal_facebook_zstd_v1_5_2.c
