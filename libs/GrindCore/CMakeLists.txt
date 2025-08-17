@@ -149,10 +149,10 @@ target_include_directories(GrindCore.Aot.GuardCF PUBLIC ${CMAKE_CURRENT_BINARY_D
 target_compile_definitions(GrindCore.Aot.GuardCF PRIVATE ${PALEXPORT_DEF})
 
 # Install targets
-install(TARGETS GrindCoreStatic DESTINATION lib)
-install(TARGETS GrindCore DESTINATION lib)
-install(TARGETS GrindCore.Aot DESTINATION lib)
-install(TARGETS GrindCore.Aot.GuardCF DESTINATION lib)
+install(TARGETS GrindCoreStatic DESTINATION .)
+install(TARGETS GrindCore DESTINATION .)
+install(TARGETS GrindCore.Aot DESTINATION .)
+install(TARGETS GrindCore.Aot.GuardCF DESTINATION .)
 
 # Generate export header for cross-platform symbol visibility
 GENERATE_EXPORT_HEADER(GrindCore
