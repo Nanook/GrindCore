@@ -15,7 +15,7 @@
 /*-*******************************************************
  *  Dependencies
  *********************************************************/
-#include "../common/ZSTD_deps.h"   /* size_t */
+#include "../common/zstd_deps.h"   /* size_t */
 #include "../zstd.h"     /* ZSTD_v1_5_2_DDict, and several public functions */
 
 

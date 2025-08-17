@@ -25,7 +25,7 @@
 #include "../common/error_private.h"
 #define ZSTD_v1_5_2_DEPS_NEED_MALLOC
 #define ZSTD_v1_5_2_DEPS_NEED_MATH64
-#include "../common/ZSTD_deps.h"  /* ZSTD_v1_5_2_malloc, ZSTD_v1_5_2_free, ZSTD_v1_5_2_memcpy, ZSTD_v1_5_2_memset */
+#include "../common/zstd_deps.h"  /* ZSTD_v1_5_2_malloc, ZSTD_v1_5_2_free, ZSTD_v1_5_2_memcpy, ZSTD_v1_5_2_memset */
 
 
 /* **************************************************************

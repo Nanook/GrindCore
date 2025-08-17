@@ -15,7 +15,7 @@
 extern "C" {
 #endif
 
-#include "ZSTD_compress_internal.h"   /* ldmParams_t, U32 */
+#include "zstd_compress_internal.h"   /* ldmParams_t, U32 */
 #include "../zstd.h"   /* ZSTD_v1_5_2_CCtx, size_t */
 
 /*-*************************************

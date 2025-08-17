@@ -14,7 +14,7 @@
 /*-*******************************************************
 *  Dependencies
 *********************************************************/
-#include "../common/ZSTD_deps.h"   /* ZSTD_v1_5_2_memcpy, ZSTD_v1_5_2_memmove, ZSTD_v1_5_2_memset */
+#include "../common/zstd_deps.h"   /* ZSTD_v1_5_2_memcpy, ZSTD_v1_5_2_memmove, ZSTD_v1_5_2_memset */
 #include "../common/compiler.h"    /* prefetch */
 #include "../common/cpu.h"         /* bmi2 */
 #include "../common/mem.h"         /* low level memory routines */
@@ -22,10 +22,10 @@
 #include "../common/fse.h"
 #define HUF_STATIC_LINKING_ONLY
 #include "../common/huf.h"
-#include "../common/ZSTD_internal.h"
-#include "ZSTD_decompress_internal.h"   /* ZSTD_v1_5_2_DCtx */
-#include "ZSTD_ddict.h"  /* ZSTD_v1_5_2_DDictDictContent */
-#include "ZSTD_decompress_block.h"
+#include "../common/zstd_internal.h"
+#include "zstd_decompress_internal.h"   /* ZSTD_v1_5_2_DCtx */
+#include "zstd_ddict.h"  /* ZSTD_v1_5_2_DDictDictContent */
+#include "zstd_decompress_block.h"
 
 /*_*******************************************************
 *  Macros

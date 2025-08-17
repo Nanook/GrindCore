@@ -11,22 +11,22 @@
 /*-*************************************
 *  Dependencies
 ***************************************/
-#include "../common/ZSTD_deps.h"  /* INT_MAX, ZSTD_v1_5_2_memset, ZSTD_v1_5_2_memcpy */
+#include "../common/zstd_deps.h"  /* INT_MAX, ZSTD_v1_5_2_memset, ZSTD_v1_5_2_memcpy */
 #include "../common/mem.h"
 #include "hist.h"           /* HIST_countFast_wksp */
 #define FSE_STATIC_LINKING_ONLY   /* FSE_encodeSymbol */
 #include "../common/fse.h"
 #define HUF_STATIC_LINKING_ONLY
 #include "../common/huf.h"
-#include "ZSTD_compress_internal.h"
-#include "ZSTD_compress_sequences.h"
-#include "ZSTD_compress_literals.h"
-#include "ZSTD_fast.h"
-#include "ZSTD_double_fast.h"
-#include "ZSTD_lazy.h"
-#include "ZSTD_opt.h"
-#include "ZSTD_ldm.h"
-#include "ZSTD_compress_superblock.h"
+#include "zstd_compress_internal.h"
+#include "zstd_compress_sequences.h"
+#include "zstd_compress_literals.h"
+#include "zstd_fast.h"
+#include "zstd_double_fast.h"
+#include "zstd_lazy.h"
+#include "zstd_opt.h"
+#include "zstd_ldm.h"
+#include "zstd_compress_superblock.h"
 
 /* ***************************************************************
 *  Tuning parameters

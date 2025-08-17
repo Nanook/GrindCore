@@ -13,7 +13,7 @@
 *  Includes
 ******************************************/
 #include <stddef.h>    /* size_t, ptrdiff_t */
-#include "ZSTD_v01.h"
+#include "zstd_v01.h"
 #include "../common/error_private.h"
 
 

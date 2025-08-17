@@ -33,7 +33,7 @@
 #include "../common/mem.h" /* read */
 #include "../common/pool.h"
 #include "../common/threading.h"
-#include "../common/ZSTD_internal.h" /* includes zstd.h */
+#include "../common/zstd_internal.h" /* includes zstd.h */
 #include "../zdict.h"
 #include "cover.h"
 

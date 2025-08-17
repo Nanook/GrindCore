@@ -11,7 +11,7 @@
  /*-*************************************
  *  Dependencies
  ***************************************/
-#include "ZSTD_compress_sequences.h"
+#include "zstd_compress_sequences.h"
 
 /**
  * -log2(x / 256) lookup table for x in [0, 256).

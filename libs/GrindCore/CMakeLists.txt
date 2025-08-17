@@ -13,7 +13,7 @@ configure_file(
 if(WIN32)
     set(PALEXPORT_DEF "PALEXPORT=__declspec(dllexport)")
 else()
-    set(PALEXPORT_DEF "PALEXPORT=")
+    set(PALEXPORT_DEF "PALEXPORT=__attribute__((visibility(\"default\")))")
 endif()
 
 # Optionally generate export header for cross-platform visibility
@@ -68,18 +68,55 @@ set_target_properties(GrindCore PROPERTIES
 target_include_directories(GrindCore PUBLIC ${CMAKE_CURRENT_BINARY_DIR}) # For export header
 target_compile_definitions(GrindCore PRIVATE ${PALEXPORT_DEF})
 
-# Optionally add .def file for Windows explicit exports
-if(WIN32 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/GrindCore.def")
-    target_sources(GrindCore PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/GrindCore.def")
+if(UNIX)
+    set_target_properties(GrindCore PROPERTIES C_VISIBILITY_PRESET hidden)
 endif()
 
-# Generate export header for cross-platform symbol visibility
-GENERATE_EXPORT_HEADER(GrindCore
-    BASE_NAME GrindCore
-    EXPORT_MACRO_NAME GrindCore_EXPORT
-    EXPORT_FILE_NAME GrindCore_Export.h
-    STATIC_DEFINE GrindCore_BUILT_AS_STATIC
+# Optionally add .def file for Windows explicit exports
+set(EXPORTS_LIST ${CMAKE_CURRENT_SOURCE_DIR}/GrindCore.exports.list)
+set(DEF_FILE ${CMAKE_CURRENT_BINARY_DIR}/GrindCore.def)
+
+add_custom_command(
+    OUTPUT ${DEF_FILE}
+    COMMAND ${CMAKE_COMMAND} -E echo "EXPORTS" > ${DEF_FILE}
+    COMMAND ${CMAKE_COMMAND} -E cat ${EXPORTS_LIST} >> ${DEF_FILE}
+    DEPENDS ${EXPORTS_LIST}
+    VERBATIM
 )
+add_custom_target(GrindCore_def ALL DEPENDS ${DEF_FILE})
+
+if(WIN32)
+    add_dependencies(GrindCore GrindCore_def)
+    target_sources(GrindCore PRIVATE ${DEF_FILE})
+    add_custom_command(TARGET GrindCore POST_BUILD
+        COMMAND dumpbin /exports $<TARGET_FILE:GrindCore> > $<TARGET_FILE_DIR:GrindCore>/GrindCore.exports.txt
+        COMMENT "Dumping exports for GrindCore.dll"
+        VERBATIM
+    )
+endif()
+
+# Unix: Generate and verify exports
+if (UNIX AND NOT APPLE AND NOT ANDROID)
+    set(DEF_SOURCES ${EXPORTS_LIST})
+    set(EXPORTS_FILE ${CMAKE_CURRENT_BINARY_DIR}/GrindCore.exports)
+    generate_exports_file(${DEF_SOURCES} ${EXPORTS_FILE})
+    set_exports_linker_option(${EXPORTS_FILE})
+
+    add_custom_target(GrindCore_exports DEPENDS ${EXPORTS_FILE})
+    add_dependencies(GrindCore GrindCore_exports)
+
+    set_property(TARGET GrindCore APPEND_STRING PROPERTY LINK_FLAGS ${EXPORTS_LINKER_OPTION})
+    set_property(TARGET GrindCore APPEND_STRING PROPERTY LINK_DEPENDS ${EXPORTS_FILE})
+
+    add_custom_command(TARGET GrindCore POST_BUILD
+        COMMENT "Verifying GrindCore entry points against entrypoints.c"
+        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../verify-entrypoints.sh
+            $<TARGET_FILE:GrindCore>
+            ${CMAKE_CURRENT_SOURCE_DIR}/entrypoints.c
+            ${CMAKE_NM}
+        VERBATIM
+    )
+endif()
 
 # Static library (for static linking)
 add_library(GrindCoreStatic STATIC ${GRINDCORE_SOURCES})
@@ -117,34 +154,10 @@ install(TARGETS GrindCore DESTINATION lib)
 install(TARGETS GrindCore.Aot DESTINATION lib)
 install(TARGETS GrindCore.Aot.GuardCF DESTINATION lib)
 
-# Windows: Dump exports after build for verification
-if (WIN32)
-    add_custom_command(TARGET GrindCore POST_BUILD
-        COMMAND dumpbin /exports $<TARGET_FILE:GrindCore> > $<TARGET_FILE_DIR:GrindCore>/GrindCore.exports.txt
-        COMMENT "Dumping exports for GrindCore.dll"
-        VERBATIM
-    )
-endif()
-
-# Unix: Generate and verify exports
-if (UNIX AND NOT APPLE AND NOT ANDROID)
-    set(DEF_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/GrindCore_unixexports.src)
-    set(EXPORTS_FILE ${CMAKE_CURRENT_BINARY_DIR}/GrindCore.exports)
-    generate_exports_file(${DEF_SOURCES} ${EXPORTS_FILE})
-    set_exports_linker_option(${EXPORTS_FILE})
-
-    add_custom_target(GrindCore_exports DEPENDS ${EXPORTS_FILE})
-    add_dependencies(GrindCore GrindCore_exports)
-
-    set_property(TARGET GrindCore APPEND_STRING PROPERTY LINK_FLAGS ${EXPORTS_LINKER_OPTION})
-    set_property(TARGET GrindCore APPEND_STRING PROPERTY LINK_DEPENDS ${EXPORTS_FILE})
-
-    add_custom_command(TARGET GrindCore POST_BUILD
-        COMMENT "Verifying GrindCore entry points against entrypoints.c"
-        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../verify-entrypoints.sh
-            $<TARGET_FILE:GrindCore>
-            ${CMAKE_CURRENT_SOURCE_DIR}/entrypoints.c
-            ${CMAKE_NM}
-        VERBATIM
-    )
-endif()
+# Generate export header for cross-platform symbol visibility
+GENERATE_EXPORT_HEADER(GrindCore
+    BASE_NAME GrindCore
+    EXPORT_MACRO_NAME GrindCore_EXPORT
+    EXPORT_FILE_NAME GrindCore_Export.h
+    STATIC_DEFINE GrindCore_BUILT_AS_STATIC
+)

@@ -15,7 +15,7 @@
 extern "C" {
 #endif
 
-#include "ZSTD_compress_internal.h"
+#include "zstd_compress_internal.h"
 
 /**
  * Dedicated Dictionary Search Structure bucket log. In the

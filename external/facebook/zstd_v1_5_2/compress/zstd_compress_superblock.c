@@ -11,13 +11,13 @@
  /*-*************************************
  *  Dependencies
  ***************************************/
-#include "ZSTD_compress_superblock.h"
+#include "zstd_compress_superblock.h"
 
-#include "../common/ZSTD_internal.h"  /* ZSTD_v1_5_2_getSequenceLength */
+#include "../common/zstd_internal.h"  /* ZSTD_v1_5_2_getSequenceLength */
 #include "hist.h"                     /* HIST_countFast_wksp */
-#include "ZSTD_compress_internal.h"   /* ZSTD_v1_5_2_[huf|fse|entropy]CTablesMetadata_t */
-#include "ZSTD_compress_sequences.h"
-#include "ZSTD_compress_literals.h"
+#include "zstd_compress_internal.h"   /* ZSTD_v1_5_2_[huf|fse|entropy]CTablesMetadata_t */
+#include "zstd_compress_sequences.h"
+#include "zstd_compress_literals.h"
 
 /** ZSTD_v1_5_2_compressSubBlock_literal() :
  *  Compresses literals section for a sub-block.

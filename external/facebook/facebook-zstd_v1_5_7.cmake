@@ -34,6 +34,11 @@ set (ZSTD_V1_5_7_C_SOURCES_BASE
     compress/zstdmt_compress.c
 )
 
+# Conditionally add the x86-64 assembly source for BMI2
+# if (USE_ASM AND IS_X64)
+#     list(APPEND ZSTD_V1_5_7_C_SOURCES_BASE decompress/huf_decompress_amd64.S)
+# endif()
+
 list (TRANSFORM ZSTD_V1_5_7_C_SOURCES_BASE PREPEND "${CMAKE_CURRENT_LIST_DIR}/zstd_v1_5_7/")
 
 set (ZSTD_SOURCES_V1_5_7
@@ -59,6 +64,6 @@ if (CMAKE_C_COMPILER_ID MATCHES "Clang|GNU")
     )
 endif()
 
-target_compile_definitions(zstd_v1_5_7 PRIVATE ZSTD_NAMESPACE=ZSTD_v1_5_7)
+target_compile_definitions(zstd_v1_5_7 PRIVATE ZSTD_NAMESPACE=ZSTD_v1_5_7 ZSTD_DISABLE_ASM)
 
 set_target_properties(zstd_v1_5_7 PROPERTIES LINKER_LANGUAGE C)

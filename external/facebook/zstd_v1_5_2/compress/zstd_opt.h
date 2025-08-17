@@ -15,7 +15,7 @@
 extern "C" {
 #endif
 
-#include "ZSTD_compress_internal.h"
+#include "zstd_compress_internal.h"
 
 /* used in ZSTD_v1_5_2_loadDictionaryContent() */
 void ZSTD_v1_5_2_updateTree(ZSTD_v1_5_2_matchState_t* ms, const BYTE* ip, const BYTE* iend);

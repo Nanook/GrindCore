@@ -11,7 +11,7 @@
 #ifndef ZSTD_v1_5_2_COMPRESS_LITERALS_H
 #define ZSTD_v1_5_2_COMPRESS_LITERALS_H
 
-#include "ZSTD_compress_internal.h" /* ZSTD_v1_5_2_hufCTables_t, ZSTD_v1_5_2_minGain() */
+#include "zstd_compress_internal.h" /* ZSTD_v1_5_2_hufCTables_t, ZSTD_v1_5_2_minGain() */
 
 
 size_t ZSTD_v1_5_2_noCompressLiterals (void* dst, size_t dstCapacity, const void* src, size_t srcSize);

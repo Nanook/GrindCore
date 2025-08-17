@@ -11,7 +11,7 @@
  /*-*************************************
  *  Dependencies
  ***************************************/
-#include "ZSTD_compress_literals.h"
+#include "zstd_compress_literals.h"
 
 size_t ZSTD_v1_5_2_noCompressLiterals (void* dst, size_t dstCapacity, const void* src, size_t srcSize)
 {

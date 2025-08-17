@@ -10,7 +10,7 @@
 
 
 #include <stddef.h>    /* size_t, ptrdiff_t */
-#include "ZSTD_v02.h"
+#include "zstd_v02.h"
 #include "../common/error_private.h"
 
 
@@ -2811,7 +2811,7 @@ struct ZSTD_v1_5_2_DCtx_s
     const BYTE* litPtr;
     size_t litSize;
     BYTE litBuffer[BLOCKSIZE + 8 /* margin for wildcopy */];
-};   /* typedef'd to ZSTD_v1_5_2_Dctx within "ZSTD_static.h" */
+};   /* typedef'd to ZSTD_v1_5_2_Dctx within "zstd_static.h" */
 
 
 static size_t ZSTD_v1_5_2_getcBlockSize(const void* src, size_t srcSize, blockProperties_t* bpPtr)

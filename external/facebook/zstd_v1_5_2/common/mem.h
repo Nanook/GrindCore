@@ -21,7 +21,7 @@ extern "C" {
 #include <stddef.h>  /* size_t, ptrdiff_t */
 #include "compiler.h"  /* __has_builtin */
 #include "debug.h"  /* DEBUG_STATIC_ASSERT */
-#include "ZSTD_deps.h"  /* ZSTD_v1_5_2_memcpy */
+#include "zstd_deps.h"  /* ZSTD_v1_5_2_memcpy */
 
 
 /*-****************************************

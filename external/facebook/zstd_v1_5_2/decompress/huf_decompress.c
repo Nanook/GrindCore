@@ -15,14 +15,14 @@
 /* **************************************************************
 *  Dependencies
 ****************************************************************/
-#include "../common/ZSTD_deps.h"  /* ZSTD_v1_5_2_memcpy, ZSTD_v1_5_2_memset */
+#include "../common/zstd_deps.h"  /* ZSTD_v1_5_2_memcpy, ZSTD_v1_5_2_memset */
 #include "../common/compiler.h"
 #include "../common/bitstream.h"  /* BIT_* */
 #include "../common/fse.h"        /* to compress headers */
 #define HUF_STATIC_LINKING_ONLY
 #include "../common/huf.h"
 #include "../common/error_private.h"
-#include "../common/ZSTD_internal.h"
+#include "../common/zstd_internal.h"
 
 /* **************************************************************
 *  Constants

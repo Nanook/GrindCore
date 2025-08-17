@@ -8,8 +8,8 @@
  * You may select, at your option, one of the above-listed licenses.
  */
 
-#include "ZSTD_compress_internal.h"  /* ZSTD_v1_5_2_hashPtr, ZSTD_v1_5_2_count, ZSTD_v1_5_2_storeSeq */
-#include "ZSTD_fast.h"
+#include "zstd_compress_internal.h"  /* ZSTD_v1_5_2_hashPtr, ZSTD_v1_5_2_count, ZSTD_v1_5_2_storeSeq */
+#include "zstd_fast.h"
 
 
 void ZSTD_v1_5_2_fillHashTable(ZSTD_v1_5_2_matchState_t* ms,

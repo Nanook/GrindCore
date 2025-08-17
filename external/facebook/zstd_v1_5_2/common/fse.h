@@ -23,7 +23,7 @@ extern "C" {
 /*-*****************************************
 *  Dependencies
 ******************************************/
-#include "ZSTD_deps.h"    /* size_t, ptrdiff_t */
+#include "zstd_deps.h"    /* size_t, ptrdiff_t */
 
 
 /*-*****************************************

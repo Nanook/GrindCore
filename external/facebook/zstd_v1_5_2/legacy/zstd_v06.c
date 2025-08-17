@@ -10,7 +10,7 @@
 
 
 /*- Dependencies -*/
-#include "ZSTD_v06.h"
+#include "zstd_v06.h"
 #include <stddef.h>    /* size_t, ptrdiff_t */
 #include <string.h>    /* memcpy */
 #include <stdlib.h>    /* malloc, free, qsort */
@@ -2821,7 +2821,7 @@ struct ZSTDv06_DCtx_s
     size_t litSize;
     BYTE litBuffer[ZSTDv06_BLOCKSIZE_MAX + WILDCOPY_OVERLENGTH];
     BYTE headerBuffer[ZSTDv06_FRAMEHEADERSIZE_MAX];
-};  /* typedef'd to ZSTDv06_DCtx within "ZSTD_static.h" */
+};  /* typedef'd to ZSTDv06_DCtx within "zstd_static.h" */
 
 size_t ZSTDv06_sizeofDCtx (void); /* Hidden declaration */
 size_t ZSTDv06_sizeofDCtx (void) { return sizeof(ZSTDv06_DCtx); }
@@ -3959,7 +3959,7 @@ struct ZBUFFv06_DCtx_s {
     size_t blockSize;
     BYTE headerBuffer[ZSTDv06_FRAMEHEADERSIZE_MAX];
     size_t lhSize;
-};   /* typedef'd to ZBUFFv06_DCtx within "ZSTD_buffered.h" */
+};   /* typedef'd to ZBUFFv06_DCtx within "zstd_buffered.h" */
 
 
 ZBUFFv06_DCtx* ZBUFFv06_createDCtx(void)

@@ -279,7 +279,7 @@
  * include the header file... */
 #include <stddef.h>  /* size_t */
 #define ZSTD_v1_5_2_DEPS_NEED_STDINT
-#include "ZSTD_deps.h"  /* intptr_t */
+#include "zstd_deps.h"  /* intptr_t */
 
 /* Make memory region fully initialized (without changing its contents). */
 void __msan_unpoison(const volatile void *a, size_t size);

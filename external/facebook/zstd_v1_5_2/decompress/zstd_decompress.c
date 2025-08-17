@@ -55,20 +55,20 @@
 /*-*******************************************************
 *  Dependencies
 *********************************************************/
-#include "../common/ZSTD_deps.h"   /* ZSTD_v1_5_2_memcpy, ZSTD_v1_5_2_memmove, ZSTD_v1_5_2_memset */
+#include "../common/zstd_deps.h"   /* ZSTD_v1_5_2_memcpy, ZSTD_v1_5_2_memmove, ZSTD_v1_5_2_memset */
 #include "../common/mem.h"         /* low level memory routines */
 #define FSE_STATIC_LINKING_ONLY
 #include "../common/fse.h"
 #define HUF_STATIC_LINKING_ONLY
 #include "../common/huf.h"
 #include "../common/xxhash.h" /* XXH64_reset, XXH64_update, XXH64_digest, XXH64 */
-#include "../common/ZSTD_internal.h"  /* blockProperties_t */
-#include "ZSTD_decompress_internal.h"   /* ZSTD_v1_5_2_DCtx */
-#include "ZSTD_ddict.h"  /* ZSTD_v1_5_2_DDictDictContent */
-#include "ZSTD_decompress_block.h"   /* ZSTD_v1_5_2_decompressBlock_internal */
+#include "../common/zstd_internal.h"  /* blockProperties_t */
+#include "zstd_decompress_internal.h"   /* ZSTD_v1_5_2_DCtx */
+#include "zstd_ddict.h"  /* ZSTD_v1_5_2_DDictDictContent */
+#include "zstd_decompress_block.h"   /* ZSTD_v1_5_2_decompressBlock_internal */
 
 #if defined(ZSTD_v1_5_2_LEGACY_SUPPORT) && (ZSTD_v1_5_2_LEGACY_SUPPORT>=1)
-#  include "../legacy/ZSTD_legacy.h"
+#  include "../legacy/zstd_legacy.h"
 #endif
 
 

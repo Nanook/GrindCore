@@ -14,9 +14,9 @@
 *  Dependencies
 ***************************************/
 #define ZSTD_v1_5_2_DEPS_NEED_MALLOC
-#include "ZSTD_deps.h"   /* ZSTD_v1_5_2_malloc, ZSTD_v1_5_2_calloc, ZSTD_v1_5_2_free, ZSTD_v1_5_2_memset */
+#include "zstd_deps.h"   /* ZSTD_v1_5_2_malloc, ZSTD_v1_5_2_calloc, ZSTD_v1_5_2_free, ZSTD_v1_5_2_memset */
 #include "error_private.h"
-#include "ZSTD_internal.h"
+#include "zstd_internal.h"
 
 
 /*-****************************************

@@ -15,7 +15,7 @@
 #include <stddef.h>    /* size_t, ptrdiff_t */
 #include <string.h>    /* memcpy */
 
-#include "ZSTD_v04.h"
+#include "zstd_v04.h"
 #include "../common/error_private.h"
 
 
@@ -2509,7 +2509,7 @@ struct ZSTDv04_Dctx_s
     size_t litSize;
     BYTE litBuffer[BLOCKSIZE + 8 /* margin for wildcopy */];
     BYTE headerBuffer[ZSTD_v1_5_2_frameHeaderSize_max];
-};  /* typedef'd to ZSTD_v1_5_2_DCtx within "ZSTD_static.h" */
+};  /* typedef'd to ZSTD_v1_5_2_DCtx within "zstd_static.h" */
 
 static size_t ZSTD_v1_5_2_resetDCtx(ZSTD_v1_5_2_DCtx* dctx)
 {
@@ -3365,7 +3365,7 @@ struct ZBUFFv04_DCtx_s {
     size_t dictSize;
     ZBUFF_dStage stage;
     unsigned char headerBuffer[ZSTD_v1_5_2_frameHeaderSize_max];
-};   /* typedef'd to ZBUFF_DCtx within "ZSTD_buffered.h" */
+};   /* typedef'd to ZBUFF_DCtx within "zstd_buffered.h" */
 
 typedef ZBUFFv04_DCtx ZBUFF_DCtx;
 

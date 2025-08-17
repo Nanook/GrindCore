@@ -12,7 +12,7 @@
 #define ZSTD_v1_5_2_COMPRESS_SEQUENCES_H
 
 #include "../common/fse.h" /* FSE_repeat, FSE_CTable */
-#include "../common/ZSTD_internal.h" /* symbolEncodingType_e, ZSTD_v1_5_2_strategy */
+#include "../common/zstd_internal.h" /* symbolEncodingType_e, ZSTD_v1_5_2_strategy */
 
 typedef enum {
     ZSTD_v1_5_2_defaultDisallowed = 0,

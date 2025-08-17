@@ -16,7 +16,7 @@ extern "C" {
 #endif
 
 #include "../common/mem.h"      /* U32 */
-#include "ZSTD_compress_internal.h"     /* ZSTD_v1_5_2_CCtx, size_t */
+#include "zstd_compress_internal.h"     /* ZSTD_v1_5_2_CCtx, size_t */
 
 void ZSTD_v1_5_2_fillDoubleHashTable(ZSTD_v1_5_2_matchState_t* ms,
                               void const* end, ZSTD_v1_5_2_dictTableLoadMethod_e dtlm);

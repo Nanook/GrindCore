@@ -8,8 +8,8 @@
  * You may select, at your option, one of the above-listed licenses.
  */
 
-#include "ZSTD_compress_internal.h"
-#include "ZSTD_double_fast.h"
+#include "zstd_compress_internal.h"
+#include "zstd_double_fast.h"
 
 
 void ZSTD_v1_5_2_fillDoubleHashTable(ZSTD_v1_5_2_matchState_t* ms,

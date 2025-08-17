@@ -1451,7 +1451,7 @@ XXH3_128bits_reset_withSecretandSeed(XXH3_state_t* statePtr,
 /* Modify the local functions below should you wish to use some other memory routines */
 /* for ZSTD_v1_5_2_malloc(), ZSTD_v1_5_2_free() */
 #define ZSTD_v1_5_2_DEPS_NEED_MALLOC
-#include "ZSTD_deps.h"  /* size_t, ZSTD_v1_5_2_malloc, ZSTD_v1_5_2_free, ZSTD_v1_5_2_memcpy */
+#include "zstd_deps.h"  /* size_t, ZSTD_v1_5_2_malloc, ZSTD_v1_5_2_free, ZSTD_v1_5_2_memcpy */
 static void* XXH_malloc(size_t s) { return ZSTD_v1_5_2_malloc(s); }
 static void  XXH_free  (void* p)  { ZSTD_v1_5_2_free(p); }
 static void* XXH_memcpy(void* dest, const void* src, size_t size) { return ZSTD_v1_5_2_memcpy(dest,src,size); }

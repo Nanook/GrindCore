@@ -18,8 +18,8 @@
 /*-*************************************
 *  Dependencies
 ***************************************/
-#include "../common/ZSTD_internal.h"
-#include "ZSTD_cwksp.h"
+#include "../common/zstd_internal.h"
+#include "zstd_cwksp.h"
 #ifdef ZSTD_v1_5_2_MULTITHREAD
 #  include "zstdmt_compress.h"
 #endif

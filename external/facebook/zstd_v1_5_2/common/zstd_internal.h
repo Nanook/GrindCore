@@ -35,7 +35,7 @@
 #endif
 #include "xxhash.h"                /* XXH_reset, update, digest */
 #ifndef ZSTD_v1_5_2_NO_TRACE
-#  include "ZSTD_trace.h"
+#  include "zstd_trace.h"
 #else
 #  define ZSTD_v1_5_2_TRACE 0
 #endif

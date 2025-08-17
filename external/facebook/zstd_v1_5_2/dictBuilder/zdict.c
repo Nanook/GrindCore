@@ -49,9 +49,9 @@
 #include "../common/mem.h"           /* read */
 #include "../common/fse.h"           /* FSE_normalizeCount, FSE_writeNCount */
 #include "../common/huf.h"           /* HUF_buildCTable, HUF_writeCTable */
-#include "../common/ZSTD_internal.h" /* includes zstd.h */
+#include "../common/zstd_internal.h" /* includes zstd.h */
 #include "../common/xxhash.h"        /* XXH64 */
-#include "../compress/ZSTD_compress_internal.h" /* ZSTD_v1_5_2_loadCEntropy() */
+#include "../compress/zstd_compress_internal.h" /* ZSTD_v1_5_2_loadCEntropy() */
 #include "../zdict.h"
 #include "divsufsort.h"
 

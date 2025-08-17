@@ -23,7 +23,7 @@
 /* **************************************************************
 *  Includes
 ****************************************************************/
-#include "../common/ZSTD_deps.h"     /* ZSTD_v1_5_2_memcpy, ZSTD_v1_5_2_memset */
+#include "../common/zstd_deps.h"     /* ZSTD_v1_5_2_memcpy, ZSTD_v1_5_2_memset */
 #include "../common/compiler.h"
 #include "../common/bitstream.h"
 #include "hist.h"

@@ -18,7 +18,7 @@
 #  define XXH_STATIC_LINKING_ONLY    /* XXH64_state_t */
 #endif
 #include "../common/xxhash.h"                  /* XXH64_* */
-#include "ZSTD_v07.h"
+#include "zstd_v07.h"
 
 #define FSEv07_STATIC_LINKING_ONLY   /* FSEv07_MIN_TABLELOG */
 #define HUFv07_STATIC_LINKING_ONLY   /* HUFv07_TABLELOG_ABSOLUTEMAX */
@@ -2951,7 +2951,7 @@ struct ZSTDv07_DCtx_s
     size_t litSize;
     BYTE litBuffer[ZSTDv07_BLOCKSIZE_ABSOLUTEMAX + WILDCOPY_OVERLENGTH];
     BYTE headerBuffer[ZSTDv07_FRAMEHEADERSIZE_MAX];
-};  /* typedef'd to ZSTDv07_DCtx within "ZSTD_static.h" */
+};  /* typedef'd to ZSTDv07_DCtx within "zstd_static.h" */
 
 int ZSTDv07_isSkipFrame(ZSTDv07_DCtx* dctx);
 
@@ -4325,7 +4325,7 @@ struct ZBUFFv07_DCtx_s {
     BYTE headerBuffer[ZSTDv07_FRAMEHEADERSIZE_MAX];
     size_t lhSize;
     ZSTDv07_customMem customMem;
-};   /* typedef'd to ZBUFFv07_DCtx within "ZSTD_buffered.h" */
+};   /* typedef'd to ZBUFFv07_DCtx within "zstd_buffered.h" */
 
 ZSTDLIBv07_API ZBUFFv07_DCtx* ZBUFFv07_createDCtx_advanced(ZSTDv07_customMem customMem);
 

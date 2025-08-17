@@ -19,7 +19,7 @@ module libzstd [extern_c] {
     }
 
     module errors [extern_c] {
-        header "ZSTD_errors.h"
+        header "zstd_errors.h"
         export *
     }
 }

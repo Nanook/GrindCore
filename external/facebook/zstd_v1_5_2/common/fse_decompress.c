@@ -23,7 +23,7 @@
 #include "fse.h"
 #include "error_private.h"
 #define ZSTD_v1_5_2_DEPS_NEED_MALLOC
-#include "ZSTD_deps.h"
+#include "zstd_deps.h"
 
 
 /* **************************************************************

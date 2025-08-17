@@ -15,10 +15,10 @@
 /*-*******************************************************
  *  Dependencies
  *********************************************************/
-#include "../common/ZSTD_deps.h"   /* size_t */
+#include "../common/zstd_deps.h"   /* size_t */
 #include "../zstd.h"    /* DCtx, and some public functions */
-#include "../common/ZSTD_internal.h"  /* blockProperties_t, and some public functions */
-#include "ZSTD_decompress_internal.h"  /* ZSTD_v1_5_2_seqSymbol */
+#include "../common/zstd_internal.h"  /* blockProperties_t, and some public functions */
+#include "zstd_decompress_internal.h"  /* ZSTD_v1_5_2_seqSymbol */
 
 
 /* ===   Prototypes   === */

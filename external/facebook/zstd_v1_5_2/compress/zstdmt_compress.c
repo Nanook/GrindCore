@@ -20,12 +20,12 @@
 
 
 /* ======   Dependencies   ====== */
-#include "../common/ZSTD_deps.h"   /* ZSTD_v1_5_2_memcpy, ZSTD_v1_5_2_memset, INT_MAX, UINT_MAX */
+#include "../common/zstd_deps.h"   /* ZSTD_v1_5_2_memcpy, ZSTD_v1_5_2_memset, INT_MAX, UINT_MAX */
 #include "../common/mem.h"         /* MEM_STATIC */
 #include "../common/pool.h"        /* threadpool */
 #include "../common/threading.h"   /* mutex */
-#include "ZSTD_compress_internal.h"  /* MIN, ERROR, ZSTD_v1_5_2_*, ZSTD_v1_5_2_highbit32 */
-#include "ZSTD_ldm.h"
+#include "zstd_compress_internal.h"  /* MIN, ERROR, ZSTD_v1_5_2_*, ZSTD_v1_5_2_highbit32 */
+#include "zstd_ldm.h"
 #include "zstdmt_compress.h"
 
 /* Guards code to support resizing the SeqPool.

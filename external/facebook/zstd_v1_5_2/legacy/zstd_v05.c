@@ -10,7 +10,7 @@
 
 
 /*- Dependencies -*/
-#include "ZSTD_v05.h"
+#include "zstd_v05.h"
 #include "../common/error_private.h"
 
 
@@ -2660,7 +2660,7 @@ struct ZSTDv05_DCtx_s
     size_t litSize;
     BYTE litBuffer[BLOCKSIZE + WILDCOPY_OVERLENGTH];
     BYTE headerBuffer[ZSTDv05_frameHeaderSize_max];
-};  /* typedef'd to ZSTDv05_DCtx within "ZSTD_static.h" */
+};  /* typedef'd to ZSTDv05_DCtx within "zstd_static.h" */
 
 size_t ZSTDv05_sizeofDCtx (void); /* Hidden declaration */
 size_t ZSTDv05_sizeofDCtx (void) { return sizeof(ZSTDv05_DCtx); }
@@ -3843,7 +3843,7 @@ struct ZBUFFv05_DCtx_s {
     size_t hPos;
     ZBUFFv05_dStage stage;
     unsigned char headerBuffer[ZSTDv05_frameHeaderSize_max];
-};   /* typedef'd to ZBUFFv05_DCtx within "ZSTD_buffered.h" */
+};   /* typedef'd to ZBUFFv05_DCtx within "zstd_buffered.h" */
 
 
 ZBUFFv05_DCtx* ZBUFFv05_createDCtx(void)

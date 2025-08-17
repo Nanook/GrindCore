@@ -20,7 +20,7 @@ extern "C" {
 ***************************************/
 #include "../common/mem.h"            /* MEM_STATIC */
 #include "../common/error_private.h"  /* ERROR */
-#include "../common/ZSTD_internal.h"  /* ZSTD_v1_5_2_inBuffer, ZSTD_v1_5_2_outBuffer, ZSTD_v1_5_2_frameSizeInfo */
+#include "../common/zstd_internal.h"  /* ZSTD_v1_5_2_inBuffer, ZSTD_v1_5_2_outBuffer, ZSTD_v1_5_2_frameSizeInfo */
 
 #if !defined (ZSTD_v1_5_2_LEGACY_SUPPORT) || (ZSTD_v1_5_2_LEGACY_SUPPORT == 0)
 #  undef ZSTD_v1_5_2_LEGACY_SUPPORT
@@ -28,25 +28,25 @@ extern "C" {
 #endif
 
 #if (ZSTD_v1_5_2_LEGACY_SUPPORT <= 1)
-#  include "ZSTD_v01.h"
+#  include "zstd_v01.h"
 #endif
 #if (ZSTD_v1_5_2_LEGACY_SUPPORT <= 2)
-#  include "ZSTD_v02.h"
+#  include "zstd_v02.h"
 #endif
 #if (ZSTD_v1_5_2_LEGACY_SUPPORT <= 3)
-#  include "ZSTD_v03.h"
+#  include "zstd_v03.h"
 #endif
 #if (ZSTD_v1_5_2_LEGACY_SUPPORT <= 4)
-#  include "ZSTD_v04.h"
+#  include "zstd_v04.h"
 #endif
 #if (ZSTD_v1_5_2_LEGACY_SUPPORT <= 5)
-#  include "ZSTD_v05.h"
+#  include "zstd_v05.h"
 #endif
 #if (ZSTD_v1_5_2_LEGACY_SUPPORT <= 6)
-#  include "ZSTD_v06.h"
+#  include "zstd_v06.h"
 #endif
 #if (ZSTD_v1_5_2_LEGACY_SUPPORT <= 7)
-#  include "ZSTD_v07.h"
+#  include "zstd_v07.h"
 #endif
 
 /** ZSTD_v1_5_2_isLegacy() :
