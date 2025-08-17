@@ -32,7 +32,7 @@ This wrapper/interop provides dotnet compatible Streaming and Block compression 
 - Fast-Lzma2 v1.0.1 (From 7Zip-mcmilk)
 - ZLib v1.3.1 [GZip, ZLib, Deflate] (From DotNet 8.0)
 - ZLib-NG v2.2.1 [GZip, ZLib, Deflate] (From DotNet 9.0)
-- ZStd v1.5.6 (From 7Zip-mcmilk)
+- ZStd v1.5.7, v1.5.2 (From Facebook)
 
 ### Hashing
 
