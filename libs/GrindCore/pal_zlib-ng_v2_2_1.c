@@ -113,7 +113,7 @@ static z_stream* GetCurrentZStream(PAL_ZStream* stream)
     return zStream;
 }
 
-int32_t DN9_ZLibNg_v2_2_1_DeflateInit2_(
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_DeflateInit2_(
     PAL_ZStream* stream, int32_t level, int32_t method, int32_t windowBits, int32_t memLevel, int32_t strategy)
 {
     assert(stream != NULL);
@@ -129,7 +129,7 @@ int32_t DN9_ZLibNg_v2_2_1_DeflateInit2_(
     return result;
 }
 
-int32_t DN9_ZLibNg_v2_2_1_Deflate(PAL_ZStream* stream, int32_t flush)
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_Deflate(PAL_ZStream* stream, int32_t flush)
 {
     assert(stream != NULL);
 
@@ -140,7 +140,7 @@ int32_t DN9_ZLibNg_v2_2_1_Deflate(PAL_ZStream* stream, int32_t flush)
     return result;
 }
 
-int32_t DN9_ZLibNg_v2_2_1_DeflateEnd(PAL_ZStream* stream)
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_DeflateEnd(PAL_ZStream* stream)
 {
     assert(stream != NULL);
 
@@ -151,7 +151,7 @@ int32_t DN9_ZLibNg_v2_2_1_DeflateEnd(PAL_ZStream* stream)
     return result;
 }
 
-int32_t DN9_ZLibNg_v2_2_1_InflateInit2_(PAL_ZStream* stream, int32_t windowBits)
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_InflateInit2_(PAL_ZStream* stream, int32_t windowBits)
 {
     assert(stream != NULL);
 
@@ -166,7 +166,7 @@ int32_t DN9_ZLibNg_v2_2_1_InflateInit2_(PAL_ZStream* stream, int32_t windowBits)
     return result;
 }
 
-int32_t DN9_ZLibNg_v2_2_1_Inflate(PAL_ZStream* stream, int32_t flush)
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_Inflate(PAL_ZStream* stream, int32_t flush)
 {
     assert(stream != NULL);
 
@@ -177,7 +177,7 @@ int32_t DN9_ZLibNg_v2_2_1_Inflate(PAL_ZStream* stream, int32_t flush)
     return result;
 }
 
-int32_t DN9_ZLibNg_v2_2_1_InflateEnd(PAL_ZStream* stream)
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_InflateEnd(PAL_ZStream* stream)
 {
     assert(stream != NULL);
 
@@ -188,7 +188,7 @@ int32_t DN9_ZLibNg_v2_2_1_InflateEnd(PAL_ZStream* stream)
     return result;
 }
 
-uint32_t DN9_ZLibNg_v2_2_1_Crc32(uint32_t crc, uint8_t* buffer, int32_t len)
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_Crc32(uint32_t crc, uint8_t* buffer, int32_t len)
 {
     assert(buffer != NULL);
 
@@ -197,7 +197,7 @@ uint32_t DN9_ZLibNg_v2_2_1_Crc32(uint32_t crc, uint8_t* buffer, int32_t len)
     return (uint32_t)result;
 }
 
-int32_t DN9_ZLibNg_v2_2_1_Compress(uint8_t *dest, uint32_t *destLen, const uint8_t *source, uint32_t sourceLen)
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_Compress(uint8_t *dest, uint32_t *destLen, const uint8_t *source, uint32_t sourceLen)
 {
     uLongf uLongfDestLen = *destLen;
     int32_t result = (int32_t)Z_v2_2_1_compress(dest, &uLongfDestLen, source, sourceLen);
@@ -205,7 +205,7 @@ int32_t DN9_ZLibNg_v2_2_1_Compress(uint8_t *dest, uint32_t *destLen, const uint8
     return result;
 }
 
-int32_t DN9_ZLibNg_v2_2_1_Compress2(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen, int32_t level)
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_Compress2(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen, int32_t level)
 {
     uLongf uLongfDestLen = *destLen;
     int32_t result = (int32_t)Z_v2_2_1_compress2(dest, &uLongfDestLen, source, sourceLen, level);
@@ -213,7 +213,7 @@ int32_t DN9_ZLibNg_v2_2_1_Compress2(uint8_t* dest, uint32_t* destLen, const uint
     return result;
 }
 
-int32_t DN9_ZLibNg_v2_2_1_Compress3(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen, int32_t level, int32_t windowBits, int32_t memLevel, int32_t strategy)
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_Compress3(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen, int32_t level, int32_t windowBits, int32_t memLevel, int32_t strategy)
 {
     uLongf uLongfDestLen = *destLen;
     int32_t result = (int32_t)Z_v2_2_1_compress3(dest, &uLongfDestLen, source, sourceLen, level, windowBits, memLevel, strategy);
@@ -221,7 +221,7 @@ int32_t DN9_ZLibNg_v2_2_1_Compress3(uint8_t* dest, uint32_t* destLen, const uint
     return (uint32_t)result;
 }
 
-int32_t DN9_ZLibNg_v2_2_1_Uncompress(uint8_t *dest, uint32_t *destLen, const uint8_t *source, uint32_t sourceLen)
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_Uncompress(uint8_t *dest, uint32_t *destLen, const uint8_t *source, uint32_t sourceLen)
 {
     uLongf uLongfDestLen = *destLen;
     int32_t result = (int32_t)Z_v2_2_1_uncompress(dest, &uLongfDestLen, source, sourceLen);
@@ -229,7 +229,7 @@ int32_t DN9_ZLibNg_v2_2_1_Uncompress(uint8_t *dest, uint32_t *destLen, const uin
     return result;
 }
 
-int32_t DN9_ZLibNg_v2_2_1_Uncompress2(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t* sourceLen)
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_Uncompress2(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t* sourceLen)
 {
     uLongf uLongfDestLen = *destLen;
     uLong uLongSourceLen = *sourceLen;
@@ -239,7 +239,7 @@ int32_t DN9_ZLibNg_v2_2_1_Uncompress2(uint8_t* dest, uint32_t* destLen, const ui
     return result;
 }
 
-int32_t DN9_ZLibNg_v2_2_1_Uncompress3(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t* sourceLen, int32_t windowBits)
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_Uncompress3(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t* sourceLen, int32_t windowBits)
 {
     uLongf uLongfDestLen = *destLen;
     uLong uLongSourceLen = *sourceLen;
