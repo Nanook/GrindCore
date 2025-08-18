@@ -1168,7 +1168,7 @@ static size_t HUF_decompress_usingDTable(   /* -3% slower when non static */
 }
 
 
-static size_t HUF_decompress (void* dst, size_t maxDstSize, const void* cSrc, size_t cSrcSize)
+static size_t HUF_v1_5_2_decompress (void* dst, size_t maxDstSize, const void* cSrc, size_t cSrcSize)
 {
     HUF_CREATE_STATIC_DTABLE(DTable, HUF_MAX_TABLELOG);
     const BYTE* ip = (const BYTE*) cSrc;
@@ -1509,7 +1509,7 @@ static size_t ZSTD_v1_5_2_decompressLiterals(void* ctx,
 
     (void)ctx;
     if (litSize > maxDstSize) return ERROR(dstSize_tooSmall);
-    errorCode = HUF_decompress(op, litSize, ip+2, srcSize-2);
+    errorCode = HUF_v1_5_2_decompress(op, litSize, ip+2, srcSize-2);
     if (FSE_isError(errorCode)) return ERROR(GENERIC);
     return litSize;
 }

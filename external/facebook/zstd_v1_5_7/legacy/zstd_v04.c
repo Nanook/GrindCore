@@ -1443,7 +1443,7 @@ HUF_decompress():
 *  Tool functions
 ******************************************/
 /* Error Management */
-static unsigned    HUF_isError(size_t code);        /* tells if a return value is an error code */
+static unsigned    HUF_v1_5_2_isError(size_t code);        /* tells if a return value is an error code */
 
 
 #if defined (__cplusplus)
@@ -1614,7 +1614,7 @@ static size_t HUF_decompress4X4_usingDTable(void* dst, size_t maxDstSize, const 
 /* **************************************************************
 *  Error Management
 ****************************************************************/
-static unsigned HUF_isError(size_t code) { return ERR_isError(code); }
+static unsigned HUF_v1_5_2_isError(size_t code) { return ERR_isError(code); }
 #define HUF_STATIC_ASSERT(c) { enum { HUF_static_assert = 1/(int)(!!(c)) }; }   /* use only *after* variable declarations */
 
 
@@ -1732,7 +1732,7 @@ static size_t HUF_readDTableX2 (U16* DTable, const void* src, size_t srcSize)
     //memset(huffWeight, 0, sizeof(huffWeight));   /* is not necessary, even though some analyzer complain ... */
 
     iSize = HUF_readStats(huffWeight, HUF_MAX_SYMBOL_VALUE + 1, rankVal, &nbSymbols, &tableLog, src, srcSize);
-    if (HUF_isError(iSize)) return iSize;
+    if (HUF_v1_5_2_isError(iSize)) return iSize;
 
     /* check result */
     if (tableLog > DTable[0]) return ERROR(tableLog_tooLarge);   /* DTable is too small */
@@ -1849,13 +1849,13 @@ static size_t HUF_decompress4X2_usingDTable(
         length4 = cSrcSize - (length1 + length2 + length3 + 6);
         if (length4 > cSrcSize) return ERROR(corruption_detected);   /* overflow */
         errorCode = BIT_initDStream(&bitD1, istart1, length1);
-        if (HUF_isError(errorCode)) return errorCode;
+        if (HUF_v1_5_2_isError(errorCode)) return errorCode;
         errorCode = BIT_initDStream(&bitD2, istart2, length2);
-        if (HUF_isError(errorCode)) return errorCode;
+        if (HUF_v1_5_2_isError(errorCode)) return errorCode;
         errorCode = BIT_initDStream(&bitD3, istart3, length3);
-        if (HUF_isError(errorCode)) return errorCode;
+        if (HUF_v1_5_2_isError(errorCode)) return errorCode;
         errorCode = BIT_initDStream(&bitD4, istart4, length4);
-        if (HUF_isError(errorCode)) return errorCode;
+        if (HUF_v1_5_2_isError(errorCode)) return errorCode;
 
         /* 16-32 symbols per loop (4-8 symbols per stream) */
         endSignal = BIT_reloadDStream(&bitD1) | BIT_reloadDStream(&bitD2) | BIT_reloadDStream(&bitD3) | BIT_reloadDStream(&bitD4);
@@ -1910,7 +1910,7 @@ static size_t HUF_decompress4X2 (void* dst, size_t dstSize, const void* cSrc, si
     size_t errorCode;
 
     errorCode = HUF_readDTableX2 (DTable, cSrc, cSrcSize);
-    if (HUF_isError(errorCode)) return errorCode;
+    if (HUF_v1_5_2_isError(errorCode)) return errorCode;
     if (errorCode >= cSrcSize) return ERROR(srcSize_wrong);
     ip += errorCode;
     cSrcSize -= errorCode;
@@ -2035,7 +2035,7 @@ static size_t HUF_readDTableX4 (U32* DTable, const void* src, size_t srcSize)
     //memset(weightList, 0, sizeof(weightList));   /* is not necessary, even though some analyzer complain ... */
 
     iSize = HUF_readStats(weightList, HUF_MAX_SYMBOL_VALUE + 1, rankStats, &nbSymbols, &tableLog, src, srcSize);
-    if (HUF_isError(iSize)) return iSize;
+    if (HUF_v1_5_2_isError(iSize)) return iSize;
 
     /* check result */
     if (tableLog > memLog) return ERROR(tableLog_tooLarge);   /* DTable can't fit code depth */
@@ -2207,13 +2207,13 @@ static size_t HUF_decompress4X4_usingDTable(
         length4 = cSrcSize - (length1 + length2 + length3 + 6);
         if (length4 > cSrcSize) return ERROR(corruption_detected);   /* overflow */
         errorCode = BIT_initDStream(&bitD1, istart1, length1);
-        if (HUF_isError(errorCode)) return errorCode;
+        if (HUF_v1_5_2_isError(errorCode)) return errorCode;
         errorCode = BIT_initDStream(&bitD2, istart2, length2);
-        if (HUF_isError(errorCode)) return errorCode;
+        if (HUF_v1_5_2_isError(errorCode)) return errorCode;
         errorCode = BIT_initDStream(&bitD3, istart3, length3);
-        if (HUF_isError(errorCode)) return errorCode;
+        if (HUF_v1_5_2_isError(errorCode)) return errorCode;
         errorCode = BIT_initDStream(&bitD4, istart4, length4);
-        if (HUF_isError(errorCode)) return errorCode;
+        if (HUF_v1_5_2_isError(errorCode)) return errorCode;
 
         /* 16-32 symbols per loop (4-8 symbols per stream) */
         endSignal = BIT_reloadDStream(&bitD1) | BIT_reloadDStream(&bitD2) | BIT_reloadDStream(&bitD3) | BIT_reloadDStream(&bitD4);
@@ -2267,7 +2267,7 @@ static size_t HUF_decompress4X4 (void* dst, size_t dstSize, const void* cSrc, si
     const BYTE* ip = (const BYTE*) cSrc;
 
     size_t hSize = HUF_readDTableX4 (DTable, cSrc, cSrcSize);
-    if (HUF_isError(hSize)) return hSize;
+    if (HUF_v1_5_2_isError(hSize)) return hSize;
     if (hSize >= cSrcSize) return ERROR(srcSize_wrong);
     ip += hSize;
     cSrcSize -= hSize;
@@ -2567,7 +2567,7 @@ static size_t ZSTD_decompressLiterals(void* dst, size_t* maxDstSizePtr,
     if (litSize > *maxDstSizePtr) return ERROR(corruption_detected);
     if (litCSize + 5 > srcSize) return ERROR(corruption_detected);
 
-    if (HUF_isError(HUF_decompress(dst, litSize, ip+5, litCSize))) return ERROR(corruption_detected);
+    if (HUF_v1_5_2_isError(HUF_decompress(dst, litSize, ip+5, litCSize))) return ERROR(corruption_detected);
 
     *maxDstSizePtr = litSize;
     return litCSize + 5;

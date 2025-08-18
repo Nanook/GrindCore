@@ -795,7 +795,7 @@ static size_t ZDICT_analyzeEntropy(void*  dstBuffer, size_t maxDstSize,
 
     /* analyze, build stats, starting with literals */
     {   size_t maxNbBits = HUF_buildCTable (hufTable, countLit, 255, huffLog);
-        if (HUF_isError(maxNbBits)) {
+        if (HUF_v1_5_2_isError(maxNbBits)) {
             eSize = maxNbBits;
             DISPLAYLEVEL(1, " HUF_buildCTable error \n");
             goto _cleanup;
@@ -845,7 +845,7 @@ static size_t ZDICT_analyzeEntropy(void*  dstBuffer, size_t maxDstSize,
 
     /* write result to buffer */
     {   size_t const hhSize = HUF_writeCTable(dstPtr, maxDstSize, hufTable, 255, huffLog);
-        if (HUF_isError(hhSize)) {
+        if (HUF_v1_5_2_isError(hhSize)) {
             eSize = hhSize;
             DISPLAYLEVEL(1, "HUF_writeCTable error \n");
             goto _cleanup;

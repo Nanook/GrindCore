@@ -3107,28 +3107,28 @@ static size_t ZSTD_v1_5_2_buildBlockEntropyStats_literals(void* const src, size_
     }
 
     /* Validate the previous Huffman table */
-    if (repeat == HUF_repeat_check && !HUF_validateCTable((HUF_CElt const*)prevHuf->CTable, countWksp, maxSymbolValue)) {
+    if (repeat == HUF_repeat_check && !HUF_v1_5_2_validateCTable((HUF_CElt const*)prevHuf->CTable, countWksp, maxSymbolValue)) {
         repeat = HUF_repeat_none;
     }
 
     /* Build Huffman Tree */
     ZSTD_v1_5_2_memset(nextHuf->CTable, 0, sizeof(nextHuf->CTable));
     huffLog = HUF_optimalTableLog(huffLog, srcSize, maxSymbolValue);
-    {   size_t const maxBits = HUF_buildCTable_wksp((HUF_CElt*)nextHuf->CTable, countWksp,
+    {   size_t const maxBits = HUF_v1_5_2_buildCTable_wksp((HUF_CElt*)nextHuf->CTable, countWksp,
                                                     maxSymbolValue, huffLog,
                                                     nodeWksp, nodeWkspSize);
-        FORWARD_IF_ERROR(maxBits, "HUF_buildCTable_wksp");
+        FORWARD_IF_ERROR(maxBits, "HUF_v1_5_2_buildCTable_wksp");
         huffLog = (U32)maxBits;
         {   /* Build and write the CTable */
-            size_t const newCSize = HUF_estimateCompressedSize(
+            size_t const newCSize = HUF_v1_5_2_estimateCompressedSize(
                     (HUF_CElt*)nextHuf->CTable, countWksp, maxSymbolValue);
-            size_t const hSize = HUF_writeCTable_wksp(
+            size_t const hSize = HUF_v1_5_2_writeCTable_wksp(
                     hufMetadata->hufDesBuffer, sizeof(hufMetadata->hufDesBuffer),
                     (HUF_CElt*)nextHuf->CTable, maxSymbolValue, huffLog,
                     nodeWksp, nodeWkspSize);
             /* Check against repeating the previous CTable */
             if (repeat != HUF_repeat_none) {
-                size_t const oldCSize = HUF_estimateCompressedSize(
+                size_t const oldCSize = HUF_v1_5_2_estimateCompressedSize(
                         (HUF_CElt const*)prevHuf->CTable, countWksp, maxSymbolValue);
                 if (oldCSize < srcSize && (oldCSize <= hSize + newCSize || hSize + 12 >= srcSize)) {
                     DEBUGLOG(5, "set_repeat - smaller");
@@ -3250,7 +3250,7 @@ static size_t ZSTD_v1_5_2_estimateBlockSize_literal(const BYTE* literals, size_t
     else if (hufMetadata->hType == set_compressed || hufMetadata->hType == set_repeat) {
         size_t const largest = HIST_v1_5_2_count_wksp (countWksp, &maxSymbolValue, (const BYTE*)literals, litSize, workspace, wkspSize);
         if (ZSTD_v1_5_2_isError(largest)) return litSize;
-        {   size_t cLitSizeEstimate = HUF_estimateCompressedSize((const HUF_CElt*)huf->CTable, countWksp, maxSymbolValue);
+        {   size_t cLitSizeEstimate = HUF_v1_5_2_estimateCompressedSize((const HUF_CElt*)huf->CTable, countWksp, maxSymbolValue);
             if (writeEntropy) cLitSizeEstimate += hufMetadata->hufDesSize;
             if (!singleStream) cLitSizeEstimate += 6; /* multi-stream huffman uses 6-byte jump table */
             return cLitSizeEstimate + literalSectionHeaderSize;
@@ -4323,7 +4323,7 @@ size_t ZSTD_v1_5_2_loadCEntropy(ZSTD_v1_5_2_compressedBlockState_t* bs, void* wo
 
     {   unsigned maxSymbolValue = 255;
         unsigned hasZeroWeights = 1;
-        size_t const hufHeaderSize = HUF_readCTable((HUF_CElt*)bs->entropy.huf.CTable, &maxSymbolValue, dictPtr,
+        size_t const hufHeaderSize = HUF_v1_5_2_readCTable((HUF_CElt*)bs->entropy.huf.CTable, &maxSymbolValue, dictPtr,
             dictEnd-dictPtr, &hasZeroWeights);
 
         /* We only set the loaded table as valid if it contains all non-zero
@@ -4331,7 +4331,7 @@ size_t ZSTD_v1_5_2_loadCEntropy(ZSTD_v1_5_2_compressedBlockState_t* bs, void* wo
         if (!hasZeroWeights)
             bs->entropy.huf.repeatMode = HUF_repeat_valid;
 
-        RETURN_ERROR_IF(HUF_isError(hufHeaderSize), dictionary_corrupted, "");
+        RETURN_ERROR_IF(HUF_v1_5_2_isError(hufHeaderSize), dictionary_corrupted, "");
         RETURN_ERROR_IF(maxSymbolValue < 255, dictionary_corrupted, "");
         dictPtr += hufHeaderSize;
     }

@@ -67,26 +67,10 @@ set_target_properties(GrindCore PROPERTIES
 target_include_directories(GrindCore PUBLIC ${CMAKE_CURRENT_BINARY_DIR}) # For export header
 target_compile_definitions(GrindCore PRIVATE ${PALEXPORT_DEF})
 
-if(UNIX)
-    set_target_properties(GrindCore PROPERTIES C_VISIBILITY_PRESET hidden)
-endif()
-
-# Optionally add .def file for Windows explicit exports
-set(EXPORTS_LIST ${CMAKE_CURRENT_SOURCE_DIR}/GrindCore.exports.list)
-set(DEF_FILE ${CMAKE_CURRENT_BINARY_DIR}/GrindCore.def)
-
-add_custom_command(
-    OUTPUT ${DEF_FILE}
-    COMMAND ${CMAKE_COMMAND} -E echo "EXPORTS" > ${DEF_FILE}
-    COMMAND ${CMAKE_COMMAND} -E cat ${EXPORTS_LIST} >> ${DEF_FILE}
-    DEPENDS ${EXPORTS_LIST}
-    VERBATIM
-)
-add_custom_target(GrindCore_def ALL DEPENDS ${DEF_FILE})
-
+# Export control for Windows
 if(WIN32)
-    add_dependencies(GrindCore GrindCore_def)
-    target_sources(GrindCore PRIVATE ${DEF_FILE})
+    set(DEF_FILE ${CMAKE_CURRENT_SOURCE_DIR}/GrindCore.def)
+    set_target_properties(GrindCore PROPERTIES LINK_FLAGS "/DEF:${DEF_FILE}")
     add_custom_command(TARGET GrindCore POST_BUILD
         COMMAND dumpbin /exports $<TARGET_FILE:GrindCore> > $<TARGET_FILE_DIR:GrindCore>/GrindCore.exports.txt
         COMMENT "Dumping exports for GrindCore.dll"
@@ -94,27 +78,17 @@ if(WIN32)
     )
 endif()
 
-# Unix: Generate and verify exports
-if (UNIX AND NOT APPLE AND NOT ANDROID)
-    set(DEF_SOURCES ${EXPORTS_LIST})
-    set(EXPORTS_FILE ${CMAKE_CURRENT_BINARY_DIR}/GrindCore.exports)
-    generate_exports_file(${DEF_SOURCES} ${EXPORTS_FILE})
-    set_exports_linker_option(${EXPORTS_FILE})
-
-    add_custom_target(GrindCore_exports DEPENDS ${EXPORTS_FILE})
-    add_dependencies(GrindCore GrindCore_exports)
-
-    set_property(TARGET GrindCore APPEND_STRING PROPERTY LINK_FLAGS ${EXPORTS_LINKER_OPTION})
-    set_property(TARGET GrindCore APPEND_STRING PROPERTY LINK_DEPENDS ${EXPORTS_FILE})
-
-    add_custom_command(TARGET GrindCore POST_BUILD
-        COMMENT "Verifying GrindCore entry points against entrypoints.c"
-        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../verify-entrypoints.sh
-            $<TARGET_FILE:GrindCore>
-            ${CMAKE_CURRENT_SOURCE_DIR}/entrypoints.c
-            ${CMAKE_NM}
-        VERBATIM
-    )
+# Export control for Unix/macOS
+if(UNIX)
+    set(EXPORTS_FILE ${CMAKE_CURRENT_SOURCE_DIR}/GrindCore_unixexports.src)
+    if(APPLE)
+        # macOS: Use -exported_symbols_list
+        set_target_properties(GrindCore PROPERTIES LINK_FLAGS "-Wl,-exported_symbols_list,${EXPORTS_FILE}")
+    else()
+        # Linux: Use --version-script
+        set_target_properties(GrindCore PROPERTIES LINK_FLAGS "-Wl,--version-script=${EXPORTS_FILE}")
+    endif()
+    set_target_properties(GrindCore PROPERTIES C_VISIBILITY_PRESET hidden)
 endif()
 
 # Static library (for static linking)
@@ -160,3 +134,15 @@ GENERATE_EXPORT_HEADER(GrindCore
     EXPORT_FILE_NAME GrindCore_Export.h
     STATIC_DEFINE GrindCore_BUILT_AS_STATIC
 )
+
+# Entry points verification (optional, keep if you use it)
+if (UNIX AND NOT APPLE AND NOT ANDROID)
+    add_custom_command(TARGET GrindCore POST_BUILD
+        COMMENT "Verifying GrindCore entry points against entrypoints.c"
+        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../verify-entrypoints.sh
+            $<TARGET_FILE:GrindCore>
+            ${CMAKE_CURRENT_SOURCE_DIR}/entrypoints.c
+            ${CMAKE_NM}
+        VERBATIM
+    )
+endif()

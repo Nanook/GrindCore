@@ -314,7 +314,7 @@ static size_t ZSTD_v1_5_2_estimateSubBlockSize_literal(const BYTE* literals, siz
     else if (hufMetadata->hType == set_compressed || hufMetadata->hType == set_repeat) {
         size_t const largest = HIST_v1_5_2_count_wksp (countWksp, &maxSymbolValue, (const BYTE*)literals, litSize, workspace, wkspSize);
         if (ZSTD_v1_5_2_isError(largest)) return litSize;
-        {   size_t cLitSizeEstimate = HUF_estimateCompressedSize((const HUF_CElt*)huf->CTable, countWksp, maxSymbolValue);
+        {   size_t cLitSizeEstimate = HUF_v1_5_2_estimateCompressedSize((const HUF_CElt*)huf->CTable, countWksp, maxSymbolValue);
             if (writeEntropy) cLitSizeEstimate += hufMetadata->hufDesSize;
             return cLitSizeEstimate + literalSectionHeaderSize;
     }   }

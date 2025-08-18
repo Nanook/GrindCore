@@ -31,8 +31,8 @@ unsigned FSE_versionNumber(void) { return FSE_VERSION_NUMBER; }
 unsigned FSE_isError(size_t code) { return ERR_isError(code); }
 const char* FSE_getErrorName(size_t code) { return ERR_getErrorName(code); }
 
-unsigned HUF_isError(size_t code) { return ERR_isError(code); }
-const char* HUF_getErrorName(size_t code) { return ERR_getErrorName(code); }
+unsigned HUF_v1_5_2_isError(size_t code) { return ERR_isError(code); }
+const char* HUF_v1_5_2_getErrorName(size_t code) { return ERR_getErrorName(code); }
 
 
 /*-**************************************************************
@@ -257,7 +257,7 @@ size_t FSE_readNCount(
     `huffWeight` is destination buffer.
     `rankStats` is assumed to be a table of at least HUF_TABLELOG_MAX U32.
     @return : size read from `src` , or an error Code .
-    Note : Needed by HUF_readCTable() and HUF_readDTableX?() .
+    Note : Needed by HUF_v1_5_2_readCTable() and HUF_readDTableX?() .
 */
 size_t HUF_readStats(BYTE* huffWeight, size_t hwSize, U32* rankStats,
                      U32* nbSymbolsPtr, U32* tableLogPtr,

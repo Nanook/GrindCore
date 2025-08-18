@@ -212,7 +212,7 @@ size_t ZSTD_v1_5_2_decodeLiteralsBlock(ZSTD_v1_5_2_DCtx* dctx,
                     dctx->litBufferEnd -= WILDCOPY_OVERLENGTH;
                 }
 
-                RETURN_ERROR_IF(HUF_isError(hufSuccess), corruption_detected, "");
+                RETURN_ERROR_IF(HUF_v1_5_2_isError(hufSuccess), corruption_detected, "");
 
                 dctx->litPtr = dctx->litBuffer;
                 dctx->litSize = litSize;

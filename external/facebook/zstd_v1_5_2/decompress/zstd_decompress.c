@@ -1356,7 +1356,7 @@ ZSTD_v1_5_2_loadDEntropy(ZSTD_v1_5_2_entropyDTables_t* entropy,
                                                 dictPtr, (size_t)(dictEnd - dictPtr),
                                                 workspace, workspaceSize);
 #endif
-        RETURN_ERROR_IF(HUF_isError(hSize), dictionary_corrupted, "");
+        RETURN_ERROR_IF(HUF_v1_5_2_isError(hSize), dictionary_corrupted, "");
         dictPtr += hSize;
     }
 
