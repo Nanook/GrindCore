@@ -57,6 +57,35 @@ set(GRINDCORE_SOURCES
     # Add any other GrindCore sources as needed
 )
 
+# ---- Export List Generation ----
+set(ENTRYPOINTS_C ${CMAKE_CURRENT_SOURCE_DIR}/entrypoints.c)
+
+if(WIN32)
+    set(EXPORT_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/../generate_exports.ps1)
+    set(EXPORTS_FILE ${CMAKE_CURRENT_BINARY_DIR}/GrindCore.def)
+    add_custom_command(
+        OUTPUT ${EXPORTS_FILE}
+        COMMAND powershell ${EXPORT_SCRIPT} ${ENTRYPOINTS_C} ${EXPORTS_FILE}
+        DEPENDS ${ENTRYPOINTS_C} ${EXPORT_SCRIPT}
+    )
+elseif(APPLE)
+    set(EXPORT_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/../generate_exports.sh)
+    set(EXPORTS_FILE ${CMAKE_CURRENT_BINARY_DIR}/GrindCore_macosexports.list)
+    add_custom_command(
+        OUTPUT ${EXPORTS_FILE}
+        COMMAND sh ${EXPORT_SCRIPT} osx ${ENTRYPOINTS_C} ${EXPORTS_FILE}
+        DEPENDS ${ENTRYPOINTS_C} ${EXPORT_SCRIPT}
+    )
+elseif(UNIX)
+    set(EXPORT_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/../generate_exports.sh)
+    set(EXPORTS_FILE ${CMAKE_CURRENT_BINARY_DIR}/GrindCore_unixexports.src)
+    add_custom_command(
+        OUTPUT ${EXPORTS_FILE}
+        COMMAND sh ${EXPORT_SCRIPT} unix ${ENTRYPOINTS_C} ${EXPORTS_FILE}
+        DEPENDS ${ENTRYPOINTS_C} ${EXPORT_SCRIPT}
+    )
+endif()
+
 # Shared library (for P/Invoke)
 add_library(GrindCore SHARED ${GRINDCORE_SOURCES})
 target_link_libraries(GrindCore PRIVATE ${GRINDCORE_THIRD_PARTY_LIBS})
@@ -67,28 +96,28 @@ set_target_properties(GrindCore PROPERTIES
 target_include_directories(GrindCore PUBLIC ${CMAKE_CURRENT_BINARY_DIR}) # For export header
 target_compile_definitions(GrindCore PRIVATE ${PALEXPORT_DEF})
 
-# Export control for Windows
+# Set export file linker flags and dependencies after target creation
 if(WIN32)
-    set(DEF_FILE ${CMAKE_CURRENT_SOURCE_DIR}/GrindCore.def)
-    set_target_properties(GrindCore PROPERTIES LINK_FLAGS "/DEF:${DEF_FILE}")
-    add_custom_command(TARGET GrindCore POST_BUILD
-        COMMAND dumpbin /exports $<TARGET_FILE:GrindCore> > $<TARGET_FILE_DIR:GrindCore>/GrindCore.exports.txt
-        COMMENT "Dumping exports for GrindCore.dll"
-        VERBATIM
-    )
+    set_target_properties(GrindCore PROPERTIES LINK_FLAGS "/DEF:${EXPORTS_FILE}")
+elseif(APPLE)
+    set_target_properties(GrindCore PROPERTIES LINK_FLAGS "-Wl,-exported_symbols_list,${EXPORTS_FILE}")
+elseif(UNIX)
+    set_target_properties(GrindCore PROPERTIES LINK_FLAGS "-Wl,--version-script=${EXPORTS_FILE}")
 endif()
 
-# Export control for Unix/macOS
-if(UNIX)
-    set(EXPORTS_FILE ${CMAKE_CURRENT_SOURCE_DIR}/GrindCore_unixexports.src)
-    if(APPLE)
-        # macOS: Use -exported_symbols_list
-        set_target_properties(GrindCore PROPERTIES LINK_FLAGS "-Wl,-exported_symbols_list,${EXPORTS_FILE}")
-    else()
-        # Linux: Use --version-script
-        set_target_properties(GrindCore PROPERTIES LINK_FLAGS "-Wl,--version-script=${EXPORTS_FILE}")
-    endif()
-    set_target_properties(GrindCore PROPERTIES C_VISIBILITY_PRESET hidden)
+add_custom_target(GrindCoreExports DEPENDS ${EXPORTS_FILE})
+add_dependencies(GrindCore GrindCoreExports)
+
+# Export verification (optional, keep if you use it)
+if (UNIX AND NOT APPLE AND NOT ANDROID)
+    add_custom_command(TARGET GrindCore POST_BUILD
+        COMMENT "Verifying GrindCore entry points against entrypoints.c"
+        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../verify-entrypoints.sh
+            $<TARGET_FILE:GrindCore>
+            ${CMAKE_CURRENT_SOURCE_DIR}/entrypoints.c
+            ${CMAKE_NM}
+        VERBATIM
+    )
 endif()
 
 # Static library (for static linking)
@@ -134,15 +163,3 @@ GENERATE_EXPORT_HEADER(GrindCore
     EXPORT_FILE_NAME GrindCore_Export.h
     STATIC_DEFINE GrindCore_BUILT_AS_STATIC
 )
-
-# Entry points verification (optional, keep if you use it)
-if (UNIX AND NOT APPLE AND NOT ANDROID)
-    add_custom_command(TARGET GrindCore POST_BUILD
-        COMMENT "Verifying GrindCore entry points against entrypoints.c"
-        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../verify-entrypoints.sh
-            $<TARGET_FILE:GrindCore>
-            ${CMAKE_CURRENT_SOURCE_DIR}/entrypoints.c
-            ${CMAKE_NM}
-        VERBATIM
-    )
-endif()
