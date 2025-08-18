@@ -63,17 +63,17 @@ typedef struct {
 } ZSTD_v1_5_2_localDict;
 
 typedef struct {
-    HUF_CElt CTable[HUF_CTABLE_SIZE_ST(255)];
-    HUF_repeat repeatMode;
+    HUF_v1_5_2_CElt CTable[HUF_v1_5_2_CTABLE_SIZE_ST(255)];
+    HUF_v1_5_2_repeat repeatMode;
 } ZSTD_v1_5_2_hufCTables_t;
 
 typedef struct {
-    FSE_CTable offcodeCTable[FSE_CTABLE_SIZE_U32(OffFSELog, MaxOff)];
-    FSE_CTable matchlengthCTable[FSE_CTABLE_SIZE_U32(MLFSELog, MaxML)];
-    FSE_CTable litlengthCTable[FSE_CTABLE_SIZE_U32(LLFSELog, MaxLL)];
-    FSE_repeat offcode_repeatMode;
-    FSE_repeat matchlength_repeatMode;
-    FSE_repeat litlength_repeatMode;
+    FSE_v1_5_2_CTable offcodeCTable[FSE_v1_5_2_CTABLE_SIZE_U32(OffFSELog, MaxOff)];
+    FSE_v1_5_2_CTable matchlengthCTable[FSE_v1_5_2_CTABLE_SIZE_U32(MLFSELog, MaxML)];
+    FSE_v1_5_2_CTable litlengthCTable[FSE_v1_5_2_CTABLE_SIZE_U32(LLFSELog, MaxLL)];
+    FSE_v1_5_2_repeat offcode_repeatMode;
+    FSE_v1_5_2_repeat matchlength_repeatMode;
+    FSE_v1_5_2_repeat litlength_repeatMode;
 } ZSTD_v1_5_2_fseCTables_t;
 
 typedef struct {
@@ -91,7 +91,7 @@ typedef struct {
  *  This metadata is populated in ZSTD_v1_5_2_buildBlockEntropyStats_literals() */
 typedef struct {
     symbolEncodingType_e hType;
-    BYTE hufDesBuffer[ZSTD_v1_5_2_MAX_HUF_HEADER_SIZE];
+    BYTE hufDesBuffer[ZSTD_v1_5_2_MAX_HUF_v1_5_2_HEADER_SIZE];
     size_t hufDesSize;
 } ZSTD_v1_5_2_hufCTablesMetadata_t;
 
@@ -104,7 +104,7 @@ typedef struct {
     symbolEncodingType_e llType;
     symbolEncodingType_e ofType;
     symbolEncodingType_e mlType;
-    BYTE fseTablesBuffer[ZSTD_v1_5_2_MAX_FSE_HEADERS_SIZE];
+    BYTE fseTablesBuffer[ZSTD_v1_5_2_MAX_FSE_v1_5_2_HEADERS_SIZE];
     size_t fseTablesSize;
     size_t lastCountSize; /* This is to account for bug in 1.3.4. More detail in ZSTD_v1_5_2_entropyCompressSeqStore_internal() */
 } ZSTD_v1_5_2_fseCTablesMetadata_t;
@@ -333,7 +333,7 @@ struct ZSTD_v1_5_2_CCtx_params_s {
 };  /* typedef'd to ZSTD_v1_5_2_CCtx_params within "zstd.h" */
 
 #define COMPRESS_SEQUENCES_WORKSPACE_SIZE (sizeof(unsigned) * (MaxSeq + 2))
-#define ENTROPY_WORKSPACE_SIZE (HUF_WORKSPACE_SIZE + COMPRESS_SEQUENCES_WORKSPACE_SIZE)
+#define ENTROPY_WORKSPACE_SIZE (HUF_v1_5_2_WORKSPACE_SIZE + COMPRESS_SEQUENCES_WORKSPACE_SIZE)
 
 /**
  * Indicates whether this compression proceeds directly from user-provided

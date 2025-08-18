@@ -18,9 +18,9 @@
 #include "../common/compiler.h"    /* prefetch */
 #include "../common/cpu.h"         /* bmi2 */
 #include "../common/mem.h"         /* low level memory routines */
-#define FSE_STATIC_LINKING_ONLY
+#define FSE_v1_5_2_STATIC_LINKING_ONLY
 #include "../common/fse.h"
-#define HUF_STATIC_LINKING_ONLY
+#define HUF_v1_5_2_STATIC_LINKING_ONLY
 #include "../common/huf.h"
 #include "../common/zstd_internal.h"
 #include "zstd_decompress_internal.h"   /* ZSTD_v1_5_2_DCtx */
@@ -176,29 +176,29 @@ size_t ZSTD_v1_5_2_decodeLiteralsBlock(ZSTD_v1_5_2_DCtx* dctx,
 
                 if (litEncType==set_repeat) {
                     if (singleStream) {
-                        hufSuccess = HUF_decompress1X_usingDTable_bmi2(
+                        hufSuccess = HUF_v1_5_2_decompress1X_usingDTable_bmi2(
                             dctx->litBuffer, litSize, istart+lhSize, litCSize,
                             dctx->HUFptr, ZSTD_v1_5_2_DCtx_get_bmi2(dctx));
                     } else {
-                        hufSuccess = HUF_decompress4X_usingDTable_bmi2(
+                        hufSuccess = HUF_v1_5_2_decompress4X_usingDTable_bmi2(
                             dctx->litBuffer, litSize, istart+lhSize, litCSize,
                             dctx->HUFptr, ZSTD_v1_5_2_DCtx_get_bmi2(dctx));
                     }
                 } else {
                     if (singleStream) {
-#if defined(HUF_FORCE_DECOMPRESS_X2)
-                        hufSuccess = HUF_decompress1X_DCtx_wksp(
+#if defined(HUF_v1_5_2_FORCE_DECOMPRESS_X2)
+                        hufSuccess = HUF_v1_5_2_decompress1X_DCtx_wksp(
                             dctx->entropy.hufTable, dctx->litBuffer, litSize,
                             istart+lhSize, litCSize, dctx->workspace,
                             sizeof(dctx->workspace));
 #else
-                        hufSuccess = HUF_decompress1X1_DCtx_wksp_bmi2(
+                        hufSuccess = HUF_v1_5_2_decompress1X1_DCtx_wksp_bmi2(
                             dctx->entropy.hufTable, dctx->litBuffer, litSize,
                             istart+lhSize, litCSize, dctx->workspace,
                             sizeof(dctx->workspace), ZSTD_v1_5_2_DCtx_get_bmi2(dctx));
 #endif
                     } else {
-                        hufSuccess = HUF_decompress4X_hufOnly_wksp_bmi2(
+                        hufSuccess = HUF_v1_5_2_decompress4X_hufOnly_wksp_bmi2(
                             dctx->entropy.hufTable, dctx->litBuffer, litSize,
                             istart+lhSize, litCSize, dctx->workspace,
                             sizeof(dctx->workspace), ZSTD_v1_5_2_DCtx_get_bmi2(dctx));
@@ -458,7 +458,7 @@ void ZSTD_v1_5_2_buildFSETable_body(ZSTD_v1_5_2_seqSymbol* dt,
     /* Sanity Checks */
     assert(maxSymbolValue <= MaxSeq);
     assert(tableLog <= MaxFSELog);
-    assert(wkspSize >= ZSTD_v1_5_2_BUILD_FSE_TABLE_WKSP_SIZE);
+    assert(wkspSize >= ZSTD_v1_5_2_BUILD_FSE_v1_5_2_TABLE_WKSP_SIZE);
     (void)wkspSize;
     /* Init, lay down lowprob symbols */
     {   ZSTD_v1_5_2_seqSymbol_header DTableH;
@@ -487,7 +487,7 @@ void ZSTD_v1_5_2_buildFSETable_body(ZSTD_v1_5_2_seqSymbol* dt,
      */
     if (highThreshold == tableSize - 1) {
         size_t const tableMask = tableSize-1;
-        size_t const step = FSE_TABLESTEP(tableSize);
+        size_t const step = FSE_v1_5_2_TABLESTEP(tableSize);
         /* First lay down the symbols in order.
          * We use a uint64_t to lay down 8 bytes at a time. This reduces branch
          * misses since small blocks generally have small table logs, so nearly
@@ -519,7 +519,7 @@ void ZSTD_v1_5_2_buildFSETable_body(ZSTD_v1_5_2_seqSymbol* dt,
             size_t position = 0;
             size_t s;
             size_t const unroll = 2;
-            assert(tableSize % unroll == 0); /* FSE_MIN_TABLELOG is 5 */
+            assert(tableSize % unroll == 0); /* FSE_v1_5_2_MIN_TABLELOG is 5 */
             for (s = 0; s < (size_t)tableSize; s += unroll) {
                 size_t u;
                 for (u = 0; u < unroll; ++u) {
@@ -532,7 +532,7 @@ void ZSTD_v1_5_2_buildFSETable_body(ZSTD_v1_5_2_seqSymbol* dt,
         }
     } else {
         U32 const tableMask = tableSize-1;
-        U32 const step = FSE_TABLESTEP(tableSize);
+        U32 const step = FSE_v1_5_2_TABLESTEP(tableSize);
         U32 s, position = 0;
         for (s=0; s<maxSV1; s++) {
             int i;
@@ -637,8 +637,8 @@ static size_t ZSTD_v1_5_2_buildSeqTable(ZSTD_v1_5_2_seqSymbol* DTableSpace, cons
     case set_compressed :
         {   unsigned tableLog;
             S16 norm[MaxSeq+1];
-            size_t const headerSize = FSE_readNCount(norm, &max, &tableLog, src, srcSize);
-            RETURN_ERROR_IF(FSE_isError(headerSize), corruption_detected, "");
+            size_t const headerSize = FSE_v1_5_2_readNCount(norm, &max, &tableLog, src, srcSize);
+            RETURN_ERROR_IF(FSE_v1_5_2_isError(headerSize), corruption_detected, "");
             RETURN_ERROR_IF(tableLog > maxLog, corruption_detected, "");
             ZSTD_v1_5_2_buildFSETable(DTableSpace, norm, max, baseValue, nbAdditionalBits, tableLog, wksp, wkspSize, bmi2);
             *DTablePtr = DTableSpace;

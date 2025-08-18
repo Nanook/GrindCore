@@ -111,12 +111,12 @@ The file structure is designed to make this selection manually achievable for an
   implementation optimized for different scenarios. For example, the Huffman
   decoder has complementary implementations that decode the stream one symbol at
   a time or two symbols at a time. Zstd normally includes both (and dispatches
-  between them at runtime), but by defining `HUF_FORCE_DECOMPRESS_X1` or
-  `HUF_FORCE_DECOMPRESS_X2`, you can force the use of one or the other, avoiding
+  between them at runtime), but by defining `HUF_v1_5_2_FORCE_DECOMPRESS_X1` or
+  `HUF_v1_5_2_FORCE_DECOMPRESS_X2`, you can force the use of one or the other, avoiding
   compilation of the other. Similarly, `ZSTD_v1_5_2_FORCE_DECOMPRESS_SEQUENCES_SHORT`
   and `ZSTD_v1_5_2_FORCE_DECOMPRESS_SEQUENCES_LONG` force the compilation and use of
   only one or the other of two decompression implementations. The smallest
-  binary is achieved by using `HUF_FORCE_DECOMPRESS_X1` and
+  binary is achieved by using `HUF_v1_5_2_FORCE_DECOMPRESS_X1` and
   `ZSTD_v1_5_2_FORCE_DECOMPRESS_SEQUENCES_SHORT` (implied by `ZSTD_v1_5_2_LIB_MINIFY`).
 
   For squeezing the last ounce of size out, you can also define

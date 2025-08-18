@@ -26,9 +26,9 @@
 #include "error_private.h"
 #define ZSTD_v1_5_2_STATIC_LINKING_ONLY
 #include "../zstd.h"
-#define FSE_STATIC_LINKING_ONLY
+#define FSE_v1_5_2_STATIC_LINKING_ONLY
 #include "fse.h"
-#define HUF_STATIC_LINKING_ONLY
+#define HUF_v1_5_2_STATIC_LINKING_ONLY
 #include "huf.h"
 #ifndef XXH_STATIC_LINKING_ONLY
 #  define XXH_STATIC_LINKING_ONLY  /* XXH64_state_t */
@@ -47,8 +47,8 @@ extern "C" {
 /* ---- static assert (debug) --- */
 #define ZSTD_v1_5_2_STATIC_ASSERT(c) DEBUG_STATIC_ASSERT(c)
 #define ZSTD_v1_5_2_isError ERR_isError   /* for inlining */
-#define FSE_isError  ERR_isError
-#define HUF_isError  ERR_isError
+#define FSE_v1_5_2_isError  ERR_isError
+#define HUF_v1_5_2_isError  ERR_isError
 
 
 /*-*************************************
@@ -114,9 +114,9 @@ typedef enum { set_basic, set_rle, set_compressed, set_repeat } symbolEncodingTy
 #define OffFSELog   8
 #define MaxFSELog  MAX(MAX(MLFSELog, LLFSELog), OffFSELog)
 
-#define ZSTD_v1_5_2_MAX_HUF_HEADER_SIZE 128 /* header + <= 127 byte tree description */
+#define ZSTD_v1_5_2_MAX_HUF_v1_5_2_HEADER_SIZE 128 /* header + <= 127 byte tree description */
 /* Each table cannot take more than #symbols * FSELog bits */
-#define ZSTD_v1_5_2_MAX_FSE_HEADERS_SIZE (((MaxML + 1) * MLFSELog + (MaxLL + 1) * LLFSELog + (MaxOff + 1) * OffFSELog + 7) / 8)
+#define ZSTD_v1_5_2_MAX_FSE_v1_5_2_HEADERS_SIZE (((MaxML + 1) * MLFSELog + (MaxLL + 1) * LLFSELog + (MaxOff + 1) * OffFSELog + 7) / 8)
 
 static UNUSED_ATTR const U8 LL_bits[MaxLL+1] = {
      0, 0, 0, 0, 0, 0, 0, 0,

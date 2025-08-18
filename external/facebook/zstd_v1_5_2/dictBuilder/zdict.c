@@ -44,11 +44,11 @@
 #ifndef ZDICT_STATIC_LINKING_ONLY
 #  define ZDICT_STATIC_LINKING_ONLY
 #endif
-#define HUF_STATIC_LINKING_ONLY
+#define HUF_v1_5_2_STATIC_LINKING_ONLY
 
 #include "../common/mem.h"           /* read */
-#include "../common/fse.h"           /* FSE_normalizeCount, FSE_writeNCount */
-#include "../common/huf.h"           /* HUF_buildCTable, HUF_writeCTable */
+#include "../common/fse.h"           /* FSE_v1_5_2_normalizeCount, FSE_v1_5_2_writeNCount */
+#include "../common/huf.h"           /* HUF_v1_5_2_buildCTable, HUF_v1_5_2_writeCTable */
 #include "../common/zstd_internal.h" /* includes zstd.h */
 #include "../common/xxhash.h"        /* XXH64 */
 #include "../compress/zstd_compress_internal.h" /* ZSTD_v1_5_2_loadCEntropy() */
@@ -112,7 +112,7 @@ size_t ZDICT_getDictHeaderSize(const void* dictBuffer, size_t dictSize)
     if (dictSize <= 8 || MEM_readLE32(dictBuffer) != ZSTD_v1_5_2_MAGIC_DICTIONARY) return ERROR(dictionary_corrupted);
 
     {   ZSTD_v1_5_2_compressedBlockState_t* bs = (ZSTD_v1_5_2_compressedBlockState_t*)malloc(sizeof(ZSTD_v1_5_2_compressedBlockState_t));
-        U32* wksp = (U32*)malloc(HUF_WORKSPACE_SIZE);
+        U32* wksp = (U32*)malloc(HUF_v1_5_2_WORKSPACE_SIZE);
         if (!bs || !wksp) {
             headerSize = ERROR(memory_allocation);
         } else {
@@ -717,7 +717,7 @@ static void ZDICT_insertSortCount(offsetCount_t table[ZSTD_v1_5_2_REP_NUM+1], U3
 
 /* ZDICT_flatLit() :
  * rewrite `countLit` to contain a mostly flat but still compressible distribution of literals.
- * necessary to avoid generating a non-compressible distribution that HUF_writeCTable() cannot encode.
+ * necessary to avoid generating a non-compressible distribution that HUF_v1_5_2_writeCTable() cannot encode.
  */
 static void ZDICT_flatLit(unsigned* countLit)
 {
@@ -736,7 +736,7 @@ static size_t ZDICT_analyzeEntropy(void*  dstBuffer, size_t maxDstSize,
                                    unsigned notificationLevel)
 {
     unsigned countLit[256];
-    HUF_CREATE_STATIC_CTABLE(hufTable, 255);
+    HUF_v1_5_2_CREATE_STATIC_CTABLE(hufTable, 255);
     unsigned offcodeCount[OFFCODE_MAX+1];
     short offcodeNCount[OFFCODE_MAX+1];
     U32 offcodeMax = ZSTD_v1_5_2_highbit32((U32)(dictBufferSize + 128 KB));
@@ -794,16 +794,16 @@ static size_t ZDICT_analyzeEntropy(void*  dstBuffer, size_t maxDstSize,
     }   }
 
     /* analyze, build stats, starting with literals */
-    {   size_t maxNbBits = HUF_buildCTable (hufTable, countLit, 255, huffLog);
+    {   size_t maxNbBits = HUF_v1_5_2_buildCTable (hufTable, countLit, 255, huffLog);
         if (HUF_v1_5_2_isError(maxNbBits)) {
             eSize = maxNbBits;
-            DISPLAYLEVEL(1, " HUF_buildCTable error \n");
+            DISPLAYLEVEL(1, " HUF_v1_5_2_buildCTable error \n");
             goto _cleanup;
         }
-        if (maxNbBits==8) {  /* not compressible : will fail on HUF_writeCTable() */
+        if (maxNbBits==8) {  /* not compressible : will fail on HUF_v1_5_2_writeCTable() */
             DISPLAYLEVEL(2, "warning : pathological dataset : literals are not compressible : samples are noisy or too regular \n");
-            ZDICT_flatLit(countLit);  /* replace distribution by a fake "mostly flat but still compressible" distribution, that HUF_writeCTable() can encode */
-            maxNbBits = HUF_buildCTable (hufTable, countLit, 255, huffLog);
+            ZDICT_flatLit(countLit);  /* replace distribution by a fake "mostly flat but still compressible" distribution, that HUF_v1_5_2_writeCTable() can encode */
+            maxNbBits = HUF_v1_5_2_buildCTable (hufTable, countLit, 255, huffLog);
             assert(maxNbBits==9);
         }
         huffLog = (U32)maxNbBits;
@@ -817,37 +817,37 @@ static size_t ZDICT_analyzeEntropy(void*  dstBuffer, size_t maxDstSize,
     /* note : the result of this phase should be used to better appreciate the impact on statistics */
 
     total=0; for (u=0; u<=offcodeMax; u++) total+=offcodeCount[u];
-    errorCode = FSE_normalizeCount(offcodeNCount, Offlog, offcodeCount, total, offcodeMax, /* useLowProbCount */ 1);
-    if (FSE_isError(errorCode)) {
+    errorCode = FSE_v1_5_2_normalizeCount(offcodeNCount, Offlog, offcodeCount, total, offcodeMax, /* useLowProbCount */ 1);
+    if (FSE_v1_5_2_isError(errorCode)) {
         eSize = errorCode;
-        DISPLAYLEVEL(1, "FSE_normalizeCount error with offcodeCount \n");
+        DISPLAYLEVEL(1, "FSE_v1_5_2_normalizeCount error with offcodeCount \n");
         goto _cleanup;
     }
     Offlog = (U32)errorCode;
 
     total=0; for (u=0; u<=MaxML; u++) total+=matchLengthCount[u];
-    errorCode = FSE_normalizeCount(matchLengthNCount, mlLog, matchLengthCount, total, MaxML, /* useLowProbCount */ 1);
-    if (FSE_isError(errorCode)) {
+    errorCode = FSE_v1_5_2_normalizeCount(matchLengthNCount, mlLog, matchLengthCount, total, MaxML, /* useLowProbCount */ 1);
+    if (FSE_v1_5_2_isError(errorCode)) {
         eSize = errorCode;
-        DISPLAYLEVEL(1, "FSE_normalizeCount error with matchLengthCount \n");
+        DISPLAYLEVEL(1, "FSE_v1_5_2_normalizeCount error with matchLengthCount \n");
         goto _cleanup;
     }
     mlLog = (U32)errorCode;
 
     total=0; for (u=0; u<=MaxLL; u++) total+=litLengthCount[u];
-    errorCode = FSE_normalizeCount(litLengthNCount, llLog, litLengthCount, total, MaxLL, /* useLowProbCount */ 1);
-    if (FSE_isError(errorCode)) {
+    errorCode = FSE_v1_5_2_normalizeCount(litLengthNCount, llLog, litLengthCount, total, MaxLL, /* useLowProbCount */ 1);
+    if (FSE_v1_5_2_isError(errorCode)) {
         eSize = errorCode;
-        DISPLAYLEVEL(1, "FSE_normalizeCount error with litLengthCount \n");
+        DISPLAYLEVEL(1, "FSE_v1_5_2_normalizeCount error with litLengthCount \n");
         goto _cleanup;
     }
     llLog = (U32)errorCode;
 
     /* write result to buffer */
-    {   size_t const hhSize = HUF_writeCTable(dstPtr, maxDstSize, hufTable, 255, huffLog);
+    {   size_t const hhSize = HUF_v1_5_2_writeCTable(dstPtr, maxDstSize, hufTable, 255, huffLog);
         if (HUF_v1_5_2_isError(hhSize)) {
             eSize = hhSize;
-            DISPLAYLEVEL(1, "HUF_writeCTable error \n");
+            DISPLAYLEVEL(1, "HUF_v1_5_2_writeCTable error \n");
             goto _cleanup;
         }
         dstPtr += hhSize;
@@ -855,10 +855,10 @@ static size_t ZDICT_analyzeEntropy(void*  dstBuffer, size_t maxDstSize,
         eSize += hhSize;
     }
 
-    {   size_t const ohSize = FSE_writeNCount(dstPtr, maxDstSize, offcodeNCount, OFFCODE_MAX, Offlog);
-        if (FSE_isError(ohSize)) {
+    {   size_t const ohSize = FSE_v1_5_2_writeNCount(dstPtr, maxDstSize, offcodeNCount, OFFCODE_MAX, Offlog);
+        if (FSE_v1_5_2_isError(ohSize)) {
             eSize = ohSize;
-            DISPLAYLEVEL(1, "FSE_writeNCount error with offcodeNCount \n");
+            DISPLAYLEVEL(1, "FSE_v1_5_2_writeNCount error with offcodeNCount \n");
             goto _cleanup;
         }
         dstPtr += ohSize;
@@ -866,10 +866,10 @@ static size_t ZDICT_analyzeEntropy(void*  dstBuffer, size_t maxDstSize,
         eSize += ohSize;
     }
 
-    {   size_t const mhSize = FSE_writeNCount(dstPtr, maxDstSize, matchLengthNCount, MaxML, mlLog);
-        if (FSE_isError(mhSize)) {
+    {   size_t const mhSize = FSE_v1_5_2_writeNCount(dstPtr, maxDstSize, matchLengthNCount, MaxML, mlLog);
+        if (FSE_v1_5_2_isError(mhSize)) {
             eSize = mhSize;
-            DISPLAYLEVEL(1, "FSE_writeNCount error with matchLengthNCount \n");
+            DISPLAYLEVEL(1, "FSE_v1_5_2_writeNCount error with matchLengthNCount \n");
             goto _cleanup;
         }
         dstPtr += mhSize;
@@ -877,10 +877,10 @@ static size_t ZDICT_analyzeEntropy(void*  dstBuffer, size_t maxDstSize,
         eSize += mhSize;
     }
 
-    {   size_t const lhSize = FSE_writeNCount(dstPtr, maxDstSize, litLengthNCount, MaxLL, llLog);
-        if (FSE_isError(lhSize)) {
+    {   size_t const lhSize = FSE_v1_5_2_writeNCount(dstPtr, maxDstSize, litLengthNCount, MaxLL, llLog);
+        if (FSE_v1_5_2_isError(lhSize)) {
             eSize = lhSize;
-            DISPLAYLEVEL(1, "FSE_writeNCount error with litlengthNCount \n");
+            DISPLAYLEVEL(1, "FSE_v1_5_2_writeNCount error with litlengthNCount \n");
             goto _cleanup;
         }
         dstPtr += lhSize;

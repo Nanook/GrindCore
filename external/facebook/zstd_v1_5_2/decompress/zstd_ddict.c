@@ -17,9 +17,9 @@
 #include "../common/zstd_deps.h"   /* ZSTD_v1_5_2_memcpy, ZSTD_v1_5_2_memmove, ZSTD_v1_5_2_memset */
 #include "../common/cpu.h"         /* bmi2 */
 #include "../common/mem.h"         /* low level memory routines */
-#define FSE_STATIC_LINKING_ONLY
+#define FSE_v1_5_2_STATIC_LINKING_ONLY
 #include "../common/fse.h"
-#define HUF_STATIC_LINKING_ONLY
+#define HUF_v1_5_2_STATIC_LINKING_ONLY
 #include "../common/huf.h"
 #include "zstd_decompress_internal.h"
 #include "zstd_ddict.h"
@@ -134,7 +134,7 @@ static size_t ZSTD_v1_5_2_initDDict_internal(ZSTD_v1_5_2_DDict* ddict,
         ZSTD_v1_5_2_memcpy(internalBuffer, dict, dictSize);
     }
     ddict->dictSize = dictSize;
-    ddict->entropy.hufTable[0] = (HUF_DTable)((HufLog)*0x1000001);  /* cover both little and big endian */
+    ddict->entropy.hufTable[0] = (HUF_v1_5_2_DTable)((HufLog)*0x1000001);  /* cover both little and big endian */
 
     /* parse dictionary content */
     FORWARD_IF_ERROR( ZSTD_v1_5_2_loadEntropy_intoDDict(ddict, dictContentType) , "");

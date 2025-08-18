@@ -1,256 +1,260 @@
-
-SZ_XXH32_Reset
-SZ_XXH32_Update
-SZ_XXH32_Digest
-SZ_XXH64_Reset
-SZ_XXH64_Update
-SZ_XXH64_Digest
-SZ_MD2_Init
-SZ_MD2_Update
-SZ_MD2_Final
-SZ_MD4_Init
-SZ_MD4_Update
-SZ_MD4_Final
-SZ_MD5_Init
-SZ_MD5_Update
-SZ_MD5_Final
-SZ_Sha1_SetFunction
-SZ_Sha1_InitState
-SZ_Sha1_Init
-SZ_Sha1_Update
-SZ_Sha1_Final
-SZ_Sha1_PrepareBlock
-SZ_Sha1_GetBlockDigest
-SZ_Sha1Prepare
-SZ_Sha256_SetFunction
-SZ_Sha256_InitState
-SZ_Sha256_Init
-SZ_Sha256_Update
-SZ_Sha256_Final
-SZ_Sha256Prepare
-SZ_SHA384_Init
-SZ_SHA384_Update
-SZ_SHA384_Final
-SZ_SHA512_Init
-SZ_SHA512_Update
-SZ_SHA512_Final
-SZ_SHA3_Init
-SZ_SHA3_Update
-SZ_SHA3_Final
-SZ_blake3_version
-SZ_blake3_hasher_init
-SZ_blake3_hasher_init_keyed
-SZ_blake3_hasher_init_derive_key
-SZ_blake3_hasher_init_derive_key_raw
-SZ_blake3_hasher_update
-SZ_blake3_hasher_finalize
-SZ_blake3_hasher_finalize_seek
-SZ_Blake2sp_SetFunction
-SZ_Blake2sp_Init
-SZ_Blake2sp_InitState
-SZ_Blake2sp_Update
-SZ_Blake2sp_Final
-SZ_Black2sp_Prepare
-DN9_BRT_v1_1_0_BrotliDecoderCreateInstance
-DN9_BRT_v1_1_0_BrotliDecoderDecompress
-DN9_BRT_v1_1_0_BrotliDecoderDecompressStream
-DN9_BRT_v1_1_0_BrotliDecoderDestroyInstance
-DN9_BRT_v1_1_0_BrotliDecoderIsFinished
-DN9_BRT_v1_1_0_BrotliEncoderCompress
-DN9_BRT_v1_1_0_BrotliEncoderCompressStream
-DN9_BRT_v1_1_0_BrotliEncoderCreateInstance
-DN9_BRT_v1_1_0_BrotliEncoderDestroyInstance
-DN9_BRT_v1_1_0_BrotliEncoderHasMoreOutput
-DN9_BRT_v1_1_0_BrotliEncoderMaxCompressedSize
-DN9_BRT_v1_1_0_BrotliEncoderSetParameter
-DN8_ZLib_v1_3_1_Crc32
-DN8_ZLib_v1_3_1_Deflate
-DN8_ZLib_v1_3_1_DeflateEnd
-DN8_ZLib_v1_3_1_DeflateInit2_
-DN8_ZLib_v1_3_1_Inflate
-DN8_ZLib_v1_3_1_InflateEnd
-DN8_ZLib_v1_3_1_InflateInit2_
-DN8_ZLib_v1_3_1_Compress
-DN8_ZLib_v1_3_1_Compress2
-DN8_ZLib_v1_3_1_Compress3
-DN8_ZLib_v1_3_1_Uncompress
-DN8_ZLib_v1_3_1_Uncompress2
-DN8_ZLib_v1_3_1_Uncompress3
-DN9_ZLibNg_v2_2_1_Crc32
-DN9_ZLibNg_v2_2_1_Deflate
-DN9_ZLibNg_v2_2_1_DeflateEnd
-DN9_ZLibNg_v2_2_1_DeflateInit2_
-DN9_ZLibNg_v2_2_1_Inflate
-DN9_ZLibNg_v2_2_1_InflateEnd
-DN9_ZLibNg_v2_2_1_InflateInit2_
-DN9_ZLibNg_v2_2_1_Compress
-DN9_ZLibNg_v2_2_1_Compress2
-DN9_ZLibNg_v2_2_1_Compress3
-DN9_ZLibNg_v2_2_1_Uncompress
-DN9_ZLibNg_v2_2_1_Uncompress2
-DN9_ZLibNg_v2_2_1_Uncompress3
-FL2_getCCtxDictProp
-FL2_maxCLevel
-FL2_maxHighCLevel
-FL2_createCCtx
-FL2_createCCtxMt
-FL2_createCStream
-FL2_createCStreamMt
-FL2_createDCtx
-FL2_createDCtxMt
-FL2_createDStream
-FL2_createDStreamMt
-FL2_freeCCtx
-FL2_freeDCtx
-FL2_CCtx_getParameter
-FL2_CCtx_setParameter
-FL2_CStream_getParameter
-FL2_CStream_setParameter
-FL2_compress
-FL2_compressBound
-FL2_compressCCtx
-FL2_compressMt
-FL2_compressStream
-FL2_copyCStreamOutput
-FL2_decompress
-FL2_decompressDCtx
-FL2_decompressMt
-FL2_decompressStream
-FL2_endStream
-FL2_estimateCCtxSize
-FL2_estimateCCtxSize_byParams
-FL2_estimateCCtxSize_usingCCtx
-FL2_estimateCStreamSize
-FL2_estimateCStreamSize_byParams
-FL2_estimateCStreamSize_usingCStream
-FL2_estimateDCtxSize
-FL2_estimateDStreamSize
-FL2_findDecompressedSize
-FL2_flushStream
-FL2_freeDStream
-FL2_getCStreamProgress
-FL2_getDictSizeFromProp
-FL2_getDictionaryBuffer
-FL2_getLevelParameters
-FL2_getNextCompressedBuffer
-FL2_initCStream
-FL2_initDCtx
-FL2_initDStream
-FL2_initDStream_withProp
-FL2_remainingOutputSize
-FL2_setCStreamTimeout
-FL2_setDStreamTimeout
-FL2_updateDictionary
-FL2_waitCStream
-FL2_waitDStream
-FL2_getCCtxThreadCount
-FL2_getDCtxThreadCount
-FL2_getDStreamProgress
-FL2_cancelCStream
-FL2_cancelDStream
-FL2_freeCStream
-FL2_setDStreamMemoryLimitMt
-SZ_Lzma2_v24_07_Dec_Construct
-SZ_Lzma2_v24_07_Dec_FreeProbs
-SZ_Lzma2_v24_07_Dec_Free
-SZ_Lzma2_v24_07_Dec_AllocateProbs
-SZ_Lzma2_v24_07_Dec_Allocate
-SZ_Lzma2_v24_07_Dec_Init
-SZ_Lzma2_v24_07_Dec_DecodeToDic
-SZ_Lzma2_v24_07_Dec_DecodeToBuf
-SZ_Lzma2_v24_07_Dec_Parse
-SZ_Lzma2_v24_07_Decode
-SZ_Lzma2_v24_07_Enc_Construct
-SZ_Lzma2_v24_07_Enc_Normalize
-SZ_Lzma2_v24_07_Enc_Create
-SZ_Lzma2_v24_07_Enc_Destroy
-SZ_Lzma2_v24_07_Enc_SetProps
-SZ_Lzma2_v24_07_Enc_SetDataSize
-SZ_Lzma2_v24_07_Enc_WriteProperties
-SZ_Lzma2_v24_07_Enc_Encode2
-SZ_Lzma2_v24_07_Enc_EncodeMultiCall
-SZ_Lzma2_v24_07_Enc_EncodeMultiCallPrepare
-SZ_Lzma_v24_07_Dec_Construct
-SZ_Lzma_v24_07_Dec_Init
-SZ_Lzma_v24_07_Dec_AllocateProbs
-SZ_Lzma_v24_07_Dec_FreeProbs
-SZ_Lzma_v24_07_Dec_Allocate
-SZ_Lzma_v24_07_Dec_Free
-SZ_Lzma_v24_07_Dec_DecodeToDic
-SZ_Lzma_v24_07_Dec_DecodeToBuf
-SZ_Lzma_v24_07_Dec_LzmaDecode
-SZ_Lzma_v24_07_EncProps_Init
-SZ_Lzma_v24_07_EncProps_Normalize
-SZ_Lzma_v24_07_EncProps_GetDictSize
-SZ_Lzma_v24_07_Enc_Create
-SZ_Lzma_v24_07_Enc_Destroy
-SZ_Lzma_v24_07_Enc_SetProps
-SZ_Lzma_v24_07_Enc_SetDataSize
-SZ_Lzma_v24_07_Enc_WriteProperties
-SZ_Lzma_v24_07_Enc_IsWriteEndMark
-SZ_Lzma_v24_07_Enc_Encode
-SZ_Lzma_v24_07_Enc_MemEncode
-SZ_Lzma_v24_07_Enc_LzmaEncode
-SZ_Lzma_v24_07_Enc_LzmaCodeMultiCall
-SZ_Lzma_v24_07_Enc_LzmaCodeMultiCallPrepare
-SZ_Lz4_v1_9_4_Init
-SZ_Lz4_v1_9_4_End
-SZ_Lz4_v1_9_4_TransferStateToPalLZ4Stream
-SZ_Lz4_v1_9_4_GetCurrentLZ4Stream
-SZ_Lz4_v1_9_4_CompressFastContinue
-SZ_Lz4_v1_9_4_DecompressSafeContinue
-SZ_Lz4_v1_9_4_LoadDict
-SZ_Lz4_v1_9_4_SaveDict
-SZ_Lz4_v1_9_4_CompressHC
-SZ_Lz4_v1_9_4_CompressHC_ExtState
-SZ_Lz4_v1_9_4_CompressHC_DestSize
-SZ_Lz4F_v1_9_4_CreateCompressionContext
-SZ_Lz4F_v1_9_4_FreeCompressionContext
-SZ_Lz4F_v1_9_4_CompressBegin
-SZ_Lz4F_v1_9_4_CompressUpdate
-SZ_Lz4F_v1_9_4_Flush
-SZ_Lz4F_v1_9_4_CompressEnd
-SZ_Lz4F_v1_9_4_CreateDecompressionContext
-SZ_Lz4F_v1_9_4_FreeDecompressionContext
-SZ_Lz4F_v1_9_4_GetFrameInfo
-SZ_Lz4F_v1_9_4_Decompress
-SZ_Lz4F_v1_9_4_ResetDecompressionContext
-SZ_Lz4F_v1_9_4_CompressBound
-SZ_Lz4F_v1_9_4_CompressFrameBound
-SZ_Lz4F_v1_9_4_CompressHC_Stream
-SZ_ZStd_v1_5_2_CreateCompressionContext
-SZ_ZStd_v1_5_2_FreeCompressionContext
-SZ_ZStd_v1_5_2_CreateDecompressionContext
-SZ_ZStd_v1_5_2_FreeDecompressionContext
-SZ_ZStd_v1_5_2_CreateCompressionDict
-SZ_ZStd_v1_5_2_FreeCompressionDict
-SZ_ZStd_v1_5_2_CreateDecompressionDict
-SZ_ZStd_v1_5_2_FreeDecompressionDict
-SZ_ZStd_v1_5_2_CompressBlock
-SZ_ZStd_v1_5_2_DecompressBlock
-SZ_ZStd_v1_5_2_CompressStream
-SZ_ZStd_v1_5_2_FlushStream
-SZ_ZStd_v1_5_2_EndStream
-SZ_ZStd_v1_5_2_DecompressStream
-SZ_ZStd_v1_5_2_SetCompressionLevel
-SZ_ZStd_v1_5_2_SetBlockSize
-SZ_ZStd_v1_5_2_CStreamInSize
-SZ_ZStd_v1_5_2_CStreamOutSize
-SZ_ZStd_v1_5_7_CreateCompressionContext
-SZ_ZStd_v1_5_7_FreeCompressionContext
-SZ_ZStd_v1_5_7_CreateDecompressionContext
-SZ_ZStd_v1_5_7_FreeDecompressionContext
-SZ_ZStd_v1_5_7_CreateCompressionDict
-SZ_ZStd_v1_5_7_FreeCompressionDict
-SZ_ZStd_v1_5_7_CreateDecompressionDict
-SZ_ZStd_v1_5_7_FreeDecompressionDict
-SZ_ZStd_v1_5_7_CompressBlock
-SZ_ZStd_v1_5_7_DecompressBlock
-SZ_ZStd_v1_5_7_CompressStream
-SZ_ZStd_v1_5_7_FlushStream
-SZ_ZStd_v1_5_7_EndStream
-SZ_ZStd_v1_5_7_DecompressStream
-SZ_ZStd_v1_5_7_SetCompressionLevel
-SZ_ZStd_v1_5_7_SetBlockSize
-SZ_ZStd_v1_5_7_CStreamInSize
-SZ_ZStd_v1_5_7_CStreamOutSize
+{
+  global:
+    SZ_XXH32_Reset;
+    SZ_XXH32_Update;
+    SZ_XXH32_Digest;
+    SZ_XXH64_Reset;
+    SZ_XXH64_Update;
+    SZ_XXH64_Digest;
+    SZ_MD2_Init;
+    SZ_MD2_Update;
+    SZ_MD2_Final;
+    SZ_MD4_Init;
+    SZ_MD4_Update;
+    SZ_MD4_Final;
+    SZ_MD5_Init;
+    SZ_MD5_Update;
+    SZ_MD5_Final;
+    SZ_Sha1_SetFunction;
+    SZ_Sha1_InitState;
+    SZ_Sha1_Init;
+    SZ_Sha1_Update;
+    SZ_Sha1_Final;
+    SZ_Sha1_PrepareBlock;
+    SZ_Sha1_GetBlockDigest;
+    SZ_Sha1Prepare;
+    SZ_Sha256_SetFunction;
+    SZ_Sha256_InitState;
+    SZ_Sha256_Init;
+    SZ_Sha256_Update;
+    SZ_Sha256_Final;
+    SZ_Sha256Prepare;
+    SZ_SHA384_Init;
+    SZ_SHA384_Update;
+    SZ_SHA384_Final;
+    SZ_SHA512_Init;
+    SZ_SHA512_Update;
+    SZ_SHA512_Final;
+    SZ_SHA3_Init;
+    SZ_SHA3_Update;
+    SZ_SHA3_Final;
+    SZ_blake3_version;
+    SZ_blake3_hasher_init;
+    SZ_blake3_hasher_init_keyed;
+    SZ_blake3_hasher_init_derive_key;
+    SZ_blake3_hasher_init_derive_key_raw;
+    SZ_blake3_hasher_update;
+    SZ_blake3_hasher_finalize;
+    SZ_blake3_hasher_finalize_seek;
+    SZ_Blake2sp_SetFunction;
+    SZ_Blake2sp_Init;
+    SZ_Blake2sp_InitState;
+    SZ_Blake2sp_Update;
+    SZ_Blake2sp_Final;
+    SZ_Black2sp_Prepare;
+    DN9_BRT_v1_1_0_BrotliDecoderCreateInstance;
+    DN9_BRT_v1_1_0_BrotliDecoderDecompress;
+    DN9_BRT_v1_1_0_BrotliDecoderDecompressStream;
+    DN9_BRT_v1_1_0_BrotliDecoderDestroyInstance;
+    DN9_BRT_v1_1_0_BrotliDecoderIsFinished;
+    DN9_BRT_v1_1_0_BrotliEncoderCompress;
+    DN9_BRT_v1_1_0_BrotliEncoderCompressStream;
+    DN9_BRT_v1_1_0_BrotliEncoderCreateInstance;
+    DN9_BRT_v1_1_0_BrotliEncoderDestroyInstance;
+    DN9_BRT_v1_1_0_BrotliEncoderHasMoreOutput;
+    DN9_BRT_v1_1_0_BrotliEncoderMaxCompressedSize;
+    DN9_BRT_v1_1_0_BrotliEncoderSetParameter;
+    DN8_ZLib_v1_3_1_Crc32;
+    DN8_ZLib_v1_3_1_Deflate;
+    DN8_ZLib_v1_3_1_DeflateEnd;
+    DN8_ZLib_v1_3_1_DeflateInit2_;
+    DN8_ZLib_v1_3_1_Inflate;
+    DN8_ZLib_v1_3_1_InflateEnd;
+    DN8_ZLib_v1_3_1_InflateInit2_;
+    DN8_ZLib_v1_3_1_Compress;
+    DN8_ZLib_v1_3_1_Compress2;
+    DN8_ZLib_v1_3_1_Compress3;
+    DN8_ZLib_v1_3_1_Uncompress;
+    DN8_ZLib_v1_3_1_Uncompress2;
+    DN8_ZLib_v1_3_1_Uncompress3;
+    DN9_ZLibNg_v2_2_1_Crc32;
+    DN9_ZLibNg_v2_2_1_Deflate;
+    DN9_ZLibNg_v2_2_1_DeflateEnd;
+    DN9_ZLibNg_v2_2_1_DeflateInit2_;
+    DN9_ZLibNg_v2_2_1_Inflate;
+    DN9_ZLibNg_v2_2_1_InflateEnd;
+    DN9_ZLibNg_v2_2_1_InflateInit2_;
+    DN9_ZLibNg_v2_2_1_Compress;
+    DN9_ZLibNg_v2_2_1_Compress2;
+    DN9_ZLibNg_v2_2_1_Compress3;
+    DN9_ZLibNg_v2_2_1_Uncompress;
+    DN9_ZLibNg_v2_2_1_Uncompress2;
+    DN9_ZLibNg_v2_2_1_Uncompress3;
+    FL2_getCCtxDictProp;
+    FL2_maxCLevel;
+    FL2_maxHighCLevel;
+    FL2_createCCtx;
+    FL2_createCCtxMt;
+    FL2_createCStream;
+    FL2_createCStreamMt;
+    FL2_createDCtx;
+    FL2_createDCtxMt;
+    FL2_createDStream;
+    FL2_createDStreamMt;
+    FL2_freeCCtx;
+    FL2_freeDCtx;
+    FL2_CCtx_getParameter;
+    FL2_CCtx_setParameter;
+    FL2_CStream_getParameter;
+    FL2_CStream_setParameter;
+    FL2_compress;
+    FL2_compressBound;
+    FL2_compressCCtx;
+    FL2_compressMt;
+    FL2_compressStream;
+    FL2_copyCStreamOutput;
+    FL2_decompress;
+    FL2_decompressDCtx;
+    FL2_decompressMt;
+    FL2_decompressStream;
+    FL2_endStream;
+    FL2_estimateCCtxSize;
+    FL2_estimateCCtxSize_byParams;
+    FL2_estimateCCtxSize_usingCCtx;
+    FL2_estimateCStreamSize;
+    FL2_estimateCStreamSize_byParams;
+    FL2_estimateCStreamSize_usingCStream;
+    FL2_estimateDCtxSize;
+    FL2_estimateDStreamSize;
+    FL2_findDecompressedSize;
+    FL2_flushStream;
+    FL2_freeDStream;
+    FL2_getCStreamProgress;
+    FL2_getDictSizeFromProp;
+    FL2_getDictionaryBuffer;
+    FL2_getLevelParameters;
+    FL2_getNextCompressedBuffer;
+    FL2_initCStream;
+    FL2_initDCtx;
+    FL2_initDStream;
+    FL2_initDStream_withProp;
+    FL2_remainingOutputSize;
+    FL2_setCStreamTimeout;
+    FL2_setDStreamTimeout;
+    FL2_updateDictionary;
+    FL2_waitCStream;
+    FL2_waitDStream;
+    FL2_getCCtxThreadCount;
+    FL2_getDCtxThreadCount;
+    FL2_getDStreamProgress;
+    FL2_cancelCStream;
+    FL2_cancelDStream;
+    FL2_freeCStream;
+    FL2_setDStreamMemoryLimitMt;
+    SZ_Lzma2_v24_07_Dec_Construct;
+    SZ_Lzma2_v24_07_Dec_FreeProbs;
+    SZ_Lzma2_v24_07_Dec_Free;
+    SZ_Lzma2_v24_07_Dec_AllocateProbs;
+    SZ_Lzma2_v24_07_Dec_Allocate;
+    SZ_Lzma2_v24_07_Dec_Init;
+    SZ_Lzma2_v24_07_Dec_DecodeToDic;
+    SZ_Lzma2_v24_07_Dec_DecodeToBuf;
+    SZ_Lzma2_v24_07_Dec_Parse;
+    SZ_Lzma2_v24_07_Decode;
+    SZ_Lzma2_v24_07_Enc_Construct;
+    SZ_Lzma2_v24_07_Enc_Normalize;
+    SZ_Lzma2_v24_07_Enc_Create;
+    SZ_Lzma2_v24_07_Enc_Destroy;
+    SZ_Lzma2_v24_07_Enc_SetProps;
+    SZ_Lzma2_v24_07_Enc_SetDataSize;
+    SZ_Lzma2_v24_07_Enc_WriteProperties;
+    SZ_Lzma2_v24_07_Enc_Encode2;
+    SZ_Lzma2_v24_07_Enc_EncodeMultiCall;
+    SZ_Lzma2_v24_07_Enc_EncodeMultiCallPrepare;
+    SZ_Lzma_v24_07_Dec_Construct;
+    SZ_Lzma_v24_07_Dec_Init;
+    SZ_Lzma_v24_07_Dec_AllocateProbs;
+    SZ_Lzma_v24_07_Dec_FreeProbs;
+    SZ_Lzma_v24_07_Dec_Allocate;
+    SZ_Lzma_v24_07_Dec_Free;
+    SZ_Lzma_v24_07_Dec_DecodeToDic;
+    SZ_Lzma_v24_07_Dec_DecodeToBuf;
+    SZ_Lzma_v24_07_Dec_LzmaDecode;
+    SZ_Lzma_v24_07_EncProps_Init;
+    SZ_Lzma_v24_07_EncProps_Normalize;
+    SZ_Lzma_v24_07_EncProps_GetDictSize;
+    SZ_Lzma_v24_07_Enc_Create;
+    SZ_Lzma_v24_07_Enc_Destroy;
+    SZ_Lzma_v24_07_Enc_SetProps;
+    SZ_Lzma_v24_07_Enc_SetDataSize;
+    SZ_Lzma_v24_07_Enc_WriteProperties;
+    SZ_Lzma_v24_07_Enc_IsWriteEndMark;
+    SZ_Lzma_v24_07_Enc_Encode;
+    SZ_Lzma_v24_07_Enc_MemEncode;
+    SZ_Lzma_v24_07_Enc_LzmaEncode;
+    SZ_Lzma_v24_07_Enc_LzmaCodeMultiCall;
+    SZ_Lzma_v24_07_Enc_LzmaCodeMultiCallPrepare;
+    SZ_Lz4_v1_9_4_Init;
+    SZ_Lz4_v1_9_4_End;
+    SZ_Lz4_v1_9_4_TransferStateToPalLZ4Stream;
+    SZ_Lz4_v1_9_4_GetCurrentLZ4Stream;
+    SZ_Lz4_v1_9_4_CompressFastContinue;
+    SZ_Lz4_v1_9_4_DecompressSafeContinue;
+    SZ_Lz4_v1_9_4_LoadDict;
+    SZ_Lz4_v1_9_4_SaveDict;
+    SZ_Lz4_v1_9_4_CompressHC;
+    SZ_Lz4_v1_9_4_CompressHC_ExtState;
+    SZ_Lz4_v1_9_4_CompressHC_DestSize;
+    SZ_Lz4F_v1_9_4_CreateCompressionContext;
+    SZ_Lz4F_v1_9_4_FreeCompressionContext;
+    SZ_Lz4F_v1_9_4_CompressBegin;
+    SZ_Lz4F_v1_9_4_CompressUpdate;
+    SZ_Lz4F_v1_9_4_Flush;
+    SZ_Lz4F_v1_9_4_CompressEnd;
+    SZ_Lz4F_v1_9_4_CreateDecompressionContext;
+    SZ_Lz4F_v1_9_4_FreeDecompressionContext;
+    SZ_Lz4F_v1_9_4_GetFrameInfo;
+    SZ_Lz4F_v1_9_4_Decompress;
+    SZ_Lz4F_v1_9_4_ResetDecompressionContext;
+    SZ_Lz4F_v1_9_4_CompressBound;
+    SZ_Lz4F_v1_9_4_CompressFrameBound;
+    SZ_Lz4F_v1_9_4_CompressHC_Stream;
+    SZ_ZStd_v1_5_2_CreateCompressionContext;
+    SZ_ZStd_v1_5_2_FreeCompressionContext;
+    SZ_ZStd_v1_5_2_CreateDecompressionContext;
+    SZ_ZStd_v1_5_2_FreeDecompressionContext;
+    SZ_ZStd_v1_5_2_CreateCompressionDict;
+    SZ_ZStd_v1_5_2_FreeCompressionDict;
+    SZ_ZStd_v1_5_2_CreateDecompressionDict;
+    SZ_ZStd_v1_5_2_FreeDecompressionDict;
+    SZ_ZStd_v1_5_2_CompressBlock;
+    SZ_ZStd_v1_5_2_DecompressBlock;
+    SZ_ZStd_v1_5_2_CompressStream;
+    SZ_ZStd_v1_5_2_FlushStream;
+    SZ_ZStd_v1_5_2_EndStream;
+    SZ_ZStd_v1_5_2_DecompressStream;
+    SZ_ZStd_v1_5_2_SetCompressionLevel;
+    SZ_ZStd_v1_5_2_SetBlockSize;
+    SZ_ZStd_v1_5_2_CStreamInSize;
+    SZ_ZStd_v1_5_2_CStreamOutSize;
+    SZ_ZStd_v1_5_7_CreateCompressionContext;
+    SZ_ZStd_v1_5_7_FreeCompressionContext;
+    SZ_ZStd_v1_5_7_CreateDecompressionContext;
+    SZ_ZStd_v1_5_7_FreeDecompressionContext;
+    SZ_ZStd_v1_5_7_CreateCompressionDict;
+    SZ_ZStd_v1_5_7_FreeCompressionDict;
+    SZ_ZStd_v1_5_7_CreateDecompressionDict;
+    SZ_ZStd_v1_5_7_FreeDecompressionDict;
+    SZ_ZStd_v1_5_7_CompressBlock;
+    SZ_ZStd_v1_5_7_DecompressBlock;
+    SZ_ZStd_v1_5_7_CompressStream;
+    SZ_ZStd_v1_5_7_FlushStream;
+    SZ_ZStd_v1_5_7_EndStream;
+    SZ_ZStd_v1_5_7_DecompressStream;
+    SZ_ZStd_v1_5_7_SetCompressionLevel;
+    SZ_ZStd_v1_5_7_SetBlockSize;
+    SZ_ZStd_v1_5_7_CStreamInSize;
+    SZ_ZStd_v1_5_7_CStreamOutSize;
+  local:
+    *;
+};

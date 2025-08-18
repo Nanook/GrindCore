@@ -57,9 +57,9 @@
 *********************************************************/
 #include "../common/zstd_deps.h"   /* ZSTD_v1_5_2_memcpy, ZSTD_v1_5_2_memmove, ZSTD_v1_5_2_memset */
 #include "../common/mem.h"         /* low level memory routines */
-#define FSE_STATIC_LINKING_ONLY
+#define FSE_v1_5_2_STATIC_LINKING_ONLY
 #include "../common/fse.h"
-#define HUF_STATIC_LINKING_ONLY
+#define HUF_v1_5_2_STATIC_LINKING_ONLY
 #include "../common/huf.h"
 #include "../common/xxhash.h" /* XXH64_reset, XXH64_update, XXH64_digest, XXH64 */
 #include "../common/zstd_internal.h"  /* blockProperties_t */
@@ -1343,16 +1343,16 @@ ZSTD_v1_5_2_loadDEntropy(ZSTD_v1_5_2_entropyDTables_t* entropy,
 
     ZSTD_v1_5_2_STATIC_ASSERT(offsetof(ZSTD_v1_5_2_entropyDTables_t, OFTable) == offsetof(ZSTD_v1_5_2_entropyDTables_t, LLTable) + sizeof(entropy->LLTable));
     ZSTD_v1_5_2_STATIC_ASSERT(offsetof(ZSTD_v1_5_2_entropyDTables_t, MLTable) == offsetof(ZSTD_v1_5_2_entropyDTables_t, OFTable) + sizeof(entropy->OFTable));
-    ZSTD_v1_5_2_STATIC_ASSERT(sizeof(entropy->LLTable) + sizeof(entropy->OFTable) + sizeof(entropy->MLTable) >= HUF_DECOMPRESS_WORKSPACE_SIZE);
+    ZSTD_v1_5_2_STATIC_ASSERT(sizeof(entropy->LLTable) + sizeof(entropy->OFTable) + sizeof(entropy->MLTable) >= HUF_v1_5_2_DECOMPRESS_WORKSPACE_SIZE);
     {   void* const workspace = &entropy->LLTable;   /* use fse tables as temporary workspace; implies fse tables are grouped together */
         size_t const workspaceSize = sizeof(entropy->LLTable) + sizeof(entropy->OFTable) + sizeof(entropy->MLTable);
-#ifdef HUF_FORCE_DECOMPRESS_X1
+#ifdef HUF_v1_5_2_FORCE_DECOMPRESS_X1
         /* in minimal huffman, we always use X1 variants */
-        size_t const hSize = HUF_readDTableX1_wksp(entropy->hufTable,
+        size_t const hSize = HUF_v1_5_2_readDTableX1_wksp(entropy->hufTable,
                                                 dictPtr, dictEnd - dictPtr,
                                                 workspace, workspaceSize);
 #else
-        size_t const hSize = HUF_readDTableX2_wksp(entropy->hufTable,
+        size_t const hSize = HUF_v1_5_2_readDTableX2_wksp(entropy->hufTable,
                                                 dictPtr, (size_t)(dictEnd - dictPtr),
                                                 workspace, workspaceSize);
 #endif
@@ -1362,8 +1362,8 @@ ZSTD_v1_5_2_loadDEntropy(ZSTD_v1_5_2_entropyDTables_t* entropy,
 
     {   short offcodeNCount[MaxOff+1];
         unsigned offcodeMaxValue = MaxOff, offcodeLog;
-        size_t const offcodeHeaderSize = FSE_readNCount(offcodeNCount, &offcodeMaxValue, &offcodeLog, dictPtr, (size_t)(dictEnd-dictPtr));
-        RETURN_ERROR_IF(FSE_isError(offcodeHeaderSize), dictionary_corrupted, "");
+        size_t const offcodeHeaderSize = FSE_v1_5_2_readNCount(offcodeNCount, &offcodeMaxValue, &offcodeLog, dictPtr, (size_t)(dictEnd-dictPtr));
+        RETURN_ERROR_IF(FSE_v1_5_2_isError(offcodeHeaderSize), dictionary_corrupted, "");
         RETURN_ERROR_IF(offcodeMaxValue > MaxOff, dictionary_corrupted, "");
         RETURN_ERROR_IF(offcodeLog > OffFSELog, dictionary_corrupted, "");
         ZSTD_v1_5_2_buildFSETable( entropy->OFTable,
@@ -1377,8 +1377,8 @@ ZSTD_v1_5_2_loadDEntropy(ZSTD_v1_5_2_entropyDTables_t* entropy,
 
     {   short matchlengthNCount[MaxML+1];
         unsigned matchlengthMaxValue = MaxML, matchlengthLog;
-        size_t const matchlengthHeaderSize = FSE_readNCount(matchlengthNCount, &matchlengthMaxValue, &matchlengthLog, dictPtr, (size_t)(dictEnd-dictPtr));
-        RETURN_ERROR_IF(FSE_isError(matchlengthHeaderSize), dictionary_corrupted, "");
+        size_t const matchlengthHeaderSize = FSE_v1_5_2_readNCount(matchlengthNCount, &matchlengthMaxValue, &matchlengthLog, dictPtr, (size_t)(dictEnd-dictPtr));
+        RETURN_ERROR_IF(FSE_v1_5_2_isError(matchlengthHeaderSize), dictionary_corrupted, "");
         RETURN_ERROR_IF(matchlengthMaxValue > MaxML, dictionary_corrupted, "");
         RETURN_ERROR_IF(matchlengthLog > MLFSELog, dictionary_corrupted, "");
         ZSTD_v1_5_2_buildFSETable( entropy->MLTable,
@@ -1392,8 +1392,8 @@ ZSTD_v1_5_2_loadDEntropy(ZSTD_v1_5_2_entropyDTables_t* entropy,
 
     {   short litlengthNCount[MaxLL+1];
         unsigned litlengthMaxValue = MaxLL, litlengthLog;
-        size_t const litlengthHeaderSize = FSE_readNCount(litlengthNCount, &litlengthMaxValue, &litlengthLog, dictPtr, (size_t)(dictEnd-dictPtr));
-        RETURN_ERROR_IF(FSE_isError(litlengthHeaderSize), dictionary_corrupted, "");
+        size_t const litlengthHeaderSize = FSE_v1_5_2_readNCount(litlengthNCount, &litlengthMaxValue, &litlengthLog, dictPtr, (size_t)(dictEnd-dictPtr));
+        RETURN_ERROR_IF(FSE_v1_5_2_isError(litlengthHeaderSize), dictionary_corrupted, "");
         RETURN_ERROR_IF(litlengthMaxValue > MaxLL, dictionary_corrupted, "");
         RETURN_ERROR_IF(litlengthLog > LLFSELog, dictionary_corrupted, "");
         ZSTD_v1_5_2_buildFSETable( entropy->LLTable,
@@ -1453,7 +1453,7 @@ size_t ZSTD_v1_5_2_decompressBegin(ZSTD_v1_5_2_DCtx* dctx)
     dctx->prefixStart = NULL;
     dctx->virtualStart = NULL;
     dctx->dictEnd = NULL;
-    dctx->entropy.hufTable[0] = (HUF_DTable)((HufLog)*0x1000001);  /* cover both little and big endian */
+    dctx->entropy.hufTable[0] = (HUF_v1_5_2_DTable)((HufLog)*0x1000001);  /* cover both little and big endian */
     dctx->litEntropy = dctx->fseEntropy = 0;
     dctx->dictID = 0;
     dctx->bType = bt_reserved;

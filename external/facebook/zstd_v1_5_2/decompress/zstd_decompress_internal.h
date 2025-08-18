@@ -73,16 +73,16 @@ static UNUSED_ATTR const U32 ML_base[MaxML+1] = {
 
  #define SEQSYMBOL_TABLE_SIZE(log)   (1 + (1 << (log)))
 
-#define ZSTD_v1_5_2_BUILD_FSE_TABLE_WKSP_SIZE (sizeof(S16) * (MaxSeq + 1) + (1u << MaxFSELog) + sizeof(U64))
-#define ZSTD_v1_5_2_BUILD_FSE_TABLE_WKSP_SIZE_U32 ((ZSTD_v1_5_2_BUILD_FSE_TABLE_WKSP_SIZE + sizeof(U32) - 1) / sizeof(U32))
+#define ZSTD_v1_5_2_BUILD_FSE_v1_5_2_TABLE_WKSP_SIZE (sizeof(S16) * (MaxSeq + 1) + (1u << MaxFSELog) + sizeof(U64))
+#define ZSTD_v1_5_2_BUILD_FSE_v1_5_2_TABLE_WKSP_SIZE_U32 ((ZSTD_v1_5_2_BUILD_FSE_v1_5_2_TABLE_WKSP_SIZE + sizeof(U32) - 1) / sizeof(U32))
 
 typedef struct {
     ZSTD_v1_5_2_seqSymbol LLTable[SEQSYMBOL_TABLE_SIZE(LLFSELog)];    /* Note : Space reserved for FSE Tables */
     ZSTD_v1_5_2_seqSymbol OFTable[SEQSYMBOL_TABLE_SIZE(OffFSELog)];   /* is also used as temporary workspace while building hufTable during DDict creation */
-    ZSTD_v1_5_2_seqSymbol MLTable[SEQSYMBOL_TABLE_SIZE(MLFSELog)];    /* and therefore must be at least HUF_DECOMPRESS_WORKSPACE_SIZE large */
-    HUF_DTable hufTable[HUF_DTABLE_SIZE(HufLog)];  /* can accommodate HUF_decompress4X */
+    ZSTD_v1_5_2_seqSymbol MLTable[SEQSYMBOL_TABLE_SIZE(MLFSELog)];    /* and therefore must be at least HUF_v1_5_2_DECOMPRESS_WORKSPACE_SIZE large */
+    HUF_v1_5_2_DTable hufTable[HUF_v1_5_2_DTABLE_SIZE(HufLog)];  /* can accommodate HUF_v1_5_2_decompress4X */
     U32 rep[ZSTD_v1_5_2_REP_NUM];
-    U32 workspace[ZSTD_v1_5_2_BUILD_FSE_TABLE_WKSP_SIZE_U32];
+    U32 workspace[ZSTD_v1_5_2_BUILD_FSE_v1_5_2_TABLE_WKSP_SIZE_U32];
 } ZSTD_v1_5_2_entropyDTables_t;
 
 typedef enum { ZSTDds_getFrameHeaderSize, ZSTDds_decodeFrameHeader,
@@ -127,9 +127,9 @@ struct ZSTD_v1_5_2_DCtx_s
     const ZSTD_v1_5_2_seqSymbol* LLTptr;
     const ZSTD_v1_5_2_seqSymbol* MLTptr;
     const ZSTD_v1_5_2_seqSymbol* OFTptr;
-    const HUF_DTable* HUFptr;
+    const HUF_v1_5_2_DTable* HUFptr;
     ZSTD_v1_5_2_entropyDTables_t entropy;
-    U32 workspace[HUF_DECOMPRESS_WORKSPACE_SIZE_U32];   /* space needed when building huffman tables */
+    U32 workspace[HUF_v1_5_2_DECOMPRESS_WORKSPACE_SIZE_U32];   /* space needed when building huffman tables */
     const void* previousDstEnd;   /* detect continuity */
     const void* prefixStart;      /* start of current segment */
     const void* virtualStart;     /* virtual start of previous segment if it was just before current one */

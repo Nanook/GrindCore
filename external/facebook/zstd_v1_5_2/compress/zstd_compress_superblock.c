@@ -38,7 +38,7 @@
  *  @return : compressed size of literals section of a sub-block
  *            Or 0 if it unable to compress.
  *            Or error code */
-static size_t ZSTD_v1_5_2_compressSubBlock_literal(const HUF_CElt* hufTable,
+static size_t ZSTD_v1_5_2_compressSubBlock_literal(const HUF_v1_5_2_CElt* hufTable,
                                     const ZSTD_v1_5_2_hufCTablesMetadata_t* hufMetadata,
                                     const BYTE* literals, size_t litSize,
                                     void* dst, size_t dstSize,
@@ -77,8 +77,8 @@ static size_t ZSTD_v1_5_2_compressSubBlock_literal(const HUF_CElt* hufTable,
     }
 
     /* TODO bmi2 */
-    {   const size_t cSize = singleStream ? HUF_compress1X_usingCTable(op, oend-op, literals, litSize, hufTable)
-                                          : HUF_compress4X_usingCTable(op, oend-op, literals, litSize, hufTable);
+    {   const size_t cSize = singleStream ? HUF_v1_5_2_compress1X_usingCTable(op, oend-op, literals, litSize, hufTable)
+                                          : HUF_v1_5_2_compress4X_usingCTable(op, oend-op, literals, litSize, hufTable);
         op += cSize;
         cLitSize += cSize;
         if (cSize == 0 || ERR_isError(cSize)) {
@@ -214,7 +214,7 @@ static size_t ZSTD_v1_5_2_compressSubBlock_sequences(const ZSTD_v1_5_2_fseCTable
         FORWARD_IF_ERROR(bitstreamSize, "ZSTD_v1_5_2_encodeSequences failed");
         op += bitstreamSize;
         /* zstd versions <= 1.3.4 mistakenly report corruption when
-         * FSE_readNCount() receives a buffer < 4 bytes.
+         * FSE_v1_5_2_readNCount() receives a buffer < 4 bytes.
          * Fixed by https://github.com/facebook/zstd/pull/1146.
          * This can happen when the last set_compressed table present is 2
          * bytes and the bitstream is only one byte.
@@ -273,7 +273,7 @@ static size_t ZSTD_v1_5_2_compressSubBlock(const ZSTD_v1_5_2_entropyCTables_t* e
     BYTE* op = ostart + ZSTD_v1_5_2_blockHeaderSize;
     DEBUGLOG(5, "ZSTD_v1_5_2_compressSubBlock (litSize=%zu, nbSeq=%zu, writeLitEntropy=%d, writeSeqEntropy=%d, lastBlock=%d)",
                 litSize, nbSeq, writeLitEntropy, writeSeqEntropy, lastBlock);
-    {   size_t cLitSize = ZSTD_v1_5_2_compressSubBlock_literal((const HUF_CElt*)entropy->huf.CTable,
+    {   size_t cLitSize = ZSTD_v1_5_2_compressSubBlock_literal((const HUF_v1_5_2_CElt*)entropy->huf.CTable,
                                                         &entropyMetadata->hufMetadata, literals, litSize,
                                                         op, oend-op, bmi2, writeLitEntropy, litEntropyWritten);
         FORWARD_IF_ERROR(cLitSize, "ZSTD_v1_5_2_compressSubBlock_literal failed");
@@ -314,7 +314,7 @@ static size_t ZSTD_v1_5_2_estimateSubBlockSize_literal(const BYTE* literals, siz
     else if (hufMetadata->hType == set_compressed || hufMetadata->hType == set_repeat) {
         size_t const largest = HIST_v1_5_2_count_wksp (countWksp, &maxSymbolValue, (const BYTE*)literals, litSize, workspace, wkspSize);
         if (ZSTD_v1_5_2_isError(largest)) return litSize;
-        {   size_t cLitSizeEstimate = HUF_v1_5_2_estimateCompressedSize((const HUF_CElt*)huf->CTable, countWksp, maxSymbolValue);
+        {   size_t cLitSizeEstimate = HUF_v1_5_2_estimateCompressedSize((const HUF_v1_5_2_CElt*)huf->CTable, countWksp, maxSymbolValue);
             if (writeEntropy) cLitSizeEstimate += hufMetadata->hufDesSize;
             return cLitSizeEstimate + literalSectionHeaderSize;
     }   }
@@ -324,7 +324,7 @@ static size_t ZSTD_v1_5_2_estimateSubBlockSize_literal(const BYTE* literals, siz
 
 static size_t ZSTD_v1_5_2_estimateSubBlockSize_symbolType(symbolEncodingType_e type,
                         const BYTE* codeTable, unsigned maxCode,
-                        size_t nbSeq, const FSE_CTable* fseCTable,
+                        size_t nbSeq, const FSE_v1_5_2_CTable* fseCTable,
                         const U8* additionalBits,
                         short const* defaultNorm, U32 defaultNormLog, U32 defaultMax,
                         void* workspace, size_t wkspSize)

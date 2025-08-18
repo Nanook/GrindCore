@@ -54,7 +54,7 @@ size_t ZSTD_v1_5_2_decompressBlock_internal(ZSTD_v1_5_2_DCtx* dctx,
  * this function must be called with valid parameters only
  * (dt is large enough, normalizedCounter distribution total is a power of 2, max is within range, etc.)
  * in which case it cannot fail.
- * The workspace must be 4-byte aligned and at least ZSTD_v1_5_2_BUILD_FSE_TABLE_WKSP_SIZE bytes, which is
+ * The workspace must be 4-byte aligned and at least ZSTD_v1_5_2_BUILD_FSE_v1_5_2_TABLE_WKSP_SIZE bytes, which is
  * defined in ZSTD_decompress_internal.h.
  * Internal use only.
  */

@@ -94,24 +94,24 @@ size_t ZSTD_v1_5_2_compressLiterals (ZSTD_v1_5_2_hufCTables_t const* prevHuf,
 
     /* small ? don't even attempt compression (speed opt) */
 #   define COMPRESS_LITERALS_SIZE_MIN 63
-    {   size_t const minLitSize = (prevHuf->repeatMode == HUF_repeat_valid) ? 6 : COMPRESS_LITERALS_SIZE_MIN;
+    {   size_t const minLitSize = (prevHuf->repeatMode == HUF_v1_5_2_repeat_valid) ? 6 : COMPRESS_LITERALS_SIZE_MIN;
         if (srcSize <= minLitSize) return ZSTD_v1_5_2_noCompressLiterals(dst, dstCapacity, src, srcSize);
     }
 
     RETURN_ERROR_IF(dstCapacity < lhSize+1, dstSize_tooSmall, "not enough space for compression");
-    {   HUF_repeat repeat = prevHuf->repeatMode;
+    {   HUF_v1_5_2_repeat repeat = prevHuf->repeatMode;
         int const preferRepeat = strategy < ZSTD_v1_5_2_lazy ? srcSize <= 1024 : 0;
-        if (repeat == HUF_repeat_valid && lhSize == 3) singleStream = 1;
+        if (repeat == HUF_v1_5_2_repeat_valid && lhSize == 3) singleStream = 1;
         cLitSize = singleStream ?
-            HUF_compress1X_repeat(
+            HUF_v1_5_2_compress1X_repeat(
                 ostart+lhSize, dstCapacity-lhSize, src, srcSize,
-                HUF_SYMBOLVALUE_MAX, HUF_TABLELOG_DEFAULT, entropyWorkspace, entropyWorkspaceSize,
-                (HUF_CElt*)nextHuf->CTable, &repeat, preferRepeat, bmi2, suspectUncompressible) :
-            HUF_compress4X_repeat(
+                HUF_v1_5_2_SYMBOLVALUE_MAX, HUF_v1_5_2_TABLELOG_DEFAULT, entropyWorkspace, entropyWorkspaceSize,
+                (HUF_v1_5_2_CElt*)nextHuf->CTable, &repeat, preferRepeat, bmi2, suspectUncompressible) :
+            HUF_v1_5_2_compress4X_repeat(
                 ostart+lhSize, dstCapacity-lhSize, src, srcSize,
-                HUF_SYMBOLVALUE_MAX, HUF_TABLELOG_DEFAULT, entropyWorkspace, entropyWorkspaceSize,
-                (HUF_CElt*)nextHuf->CTable, &repeat, preferRepeat, bmi2, suspectUncompressible);
-        if (repeat != HUF_repeat_none) {
+                HUF_v1_5_2_SYMBOLVALUE_MAX, HUF_v1_5_2_TABLELOG_DEFAULT, entropyWorkspace, entropyWorkspaceSize,
+                (HUF_v1_5_2_CElt*)nextHuf->CTable, &repeat, preferRepeat, bmi2, suspectUncompressible);
+        if (repeat != HUF_v1_5_2_repeat_none) {
             /* reused the existing table */
             DEBUGLOG(5, "Reusing previous huffman table");
             hType = set_repeat;
@@ -129,7 +129,7 @@ size_t ZSTD_v1_5_2_compressLiterals (ZSTD_v1_5_2_hufCTables_t const* prevHuf,
 
     if (hType == set_compressed) {
         /* using a newly constructed table */
-        nextHuf->repeatMode = HUF_repeat_check;
+        nextHuf->repeatMode = HUF_v1_5_2_repeat_check;
     }
 
     /* Build header */
