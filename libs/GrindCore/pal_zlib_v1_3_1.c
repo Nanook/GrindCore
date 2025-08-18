@@ -186,7 +186,7 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_v1_3_1_InflateEnd(PAL
     return result;
 }
 
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_v1_3_1_Crc32(uint32_t crc, uint8_t* buffer, int32_t len)
+FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_v1_3_1_Crc32(uint32_t crc, uint8_t* buffer, int32_t len)
 {
     assert(buffer != NULL);
 

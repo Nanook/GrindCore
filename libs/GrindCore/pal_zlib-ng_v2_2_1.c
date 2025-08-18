@@ -1,3 +1,6 @@
+#ifndef PAL_ZLIB_NG_V2_2_1_H
+#define PAL_ZLIB_NG_V2_2_1_H
+
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
@@ -188,7 +191,7 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_InflateEnd(P
     return result;
 }
 
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_Crc32(uint32_t crc, uint8_t* buffer, int32_t len)
+FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_Crc32(uint32_t crc, uint8_t* buffer, int32_t len)
 {
     assert(buffer != NULL);
 
@@ -248,3 +251,5 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN9_ZLibNg_v2_2_1_Uncompress3(
     *sourceLen = (uint32_t)uLongSourceLen;
     return result;
 }
+
+#endif // PAL_ZLIB_NG_V2_2_1_H

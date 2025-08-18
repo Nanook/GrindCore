@@ -1,3 +1,6 @@
+#ifndef PAL_ZLIB_V1_3_1_H
+#define PAL_ZLIB_V1_3_1_H
+
 #ifdef _WIN32
     #include <stdint.h>
     #include <windows.h>
@@ -137,3 +140,5 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_v1_3_1_Compress3(uint
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_v1_3_1_Uncompress(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t sourceLen);
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_v1_3_1_Uncompress2(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t* sourceLen);
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION DN8_ZLib_v1_3_1_Uncompress3(uint8_t* dest, uint32_t* destLen, const uint8_t* source, uint32_t* sourceLen, int32_t windowBits);
+
+#endif // PAL_ZLIB_V1_3_1_H

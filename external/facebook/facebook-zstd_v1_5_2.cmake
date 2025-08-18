@@ -47,6 +47,11 @@ set (ZSTD_SOURCES_V1_5_2
 # Create a static library for zstd 1.5.2
 add_library(zstd_v1_5_2 STATIC ${ZSTD_SOURCES_V1_5_2})
 
+# Suppress MSVC C4267 (size_t to int conversion) warnings for zstd sources
+if (MSVC)
+    set_source_files_properties(${ZSTD_SOURCES_V1_5_2} PROPERTIES COMPILE_FLAGS "/wd4267")
+endif()
+
 # Include directories for official zstd
 target_include_directories(zstd_v1_5_2 PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/zstd_v1_5_2/common
