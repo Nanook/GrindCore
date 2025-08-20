@@ -1,4 +1,4 @@
-#include "pal_lz4_Lz4_v1_10_0.h"
+#include "pal_lz4_lz4_v1_10_0.h"
 
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_10_0_Init(SZ_Lz4_v1_10_0_Stream* stream)
 {

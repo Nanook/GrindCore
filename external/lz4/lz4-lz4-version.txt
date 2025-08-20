@@ -1,2 +1,2 @@
-1.9.4
-https://github.com/mcmilk/7-Zip-zstd/tree/master/C
+1.10.0
+https://github.com/lz4/lz4
