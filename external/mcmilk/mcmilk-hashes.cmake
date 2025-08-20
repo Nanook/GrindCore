@@ -8,7 +8,8 @@ if (USE_ASM)
     endif ()
 endif ()
 
-set (C_SOURCES_BASE
+set (DEPS_SOURCES_BASE
+    xxhash.c
     Blake2s.c
     CpuArch.c
     Sha1.c
@@ -22,7 +23,7 @@ if (USE_X86_ASM)
         Sha256Opt.asm
     )
 else ()
-    list(APPEND C_SOURCES_BASE
+    list(APPEND DEPS_SOURCES_BASE
         Sha1Opt.c
         Sha256Opt.c
      )
@@ -37,21 +38,19 @@ set (HASHES_SOURCES_BASE
     sha512.c
 )
 
-set (ZSTD_SOURCES_V1_5_6_BASE
-    xxhash.c
-)
-
-list(TRANSFORM C_SOURCES_BASE PREPEND      "${CMAKE_CURRENT_LIST_DIR}/C/")
 list(TRANSFORM ASM_SOURCES_BASE PREPEND    "${CMAKE_CURRENT_LIST_DIR}/Asm/x86/")
 list(TRANSFORM HASHES_SOURCES_BASE PREPEND "${CMAKE_CURRENT_LIST_DIR}/C/hashes/")
-list(TRANSFORM ZSTD_SOURCES_V1_5_6_BASE PREPEND   "${CMAKE_CURRENT_LIST_DIR}/C/zstd/")
+list(TRANSFORM DEPS_SOURCES_BASE PREPEND   "${CMAKE_CURRENT_LIST_DIR}/C/7z-deps/")
 
 set(HASHES_SOURCES
-    ${C_SOURCES_BASE}
+    ${DEPS_SOURCES_BASE}
     ${ASM_SOURCES_BASE}
     ${HASHES_SOURCES_BASE}
-    ${ZSTD_SOURCES_V1_5_6_BASE}
 )
 
 add_library(hashes STATIC ${HASHES_SOURCES})
-target_include_directories(hashes PUBLIC ${CMAKE_CURRENT_LIST_DIR}/C/hashes)
+target_include_directories(hashes PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR}/C/7z-deps
+    ${CMAKE_CURRENT_LIST_DIR}/C/hashes
+)
+

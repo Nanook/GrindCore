@@ -33,7 +33,11 @@
         "pal_mcmilk_zstd_v1_5_6.h": "c",
         "zstd_compress_sequences.h": "c",
         "zstd_compress_literals.h": "c",
-        "windows.h": "c"
+        "windows.h": "c",
+        "iosfwd": "c",
+        "blake2.h": "c",
+        "mspack.h": "c",
+        "assert.h": "c"
     },
     "cmake.ignoreCMakeListsMissing": true
 }

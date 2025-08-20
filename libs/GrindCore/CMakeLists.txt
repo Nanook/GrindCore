@@ -24,8 +24,8 @@ include(${CLR_SRC_NATIVE_DIR}/external/dotnet9_0/zlib-ng_v2_2_1.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib_v1_3_1.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-hashes.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-fast-lzma2.cmake)
-include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-lzma.cmake)
-include(${CLR_SRC_NATIVE_DIR}/external/mcmilk/mcmilk-lz4.cmake)
+include(${CLR_SRC_NATIVE_DIR}/external/lz4/lz4-lz4.cmake)
+include(${CLR_SRC_NATIVE_DIR}/external/sevenzip/sevenzip-lzma_v25_01.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/facebook/facebook-zstd_v1_5_2.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/facebook/facebook-zstd_v1_5_7.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/dotnet9_0/brotli_v1_1_0.cmake)
@@ -36,8 +36,8 @@ set(GRINDCORE_THIRD_PARTY_LIBS
     zlib_v1_3_1
     hashes
     fastlzma2_v1_0_1
-    lzma_v24_07
-    lz4_v1_9_4
+    lzma_v25_01
+    lz4_v1_10_0
     zstd_v1_5_2
     zstd_v1_5_7
     brotli_v1_1_0
@@ -48,8 +48,8 @@ set(GRINDCORE_SOURCES
     pal_zlib-ng_v2_2_1.c
     pal_zlib_v1_3_1.c
     pal_mcmilk_hashes.c
-    pal_mcmilk_lzma_v24_07.c
-    pal_mcmilk_lz4_v1_9_4.c
+    pal_lz4_lz4_v1_10_0.c
+    pal_sevenzip_lzma_v25_01.c
     pal_facebook_zstd_v1_5_2.c
     pal_facebook_zstd_v1_5_7.c
     pal_brotli_v1_1_0.c

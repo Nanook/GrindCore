@@ -17,10 +17,10 @@
 #include <external/mcmilk/C/hashes/blake3.h>
 #include <external/mcmilk/C/hashes/sha3.h>
 #include <external/mcmilk/C/hashes/sha512.h>
-#include <external/mcmilk/C/Sha1.h>
-#include <external/mcmilk/C/Sha256.h>
-#include <external/mcmilk/C/Blake2.h>
-#include <external/mcmilk/C/zstd/xxhash.h>
+#include <external/mcmilk/C/7z-deps/Sha1.h>
+#include <external/mcmilk/C/7z-deps/Sha256.h>
+#include <external/mcmilk/C/7z-deps/Blake2.h>
+#include <external/mcmilk/C/7z-deps/xxhash.h>
 
 // XXH32
 FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_XXH32_Reset(XXH32_state_t *ctx);

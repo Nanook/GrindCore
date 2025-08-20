@@ -40,7 +40,7 @@
 
 #include <string.h>
 
-#include "../7zTypes.h"
+#include "../7z-deps/7zTypes.h"
 
 #ifndef uint32_t
 typedef UInt32 uint32_t;
