@@ -808,8 +808,6 @@ SRes Lzma2Enc_Encode2(CLzma2EncHandle p,
       progress);
 }
 
-#undef PRF
-
 ////////////////////////////////////////////////////////////////////////////////
 // Nanook - added code to allow write driven solid encoding
 typedef struct
