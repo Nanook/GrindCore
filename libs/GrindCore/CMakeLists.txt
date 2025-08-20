@@ -118,6 +118,7 @@ if (UNIX AND NOT APPLE AND NOT ANDROID)
             ${CMAKE_NM}
         VERBATIM
     )
+    install_with_stripped_symbols (GrindCore PROGRAMS .)
 endif()
 
 # Static library (for static linking)
