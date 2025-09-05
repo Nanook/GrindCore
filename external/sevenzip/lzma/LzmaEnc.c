@@ -35,7 +35,11 @@ void LzmaEnc_SaveState(CLzmaEncHandle p);
 void LzmaEnc_RestoreState(CLzmaEncHandle p);
 
 #ifdef SHOW_STAT
+#ifdef __linux__
+static __thread unsigned g_STAT_OFFSET = 0;
+#else
 static unsigned g_STAT_OFFSET = 0;
+#endif
 #endif
 
 /* for good normalization speed we still reserve 256 MB before 4 GB range */

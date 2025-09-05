@@ -890,9 +890,26 @@ SRes Lzma2Enc_EncodeMultiCall(CLzma2EncHandle p, Byte *outBuf, size_t *outBufSiz
   SRes res = Lzma2EncInt_EncodeSubblock(&p->coders[0], outBuf, outBufSize, NULL);
 
   if (final)
-    LzmaEnc_Finish((CLzmaEncHandle)(void *)p);
+      LzmaEnc_Finish(p->coders[0].enc);
 
   return res;
+}
+
+// New function for safe finalization
+SRes Lzma2Enc_EncodeMultiCallFinalize(CLzma2EncHandle p, Byte *outBuf, size_t *outBufSize)
+{
+  if (!p || !outBuf || !outBufSize || *outBufSize == 0)
+    return SZ_ERROR_PARAM;
+    
+  // Properly finish the LZMA encoder
+  if (p->coders[0].enc)
+    LzmaEnc_Finish(p->coders[0].enc);
+  
+  // Write LZMA2 termination block
+  outBuf[0] = 0x00; // LZMA2_CONTROL_EOF
+  *outBufSize = 1;
+  
+  return SZ_OK;
 }
 
 #undef PRF
