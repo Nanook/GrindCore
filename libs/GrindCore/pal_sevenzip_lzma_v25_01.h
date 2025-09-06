@@ -159,9 +159,7 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma_v25_01_Enc_LzmaCodeMul
 
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v25_01_Enc_EncodeMultiCallPrepare(CLzma2EncHandle p);
 
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v25_01_Enc_EncodeMultiCall(CLzma2EncHandle p, uint8_t *outBuf, size_t *outBufSize, CBufferInStream *srcStream, uint32_t init, uint32_t final);
-
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v25_01_Enc_EncodeMultiCallFinalize(CLzma2EncHandle p, uint8_t *outBuf, size_t *outBufSize);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v25_01_Enc_EncodeMultiCall(CLzma2EncHandle p, uint8_t *outBuf, size_t *outBufSize, CBufferInStream *srcStream, uint32_t init);
 
 
 EXTERN_C_END

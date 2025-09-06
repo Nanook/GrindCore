@@ -882,34 +882,21 @@ SRes Lzma2Enc_EncodeMultiCallPrepare(CLzma2EncHandle p)
   return res;
 }
 
-SRes Lzma2Enc_EncodeMultiCall(CLzma2EncHandle p, Byte *outBuf, size_t *outBufSize, ISeqInStreamPtr inStream, BoolInt init, BoolInt final)
+SRes Lzma2Enc_EncodeMultiCall(CLzma2EncHandle p, Byte *outBuf, size_t *outBufSize, ISeqInStreamPtr inStream, BoolInt init)
 {
   // set the instream - nothing else - uses multicall
   p->inStream.realStream = inStream;
 
+  // Re-prepare the stream if this is a new init call
+  if (init)
+  {
+    RINOK(LzmaEnc_SetStreamLzma2(p->coders[0].enc, &p->inStream.vt))
+  }
+
+  // Encode the subblock - final parameter indicates end of block, not end of stream
   SRes res = Lzma2EncInt_EncodeSubblock(&p->coders[0], outBuf, outBufSize, NULL);
-
-  if (final)
-      LzmaEnc_Finish(p->coders[0].enc);
-
+  
   return res;
-}
-
-// New function for safe finalization
-SRes Lzma2Enc_EncodeMultiCallFinalize(CLzma2EncHandle p, Byte *outBuf, size_t *outBufSize)
-{
-  if (!p || !outBuf || !outBufSize || *outBufSize == 0)
-    return SZ_ERROR_PARAM;
-    
-  // Properly finish the LZMA encoder
-  if (p->coders[0].enc)
-    LzmaEnc_Finish(p->coders[0].enc);
-  
-  // Write LZMA2 termination block
-  outBuf[0] = 0x00; // LZMA2_CONTROL_EOF
-  *outBufSize = 1;
-  
-  return SZ_OK;
 }
 
 #undef PRF
