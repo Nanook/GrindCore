@@ -320,7 +320,7 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma_v25_01_Enc_LzmaCodeMul
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma_v25_01_Enc_LzmaCodeMultiCall(CLzmaEncHandle p, uint8_t *dest, size_t *destLen, CBufferInStream *srcStream, int32_t limit, uint32_t* availableBytes, uint32_t final)
 {
     srcStream->vt.Read = BufferInStream_Read;
-    return LzmaEnc_LzmaCodeMultiCall(p, dest, destLen, &srcStream->vt, limit, srcStream->pos, availableBytes, final);
+    return LzmaEnc_LzmaCodeMultiCall(p, dest, destLen, &srcStream->vt, limit, srcStream->processed, availableBytes, final);
 }
 
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lzma2_v25_01_Enc_EncodeMultiCallPrepare(CLzma2EncHandle p)
