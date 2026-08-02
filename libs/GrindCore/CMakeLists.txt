@@ -51,7 +51,9 @@ set(GRINDCORE_SOURCES
     pal_lz4_lz4_v1_10_0.c
     pal_sevenzip_lzma_v25_01.c
     pal_facebook_zstd_v1_5_2.c
+    pal_facebook_zstd_v1_5_2_seekable.c
     pal_facebook_zstd_v1_5_7.c
+    pal_facebook_zstd_v1_5_7_seekable.c
     pal_brotli_v1_1_0.c
     entrypoints.c
     # Add any other GrindCore sources as needed

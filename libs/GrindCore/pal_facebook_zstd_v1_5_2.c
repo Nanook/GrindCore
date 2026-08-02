@@ -1,3 +1,5 @@
+#define ZSTD_STATIC_LINKING_ONLY
+#define ZSTD_v1_5_2_STATIC_LINKING_ONLY
 #include "pal_facebook_zstd_v1_5_2.h"
 #include <stdlib.h>
 #include <stdint.h>
@@ -159,4 +161,45 @@ FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_CStreamInSize(vo
 
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_CStreamOutSize(void) {
     return ZSTD_v1_5_2_CStreamOutSize();
+}
+
+//
+// ===== Error Handling =====
+//
+FUNCTIONEXPORT unsigned FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_IsError(size_t result) {
+    return ZSTD_v1_5_2_isError(result);
+}
+
+FUNCTIONEXPORT const char* FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_GetErrorName(size_t result) {
+    return ZSTD_v1_5_2_getErrorName(result);
+}
+
+//
+// ===== Skippable Frame Functions =====
+//
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_WriteSkippableFrame(
+    void* dst,
+    size_t dstCapacity,
+    const void* src,
+    size_t srcSize,
+    uint32_t magicVariant)
+{
+    return ZSTD_v1_5_2_writeSkippableFrame(dst, dstCapacity, src, srcSize, magicVariant);
+}
+
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_ReadSkippableFrame(
+    void* dst,
+    size_t dstCapacity,
+    uint32_t* magicVariant,
+    const void* src,
+    size_t srcSize)
+{
+    return ZSTD_v1_5_2_readSkippableFrame(dst, dstCapacity, magicVariant, src, srcSize);
+}
+
+FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_IsSkippableFrame(
+    const void* buffer,
+    size_t size)
+{
+    return ZSTD_v1_5_2_isSkippableFrame(buffer, size);
 }

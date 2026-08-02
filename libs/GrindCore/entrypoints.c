@@ -9,7 +9,9 @@
 #include "pal_sevenzip_lzma_v25_01.h"
 #include "pal_lz4_lz4_v1_10_0.h"
 #include "pal_facebook_zstd_v1_5_2.h"
+#include "pal_facebook_zstd_v1_5_2_seekable.h"
 #include "pal_facebook_zstd_v1_5_7.h"
+#include "pal_facebook_zstd_v1_5_7_seekable.h"
 
 static const Entry s_compressionNative[] =
 {
@@ -256,6 +258,29 @@ static const Entry s_compressionNative[] =
     DllImportEntry(SZ_ZStd_v1_5_2_SetBlockSize)
     DllImportEntry(SZ_ZStd_v1_5_2_CStreamInSize)
     DllImportEntry(SZ_ZStd_v1_5_2_CStreamOutSize)
+    DllImportEntry(SZ_ZStd_v1_5_2_IsError)
+    DllImportEntry(SZ_ZStd_v1_5_2_GetErrorName)
+    DllImportEntry(SZ_ZStd_v1_5_2_WriteSkippableFrame)
+    DllImportEntry(SZ_ZStd_v1_5_2_ReadSkippableFrame)
+    DllImportEntry(SZ_ZStd_v1_5_2_IsSkippableFrame)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_CreateCStream)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_FreeCStream)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_InitCStream)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_CompressStream)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_EndFrame)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_EndStream)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_Create)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_Free)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_InitBuff)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_InitAdvanced)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_Decompress)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_GetNumFrames)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_GetFrameCompressedOffset)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_GetFrameDecompressedOffset)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_GetFrameCompressedSize)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_GetFrameDecompressedSize)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_GetDecompressedSize)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_OffsetToFrameIndex)
     DllImportEntry(SZ_ZStd_v1_5_7_CreateCompressionContext)
     DllImportEntry(SZ_ZStd_v1_5_7_FreeCompressionContext)
     DllImportEntry(SZ_ZStd_v1_5_7_CreateDecompressionContext)
@@ -274,6 +299,28 @@ static const Entry s_compressionNative[] =
     DllImportEntry(SZ_ZStd_v1_5_7_SetBlockSize)
     DllImportEntry(SZ_ZStd_v1_5_7_CStreamInSize)
     DllImportEntry(SZ_ZStd_v1_5_7_CStreamOutSize)
+    DllImportEntry(SZ_ZStd_v1_5_7_IsError)
+    DllImportEntry(SZ_ZStd_v1_5_7_GetErrorName)
+    DllImportEntry(SZ_ZStd_v1_5_7_WriteSkippableFrame)
+    DllImportEntry(SZ_ZStd_v1_5_7_ReadSkippableFrame)
+    DllImportEntry(SZ_ZStd_v1_5_7_IsSkippableFrame)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_CreateCStream)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_FreeCStream)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_InitCStream)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_CompressStream)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_EndFrame)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_EndStream)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_Create)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_Free)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_InitBuff)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_InitAdvanced)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_Decompress)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_GetNumFrames)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_GetFrameCompressedOffset)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_GetFrameDecompressedOffset)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_GetFrameCompressedSize)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_GetFrameDecompressedSize)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_OffsetToFrameIndex)
 };
 
 EXTERN_C const void* CompressionResolveDllImport(const char* name);
