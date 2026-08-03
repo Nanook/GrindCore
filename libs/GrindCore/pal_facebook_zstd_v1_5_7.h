@@ -15,6 +15,7 @@
 
 #undef ZSTD_NAMESPACE
 #define ZSTD_NAMESPACE ZSTD_v1_5_7
+#define ZSTD_STATIC_LINKING_ONLY
 #include "external/facebook/zstd_v1_5_7/zstd.h"
 #include <stddef.h>
 
@@ -80,6 +81,24 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetBlockSize(SZ
 /* Recommended Buffer Sizes */
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CStreamInSize(void);
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CStreamOutSize(void);
+
+/* Error Handling */
+FUNCTIONEXPORT unsigned FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_IsError(size_t result);
+FUNCTIONEXPORT const char* FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_GetErrorName(size_t result);
+
+/* Skippable Frame Support */
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_WriteSkippableFrame(
+    void* dst, size_t dstCapacity, 
+    const void* src, size_t srcSize, 
+    unsigned magicVariant);
+
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_ReadSkippableFrame(
+    void* dst, size_t dstCapacity, 
+    unsigned* magicVariant, 
+    const void* src, size_t srcSize);
+
+FUNCTIONEXPORT unsigned FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_IsSkippableFrame(
+    const void* buffer, size_t size);
 
 #ifdef __cplusplus
 }

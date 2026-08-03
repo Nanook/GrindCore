@@ -32,6 +32,8 @@ set (ZSTD_V1_5_7_C_SOURCES_BASE
     legacy/zstd_v06.c
     legacy/zstd_v07.c
     compress/zstdmt_compress.c
+    seekable/zstdseek_compress.c
+    seekable/zstdseek_decompress.c
 )
 
 # Conditionally add the x86-64 assembly source for BMI2
@@ -55,10 +57,12 @@ endif()
 
 # Include directories for official zstd
 target_include_directories(zstd_v1_5_7 PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR}/zstd_v1_5_7
     ${CMAKE_CURRENT_LIST_DIR}/zstd_v1_5_7/common
     ${CMAKE_CURRENT_LIST_DIR}/zstd_v1_5_7/compress
     ${CMAKE_CURRENT_LIST_DIR}/zstd_v1_5_7/decompress
     ${CMAKE_CURRENT_LIST_DIR}/zstd_v1_5_7/legacy
+    ${CMAKE_CURRENT_LIST_DIR}/zstd_v1_5_7/seekable
 )
 
 # Suppress implicit-fallthrough warnings for zstd 1.5.2 sources if building with GCC or Clang
