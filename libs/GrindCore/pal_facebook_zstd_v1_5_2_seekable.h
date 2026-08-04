@@ -6,13 +6,11 @@
     #include <windows.h>
     #define FUNCTIONEXPORT __declspec(dllexport)
     #define FUNCTIONCALLINGCONVENCTION __cdecl
-    #define SEEKABLE_CALLBACK __cdecl
 #else
     #include "pal_types.h"
     #include "pal_compiler.h"
     #define FUNCTIONEXPORT PALEXPORT
     #define FUNCTIONCALLINGCONVENCTION
-    #define SEEKABLE_CALLBACK
 #endif
 
 #undef ZSTD_NAMESPACE
@@ -88,8 +86,8 @@ FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_InitBuf
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_InitAdvanced(
     SZ_ZStd_v1_5_2_Seekable* ctx,
     void* opaque,
-    int(SEEKABLE_CALLBACK* readFn)(void*, void*, size_t),
-    int(SEEKABLE_CALLBACK* seekFn)(void*, long long, int));
+    ZSTD_seekable_read* readFn,
+    ZSTD_seekable_seek* seekFn);
 
 /* Decompression */
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_Decompress(

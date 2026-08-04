@@ -59,6 +59,16 @@ set(GRINDCORE_SOURCES
     # Add any other GrindCore sources as needed
 )
 
+# Suppress MSVC narrowing warnings for seekable PAL wrappers on 32-bit targets
+# These files pass through U64 values from zstd's seekable API which truncate to size_t on x86
+if (MSVC)
+    set_source_files_properties(
+        pal_facebook_zstd_v1_5_2_seekable.c
+        pal_facebook_zstd_v1_5_7_seekable.c
+        PROPERTIES COMPILE_FLAGS "/wd4242 /wd4244"
+    )
+endif()
+
 # ---- Export List Generation ----
 set(ENTRYPOINTS_C ${CMAKE_CURRENT_SOURCE_DIR}/entrypoints.c)
 

@@ -132,8 +132,8 @@ FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_Seekable_InitBuf
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_Seekable_InitAdvanced(
     SZ_ZStd_v1_5_7_Seekable* ctx,
     void* opaque,
-    int(SEEKABLE_CALLBACK* readFn)(void*, void*, size_t),
-    int(SEEKABLE_CALLBACK* seekFn)(void*, long long, int))
+    ZSTD_seekable_read* readFn,
+    ZSTD_seekable_seek* seekFn)
 {
     if (!ctx || !ctx->zs || !readFn || !seekFn) return (size_t)-1;
 
