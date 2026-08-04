@@ -49,9 +49,11 @@ set (ZSTD_SOURCES_V1_5_2
 # Create a static library for zstd 1.5.2
 add_library(zstd_v1_5_2 STATIC ${ZSTD_SOURCES_V1_5_2})
 
-# Suppress MSVC C4267 (size_t to int conversion) warnings for zstd sources
+# Suppress MSVC conversion warnings for zstd sources
+# C4267: size_t to int conversion
+# C4242/C4244: U64 to size_t narrowing (seekable format on 32-bit targets)
 if (MSVC)
-    set_source_files_properties(${ZSTD_SOURCES_V1_5_2} PROPERTIES COMPILE_FLAGS "/wd4267")
+    set_source_files_properties(${ZSTD_SOURCES_V1_5_2} PROPERTIES COMPILE_FLAGS "/wd4267 /wd4242 /wd4244")
 endif()
 
 # Include directories for official zstd
