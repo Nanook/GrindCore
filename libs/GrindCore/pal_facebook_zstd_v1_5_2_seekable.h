@@ -1,18 +1,18 @@
-#ifndef PAL_FACEBOOK_ZSTD_v1_5_2_SEEKABLE_H
-#define PAL_FACEBOOK_ZSTD_v1_5_2_SEEKABLE_H
+#ifndef PAL_FACEBOOK_ZSTD_V1_5_2_SEEKABLE_H
+#define PAL_FACEBOOK_ZSTD_V1_5_2_SEEKABLE_H
 
 #ifdef _WIN32
-	#include <stdint.h>
-	#include <windows.h>
-	#define FUNCTIONEXPORT __declspec(dllexport)
-	#define FUNCTIONCALLINGCONVENCTION __cdecl
-	#define SEEKABLE_CALLBACK __cdecl
+    #include <stdint.h>
+    #include <windows.h>
+    #define FUNCTIONEXPORT __declspec(dllexport)
+    #define FUNCTIONCALLINGCONVENCTION __cdecl
+    #define SEEKABLE_CALLBACK __cdecl
 #else
-	#include "pal_types.h"
-	#include "pal_compiler.h"
-	#define FUNCTIONEXPORT PALEXPORT
-	#define FUNCTIONCALLINGCONVENCTION
-	#define SEEKABLE_CALLBACK
+    #include "pal_types.h"
+    #include "pal_compiler.h"
+    #define FUNCTIONEXPORT PALEXPORT
+    #define FUNCTIONCALLINGCONVENCTION
+    #define SEEKABLE_CALLBACK
 #endif
 
 #undef ZSTD_NAMESPACE
@@ -23,12 +23,12 @@
 
 /* Seekable Compression Context Management */
 typedef struct {
-	ZSTD_seekable_CStream* zcs;
+    ZSTD_seekable_CStream* zcs;
 } SZ_ZStd_v1_5_2_SeekableCStream;
 
 /* Seekable Decompression Context Management */
 typedef struct {
-	ZSTD_seekable* zs;
+    ZSTD_seekable* zs;
 } SZ_ZStd_v1_5_2_Seekable;
 
 /* Function Prototypes */
@@ -44,33 +44,33 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_FreeCS
 
 /* Initialization */
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_InitCStream(
-	SZ_ZStd_v1_5_2_SeekableCStream* ctx,
-	int32_t compressionLevel,
-	int32_t checksumFlag,
-	uint32_t maxFrameSize);
+    SZ_ZStd_v1_5_2_SeekableCStream* ctx,
+    int32_t compressionLevel,
+    int32_t checksumFlag,
+    uint32_t maxFrameSize);
 
 /* Streaming Compression */
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_CompressStream(
-	SZ_ZStd_v1_5_2_SeekableCStream* ctx,
-	void* dst,
-	size_t dstCapacity,
-	const void* src,
-	size_t srcCapacity,
-	int64_t* inSize,
-	int64_t* outSize);
+    SZ_ZStd_v1_5_2_SeekableCStream* ctx,
+    void* dst,
+    size_t dstCapacity,
+    const void* src,
+    size_t srcCapacity,
+    int64_t* inSize,
+    int64_t* outSize);
 
 /* Frame Control */
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_EndFrame(
-	SZ_ZStd_v1_5_2_SeekableCStream* ctx,
-	void* dst,
-	size_t dstCapacity,
-	int64_t* outSize);
+    SZ_ZStd_v1_5_2_SeekableCStream* ctx,
+    void* dst,
+    size_t dstCapacity,
+    int64_t* outSize);
 
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_EndStream(
-	SZ_ZStd_v1_5_2_SeekableCStream* ctx,
-	void* dst,
-	size_t dstCapacity,
-	int64_t* outSize);
+    SZ_ZStd_v1_5_2_SeekableCStream* ctx,
+    void* dst,
+    size_t dstCapacity,
+    int64_t* outSize);
 
 /*===== Seekable Decompression Functions =====*/
 
@@ -80,54 +80,53 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_Free(S
 
 /* Initialization - In-Memory */
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_InitBuff(
-	SZ_ZStd_v1_5_2_Seekable* ctx,
-	const void* src,
-	size_t srcSize);
+    SZ_ZStd_v1_5_2_Seekable* ctx,
+    const void* src,
+    size_t srcSize);
 
 /* Initialization - Streaming (Custom I/O) */
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_InitAdvanced(
-	SZ_ZStd_v1_5_2_Seekable* ctx,
-	void* opaque,
-	int(SEEKABLE_CALLBACK* readFn)(void*, void*, size_t),
-	int(SEEKABLE_CALLBACK* seekFn)(void*, long long, int));
+    SZ_ZStd_v1_5_2_Seekable* ctx,
+    void* opaque,
+    int(SEEKABLE_CALLBACK* readFn)(void*, void*, size_t),
+    int(SEEKABLE_CALLBACK* seekFn)(void*, long long, int));
 
 /* Decompression */
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_Decompress(
-	SZ_ZStd_v1_5_2_Seekable* ctx,
-	void* dst,
-	size_t dstSize,
-	uint64_t offset);
+    SZ_ZStd_v1_5_2_Seekable* ctx,
+    void* dst,
+    size_t dstSize,
+    uint64_t offset);
 
 /* Seek Table Inspection */
 FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_GetNumFrames(
-	const SZ_ZStd_v1_5_2_Seekable* ctx);
+    const SZ_ZStd_v1_5_2_Seekable* ctx);
 
 FUNCTIONEXPORT uint64_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_GetFrameCompressedOffset(
-	const SZ_ZStd_v1_5_2_Seekable* ctx,
-	uint32_t frameIndex);
+    const SZ_ZStd_v1_5_2_Seekable* ctx,
+    uint32_t frameIndex);
 
 FUNCTIONEXPORT uint64_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_GetFrameDecompressedOffset(
-	const SZ_ZStd_v1_5_2_Seekable* ctx,
-	uint32_t frameIndex);
+    const SZ_ZStd_v1_5_2_Seekable* ctx,
+    uint32_t frameIndex);
 
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_GetFrameCompressedSize(
-	const SZ_ZStd_v1_5_2_Seekable* ctx,
-	uint32_t frameIndex);
+    const SZ_ZStd_v1_5_2_Seekable* ctx,
+    uint32_t frameIndex);
 
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_GetFrameDecompressedSize(
-	const SZ_ZStd_v1_5_2_Seekable* ctx,
-	uint32_t frameIndex);
+    const SZ_ZStd_v1_5_2_Seekable* ctx,
+    uint32_t frameIndex);
 
 FUNCTIONEXPORT uint64_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_GetDecompressedSize(
-	const SZ_ZStd_v1_5_2_Seekable* ctx);
+    const SZ_ZStd_v1_5_2_Seekable* ctx);
 
 FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_OffsetToFrameIndex(
-	const SZ_ZStd_v1_5_2_Seekable* ctx,
-	uint64_t offset);
+    const SZ_ZStd_v1_5_2_Seekable* ctx,
+    uint64_t offset);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* PAL_FACEBOOK_ZSTD_v1_5_2_SEEKABLE_H */
-
+#endif /* PAL_FACEBOOK_ZSTD_V1_5_2_SEEKABLE_H */

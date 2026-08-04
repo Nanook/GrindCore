@@ -86,19 +86,24 @@ FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CStreamOutSize(v
 FUNCTIONEXPORT unsigned FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_IsError(size_t result);
 FUNCTIONEXPORT const char* FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_GetErrorName(size_t result);
 
-/* Skippable Frame Support */
+/* Skippable Frame Functions */
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_WriteSkippableFrame(
-    void* dst, size_t dstCapacity, 
-    const void* src, size_t srcSize, 
-    unsigned magicVariant);
+    void* dst,
+    size_t dstCapacity,
+    const void* src,
+    size_t srcSize,
+    uint32_t magicVariant);
 
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_ReadSkippableFrame(
-    void* dst, size_t dstCapacity, 
-    unsigned* magicVariant, 
-    const void* src, size_t srcSize);
+    void* dst,
+    size_t dstCapacity,
+    uint32_t* magicVariant,
+    const void* src,
+    size_t srcSize);
 
-FUNCTIONEXPORT unsigned FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_IsSkippableFrame(
-    const void* buffer, size_t size);
+FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_IsSkippableFrame(
+    const void* buffer,
+    size_t size);
 
 #ifdef __cplusplus
 }

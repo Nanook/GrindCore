@@ -203,3 +203,4 @@ FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_IsSkippableFra
 {
     return ZSTD_v1_5_2_isSkippableFrame(buffer, size);
 }
+
