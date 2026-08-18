@@ -159,6 +159,19 @@ FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_Seekable_Decompr
 }
 
 //
+// ===== Seekable Decompression by Frame =====
+//
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_Seekable_DecompressFrame(
+    SZ_ZStd_v1_5_7_Seekable* ctx,
+    void* dst,
+    size_t dstSize,
+    uint32_t frameIndex)
+{
+    if (!ctx || !ctx->zs || !dst) return (size_t)-1;
+    return ZSTD_seekable_decompressFrame(ctx->zs, dst, dstSize, frameIndex);
+}
+
+//
 // ===== Seekable Seek Table Inspection =====
 //
 FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_Seekable_GetNumFrames(

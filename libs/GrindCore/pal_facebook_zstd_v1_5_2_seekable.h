@@ -96,6 +96,12 @@ FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_Decompr
     size_t dstSize,
     uint64_t offset);
 
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_DecompressFrame(
+    SZ_ZStd_v1_5_2_Seekable* ctx,
+    void* dst,
+    size_t dstSize,
+    uint32_t frameIndex);
+
 /* Seek Table Inspection */
 FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_GetNumFrames(
     const SZ_ZStd_v1_5_2_Seekable* ctx);

@@ -274,6 +274,7 @@ static const Entry s_compressionNative[] =
     DllImportEntry(SZ_ZStd_v1_5_2_Seekable_InitBuff)
     DllImportEntry(SZ_ZStd_v1_5_2_Seekable_InitAdvanced)
     DllImportEntry(SZ_ZStd_v1_5_2_Seekable_Decompress)
+    DllImportEntry(SZ_ZStd_v1_5_2_Seekable_DecompressFrame)
     DllImportEntry(SZ_ZStd_v1_5_2_Seekable_GetNumFrames)
     DllImportEntry(SZ_ZStd_v1_5_2_Seekable_GetFrameCompressedOffset)
     DllImportEntry(SZ_ZStd_v1_5_2_Seekable_GetFrameDecompressedOffset)
@@ -315,11 +316,13 @@ static const Entry s_compressionNative[] =
     DllImportEntry(SZ_ZStd_v1_5_7_Seekable_InitBuff)
     DllImportEntry(SZ_ZStd_v1_5_7_Seekable_InitAdvanced)
     DllImportEntry(SZ_ZStd_v1_5_7_Seekable_Decompress)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_DecompressFrame)
     DllImportEntry(SZ_ZStd_v1_5_7_Seekable_GetNumFrames)
     DllImportEntry(SZ_ZStd_v1_5_7_Seekable_GetFrameCompressedOffset)
     DllImportEntry(SZ_ZStd_v1_5_7_Seekable_GetFrameDecompressedOffset)
     DllImportEntry(SZ_ZStd_v1_5_7_Seekable_GetFrameCompressedSize)
     DllImportEntry(SZ_ZStd_v1_5_7_Seekable_GetFrameDecompressedSize)
+    DllImportEntry(SZ_ZStd_v1_5_7_Seekable_GetDecompressedSize)
     DllImportEntry(SZ_ZStd_v1_5_7_Seekable_OffsetToFrameIndex)
 };
 
