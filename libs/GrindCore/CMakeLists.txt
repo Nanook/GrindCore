@@ -133,41 +133,68 @@ if (UNIX AND NOT APPLE AND NOT ANDROID)
     install_with_stripped_symbols (GrindCore PROGRAMS .)
 endif()
 
+# ---- Fat Static Libraries ----
+# CMake's target_link_libraries() on STATIC library targets only records metadata;
+# it does NOT merge the linked libraries' object files into the archive. To produce
+# self-contained static libraries suitable for linking, we use a post-build bundling
+# step that merges all constituent archives into one fat archive.
+include(${CMAKE_CURRENT_SOURCE_DIR}/../bundle_static_lib.cmake)
+
 # Static library (for static linking)
+# The thin intermediate lib goes to obj/static; the fat bundled output goes to static/
 add_library(GrindCoreStatic STATIC ${GRINDCORE_SOURCES})
 target_link_libraries(GrindCoreStatic PRIVATE ${GRINDCORE_THIRD_PARTY_LIBS})
 set_target_properties(GrindCoreStatic PROPERTIES
-    OUTPUT_NAME "GrindCore"
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/static"
+    OUTPUT_NAME "GrindCore_thin"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/obj/static"
 )
 target_include_directories(GrindCoreStatic PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_compile_definitions(GrindCoreStatic PRIVATE ${PALEXPORT_DEF})
 
+# Bundle into a fat static library containing all third-party object code
+bundle_static_library(GrindCoreStatic GrindCoreStatic_Bundled "${CMAKE_BINARY_DIR}/static" "GrindCore")
+
 # AOT static library (for NativeAOT scenarios)
+# Disable interprocedural optimization so the archive can be linked with any
+# toolchain version, not only the exact one used to build.
 add_library(GrindCore.Aot STATIC ${GRINDCORE_SOURCES})
 target_link_libraries(GrindCore.Aot PRIVATE ${GRINDCORE_THIRD_PARTY_LIBS})
 set_target_properties(GrindCore.Aot PROPERTIES
-    OUTPUT_NAME "GrindCore.Aot"
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/aot"
+    OUTPUT_NAME "GrindCore.Aot_thin"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/obj/aot"
+    INTERPROCEDURAL_OPTIMIZATION OFF
 )
 target_include_directories(GrindCore.Aot PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_compile_definitions(GrindCore.Aot PRIVATE ${PALEXPORT_DEF})
 
-# Optionally, add a GuardCF variant for AOT with Control Flow Guard
+# Bundle into a fat static library
+bundle_static_library(GrindCore.Aot GrindCoreAot_Bundled "${CMAKE_BINARY_DIR}/aot" "GrindCore.Aot")
+
+# AOT variant with Control Flow Guard (Windows-specific security hardening)
 add_library(GrindCore.Aot.GuardCF STATIC ${GRINDCORE_SOURCES})
 target_link_libraries(GrindCore.Aot.GuardCF PRIVATE ${GRINDCORE_THIRD_PARTY_LIBS})
 set_target_properties(GrindCore.Aot.GuardCF PROPERTIES
-    OUTPUT_NAME "GrindCore.Aot.GuardCF"
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/aot"
+    OUTPUT_NAME "GrindCore.Aot.GuardCF_thin"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/obj/aot"
+    INTERPROCEDURAL_OPTIMIZATION OFF
 )
 target_include_directories(GrindCore.Aot.GuardCF PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_compile_definitions(GrindCore.Aot.GuardCF PRIVATE ${PALEXPORT_DEF})
+if(MSVC)
+    target_compile_options(GrindCore.Aot.GuardCF PRIVATE /guard:cf)
+endif()
+
+# Bundle into a fat static library
+bundle_static_library(GrindCore.Aot.GuardCF GrindCoreAotGuardCF_Bundled "${CMAKE_BINARY_DIR}/aot" "GrindCore.Aot.GuardCF")
 
 # Install targets
-install(TARGETS GrindCoreStatic DESTINATION .)
+# Shared library installed directly via CMake target
 install(TARGETS GrindCore DESTINATION .)
-install(TARGETS GrindCore.Aot DESTINATION .)
-install(TARGETS GrindCore.Aot.GuardCF DESTINATION .)
+
+# Fat static libraries installed from bundled output
+install(FILES ${GrindCoreStatic_Bundled_OUTPUT} DESTINATION .)
+install(FILES ${GrindCoreAot_Bundled_OUTPUT} DESTINATION .)
+install(FILES ${GrindCoreAotGuardCF_Bundled_OUTPUT} DESTINATION .)
 
 # Generate export header for cross-platform symbol visibility
 GENERATE_EXPORT_HEADER(GrindCore
