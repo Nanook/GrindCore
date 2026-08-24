@@ -151,6 +151,17 @@ if (UNIX AND NOT APPLE AND NOT ANDROID)
     install_with_stripped_symbols (GrindCore PROGRAMS .)
 endif()
 
+# macOS: Generate dSYM debug symbols and install alongside the dylib
+if(APPLE)
+    add_custom_command(TARGET GrindCore POST_BUILD
+        COMMENT "Generating dSYM for libGrindCore.dylib"
+        COMMAND dsymutil $<TARGET_FILE:GrindCore> -o $<TARGET_FILE:GrindCore>.dSYM
+        VERBATIM
+    )
+    install(TARGETS GrindCore DESTINATION .)
+    install(DIRECTORY $<TARGET_FILE:GrindCore>.dSYM DESTINATION .)
+endif()
+
 # ---- Static Library (for NativeAOT static linking) ----
 # Produces a single fat static archive containing all PAL + third-party objects.
 # IPO disabled for cross-toolchain compatibility. GuardCF added on Windows.
