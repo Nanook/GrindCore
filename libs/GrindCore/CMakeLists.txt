@@ -243,6 +243,11 @@ add_custom_target(GrindCoreFat ALL DEPENDS ${FAT_STATIC_LIB})
 install(FILES ${FAT_STATIC_LIB} DESTINATION .)
 install(TARGETS GrindCore DESTINATION .)
 
+# Install PDB debug symbols on Windows (equivalent to .dbg on Linux)
+if(WIN32)
+    install(FILES $<TARGET_PDB_FILE:GrindCore> DESTINATION . OPTIONAL)
+endif()
+
 # ---- Symbol Localization & Verification (Unix/macOS) ----
 # After bundling the fat archive, localize all hidden-visibility symbols
 # so only PAL functions remain global. Then verify no leaks.
