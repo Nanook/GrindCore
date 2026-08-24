@@ -251,15 +251,16 @@ if(NOT WIN32)
     file(WRITE ${VERIFY_SYMBOLS_SCRIPT}
 "#!/bin/sh
 # Verify that only PAL symbols (SZ_*, DN8_*, DN9_*, FL2_*) are global in the static archive.
+# On macOS symbols have a leading underscore prefix, so we match without requiring a space before.
 ARCHIVE=\"$1\"
 NM_TOOL=\"$2\"
 if [ -z \"$NM_TOOL\" ]; then NM_TOOL=nm; fi
 
-UNEXPECTED=$($NM_TOOL --defined-only -g \"$ARCHIVE\" 2>/dev/null | grep ' T ' | grep -v -E ' (SZ_|DN8_|DN9_|FL2_)' | head -20)
+UNEXPECTED=$($NM_TOOL --defined-only -g \"$ARCHIVE\" 2>/dev/null | grep ' T ' | grep -v -E '(SZ_|DN8_|DN9_|FL2_)' | head -20)
 if [ -n \"$UNEXPECTED\" ]; then
     echo \"ERROR: Unexpected global symbols found in $ARCHIVE:\"
     echo \"$UNEXPECTED\"
-    COUNT=$($NM_TOOL --defined-only -g \"$ARCHIVE\" 2>/dev/null | grep ' T ' | grep -v -E ' (SZ_|DN8_|DN9_|FL2_)' | wc -l)
+    COUNT=$($NM_TOOL --defined-only -g \"$ARCHIVE\" 2>/dev/null | grep ' T ' | grep -v -E '(SZ_|DN8_|DN9_|FL2_)' | wc -l)
     echo \"Total unexpected global symbols: $COUNT\"
     exit 1
 fi
@@ -268,10 +269,18 @@ exit 0
 ")
 
     if(APPLE)
+        # macOS: Keep only PAL symbols global using nmedit
+        set(LOCALIZE_SCRIPT_MAC "${FAT_STATIC_DIR}/localize_symbols_mac.sh")
+        file(WRITE ${LOCALIZE_SCRIPT_MAC}
+"#!/bin/sh
+nm -g --defined-only \"${FAT_STATIC_LIB}\" | grep ' T ' | grep -E '_(SZ_|DN8_|DN9_|FL2_)' | awk '{print \$3}' > \"${FAT_STATIC_LIB}.exports\"
+if [ -s \"${FAT_STATIC_LIB}.exports\" ]; then
+    nmedit -s \"${FAT_STATIC_LIB}.exports\" \"${FAT_STATIC_LIB}\"
+fi
+")
         add_custom_command(TARGET GrindCoreFat POST_BUILD
             COMMENT "Localizing internal symbols in fat archive (macOS)"
-            COMMAND bash -c "nm -g --defined-only ${FAT_STATIC_LIB} | grep ' T ' | grep -E ' _(SZ_|DN8_|DN9_|FL2_)' | awk '{print $$3}' > ${FAT_STATIC_LIB}.exports && nmedit -s ${FAT_STATIC_LIB}.exports ${FAT_STATIC_LIB} || true"
-            VERBATIM
+            COMMAND sh ${LOCALIZE_SCRIPT_MAC}
         )
     else()
         # Linux: Keep only PAL symbols global, localize everything else
