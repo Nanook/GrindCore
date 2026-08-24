@@ -7,8 +7,8 @@ set (ZSTD_V1_5_7_C_SOURCES_BASE
     compress/hist.c
     compress/huf_compress.c
     decompress/huf_decompress.c
-    # common/pool.c            -- moved to zstd_shared
-    # common/threading.c       -- moved to zstd_shared
+    common/pool.c
+    common/threading.c
     # common/xxhash.c          -- moved to shared_xxhash
     common/zstd_common.c
     compress/zstd_compress.c
@@ -25,7 +25,7 @@ set (ZSTD_V1_5_7_C_SOURCES_BASE
     compress/zstd_ldm.c
     compress/zstd_opt.c
     # legacy/zstd_v01-v07.c    -- moved to zstd_shared
-    # compress/zstdmt_compress.c -- moved to zstd_shared
+    compress/zstdmt_compress.c
     seekable/zstdseek_compress.c
     seekable/zstdseek_decompress.c
 )
@@ -69,7 +69,7 @@ if (CMAKE_C_COMPILER_ID MATCHES "Clang|GNU")
     )
 endif()
 
-target_compile_definitions(zstd_v1_5_7 PRIVATE ZSTD_NAMESPACE=ZSTD_v1_5_7 ZSTD_DISABLE_ASM)
+target_compile_definitions(zstd_v1_5_7 PRIVATE ZSTD_NAMESPACE=ZSTD_v1_5_7 ZSTD_DISABLE_ASM ZSTD_MULTITHREAD)
 
 # Link shared libraries (debug, error_private, legacy decoders, xxhash)
 target_link_libraries(zstd_v1_5_7 PUBLIC zstd_shared shared_xxhash)

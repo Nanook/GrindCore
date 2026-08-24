@@ -26,12 +26,12 @@
 #include "threading.h"   /* pthread adaptation */
 
 /* A job is a function and an opaque argument */
-typedef struct POOL_job_s {
-    POOL_function function;
+typedef struct POOL_v1_5_2_job_s {
+    POOL_v1_5_2_function function;
     void *opaque;
-} POOL_job;
+} POOL_v1_5_2_job;
 
-struct POOL_ctx_s {
+struct POOL_v1_5_2_ctx_s {
     ZSTD_v1_5_2_customMem customMem;
     /* Keep track of the threads */
     ZSTD_v1_5_2_pthread_t* threads;
@@ -39,7 +39,7 @@ struct POOL_ctx_s {
     size_t threadLimit;
 
     /* The queue is a circular buffer */
-    POOL_job *queue;
+    POOL_v1_5_2_job *queue;
     size_t queueHead;
     size_t queueTail;
     size_t queueSize;
@@ -59,13 +59,13 @@ struct POOL_ctx_s {
     int shutdown;
 };
 
-/* POOL_thread() :
+/* POOL_v1_5_2_thread() :
  * Work thread for the thread pool.
  * Waits for jobs and executes them.
  * @returns : NULL on failure else non-null.
  */
-static void* POOL_thread(void* opaque) {
-    POOL_ctx* const ctx = (POOL_ctx*)opaque;
+static void* POOL_v1_5_2_thread(void* opaque) {
+    POOL_v1_5_2_ctx* const ctx = (POOL_v1_5_2_ctx*)opaque;
     if (!ctx) { return NULL; }
     for (;;) {
         /* Lock the mutex and wait for a non-empty queue or until shutdown */
@@ -83,7 +83,7 @@ static void* POOL_thread(void* opaque) {
             ZSTD_v1_5_2_pthread_cond_wait(&ctx->queuePopCond, &ctx->queueMutex);
         }
         /* Pop a job off the queue */
-        {   POOL_job const job = ctx->queue[ctx->queueHead];
+        {   POOL_v1_5_2_job const job = ctx->queue[ctx->queueHead];
             ctx->queueHead = (ctx->queueHead + 1) % ctx->queueSize;
             ctx->numThreadsBusy++;
             ctx->queueEmpty = (ctx->queueHead == ctx->queueTail);
@@ -106,29 +106,29 @@ static void* POOL_thread(void* opaque) {
 }
 
 /* ZSTD_v1_5_2_createThreadPool() : public access point */
-POOL_ctx* ZSTD_v1_5_2_createThreadPool(size_t numThreads) {
-    return POOL_create (numThreads, 0);
+POOL_v1_5_2_ctx* ZSTD_v1_5_2_createThreadPool(size_t numThreads) {
+    return POOL_v1_5_2_create (numThreads, 0);
 }
 
-POOL_ctx* POOL_create(size_t numThreads, size_t queueSize) {
-    return POOL_create_advanced(numThreads, queueSize, ZSTD_v1_5_2_defaultCMem);
+POOL_v1_5_2_ctx* POOL_v1_5_2_create(size_t numThreads, size_t queueSize) {
+    return POOL_v1_5_2_create_advanced(numThreads, queueSize, ZSTD_v1_5_2_defaultCMem);
 }
 
-POOL_ctx* POOL_create_advanced(size_t numThreads, size_t queueSize,
+POOL_v1_5_2_ctx* POOL_v1_5_2_create_advanced(size_t numThreads, size_t queueSize,
                                ZSTD_v1_5_2_customMem customMem)
 {
-    POOL_ctx* ctx;
+    POOL_v1_5_2_ctx* ctx;
     /* Check parameters */
     if (!numThreads) { return NULL; }
     /* Allocate the context and zero initialize */
-    ctx = (POOL_ctx*)ZSTD_v1_5_2_customCalloc(sizeof(POOL_ctx), customMem);
+    ctx = (POOL_v1_5_2_ctx*)ZSTD_v1_5_2_customCalloc(sizeof(POOL_v1_5_2_ctx), customMem);
     if (!ctx) { return NULL; }
     /* Initialize the job queue.
      * It needs one extra space since one space is wasted to differentiate
      * empty and full queues.
      */
     ctx->queueSize = queueSize + 1;
-    ctx->queue = (POOL_job*)ZSTD_v1_5_2_customMalloc(ctx->queueSize * sizeof(POOL_job), customMem);
+    ctx->queue = (POOL_v1_5_2_job*)ZSTD_v1_5_2_customMalloc(ctx->queueSize * sizeof(POOL_v1_5_2_job), customMem);
     ctx->queueHead = 0;
     ctx->queueTail = 0;
     ctx->numThreadsBusy = 0;
@@ -138,7 +138,7 @@ POOL_ctx* POOL_create_advanced(size_t numThreads, size_t queueSize,
         error |= ZSTD_v1_5_2_pthread_mutex_init(&ctx->queueMutex, NULL);
         error |= ZSTD_v1_5_2_pthread_cond_init(&ctx->queuePushCond, NULL);
         error |= ZSTD_v1_5_2_pthread_cond_init(&ctx->queuePopCond, NULL);
-        if (error) { POOL_free(ctx); return NULL; }
+        if (error) { POOL_v1_5_2_free(ctx); return NULL; }
     }
     ctx->shutdown = 0;
     /* Allocate space for the thread handles */
@@ -146,13 +146,13 @@ POOL_ctx* POOL_create_advanced(size_t numThreads, size_t queueSize,
     ctx->threadCapacity = 0;
     ctx->customMem = customMem;
     /* Check for errors */
-    if (!ctx->threads || !ctx->queue) { POOL_free(ctx); return NULL; }
+    if (!ctx->threads || !ctx->queue) { POOL_v1_5_2_free(ctx); return NULL; }
     /* Initialize the threads */
     {   size_t i;
         for (i = 0; i < numThreads; ++i) {
-            if (ZSTD_v1_5_2_pthread_create(&ctx->threads[i], NULL, &POOL_thread, ctx)) {
+            if (ZSTD_v1_5_2_pthread_create(&ctx->threads[i], NULL, &POOL_v1_5_2_thread, ctx)) {
                 ctx->threadCapacity = i;
-                POOL_free(ctx);
+                POOL_v1_5_2_free(ctx);
                 return NULL;
         }   }
         ctx->threadCapacity = numThreads;
@@ -161,10 +161,10 @@ POOL_ctx* POOL_create_advanced(size_t numThreads, size_t queueSize,
     return ctx;
 }
 
-/*! POOL_join() :
+/*! POOL_v1_5_2_join() :
     Shutdown the queue, wake any sleeping threads, and join all of the threads.
 */
-static void POOL_join(POOL_ctx* ctx) {
+static void POOL_v1_5_2_join(POOL_v1_5_2_ctx* ctx) {
     /* Shut down the queue */
     ZSTD_v1_5_2_pthread_mutex_lock(&ctx->queueMutex);
     ctx->shutdown = 1;
@@ -179,9 +179,9 @@ static void POOL_join(POOL_ctx* ctx) {
     }   }
 }
 
-void POOL_free(POOL_ctx *ctx) {
+void POOL_v1_5_2_free(POOL_v1_5_2_ctx *ctx) {
     if (!ctx) { return; }
-    POOL_join(ctx);
+    POOL_v1_5_2_join(ctx);
     ZSTD_v1_5_2_pthread_mutex_destroy(&ctx->queueMutex);
     ZSTD_v1_5_2_pthread_cond_destroy(&ctx->queuePushCond);
     ZSTD_v1_5_2_pthread_cond_destroy(&ctx->queuePopCond);
@@ -191,19 +191,19 @@ void POOL_free(POOL_ctx *ctx) {
 }
 
 void ZSTD_v1_5_2_freeThreadPool (ZSTD_v1_5_2_threadPool* pool) {
-  POOL_free (pool);
+  POOL_v1_5_2_free (pool);
 }
 
-size_t POOL_sizeof(const POOL_ctx* ctx) {
+size_t POOL_v1_5_2_sizeof(const POOL_v1_5_2_ctx* ctx) {
     if (ctx==NULL) return 0;  /* supports sizeof NULL */
     return sizeof(*ctx)
-        + ctx->queueSize * sizeof(POOL_job)
+        + ctx->queueSize * sizeof(POOL_v1_5_2_job)
         + ctx->threadCapacity * sizeof(ZSTD_v1_5_2_pthread_t);
 }
 
 
 /* @return : 0 on success, 1 on error */
-static int POOL_resize_internal(POOL_ctx* ctx, size_t numThreads)
+static int POOL_v1_5_2_resize_internal(POOL_v1_5_2_ctx* ctx, size_t numThreads)
 {
     if (numThreads <= ctx->threadCapacity) {
         if (!numThreads) return 1;
@@ -220,7 +220,7 @@ static int POOL_resize_internal(POOL_ctx* ctx, size_t numThreads)
         /* Initialize additional threads */
         {   size_t threadId;
             for (threadId = ctx->threadCapacity; threadId < numThreads; ++threadId) {
-                if (ZSTD_v1_5_2_pthread_create(&threadPool[threadId], NULL, &POOL_thread, ctx)) {
+                if (ZSTD_v1_5_2_pthread_create(&threadPool[threadId], NULL, &POOL_v1_5_2_thread, ctx)) {
                     ctx->threadCapacity = threadId;
                     return 1;
             }   }
@@ -232,12 +232,12 @@ static int POOL_resize_internal(POOL_ctx* ctx, size_t numThreads)
 }
 
 /* @return : 0 on success, 1 on error */
-int POOL_resize(POOL_ctx* ctx, size_t numThreads)
+int POOL_v1_5_2_resize(POOL_v1_5_2_ctx* ctx, size_t numThreads)
 {
     int result;
     if (ctx==NULL) return 1;
     ZSTD_v1_5_2_pthread_mutex_lock(&ctx->queueMutex);
-    result = POOL_resize_internal(ctx, numThreads);
+    result = POOL_v1_5_2_resize_internal(ctx, numThreads);
     ZSTD_v1_5_2_pthread_cond_broadcast(&ctx->queuePopCond);
     ZSTD_v1_5_2_pthread_mutex_unlock(&ctx->queueMutex);
     return result;
@@ -249,7 +249,7 @@ int POOL_resize(POOL_ctx* ctx, size_t numThreads)
  * When queueSize is 1 (pool was created with an intended queueSize of 0),
  * then a queue is empty if there is a thread free _and_ no job is waiting.
  */
-static int isQueueFull(POOL_ctx const* ctx) {
+static int isQueueFull_v1_5_2(POOL_v1_5_2_ctx const* ctx) {
     if (ctx->queueSize > 1) {
         return ctx->queueHead == ((ctx->queueTail + 1) % ctx->queueSize);
     } else {
@@ -260,9 +260,9 @@ static int isQueueFull(POOL_ctx const* ctx) {
 
 
 static void
-POOL_add_internal(POOL_ctx* ctx, POOL_function function, void *opaque)
+POOL_v1_5_2_add_internal(POOL_v1_5_2_ctx* ctx, POOL_v1_5_2_function function, void *opaque)
 {
-    POOL_job const job = {function, opaque};
+    POOL_v1_5_2_job const job = {function, opaque};
     assert(ctx != NULL);
     if (ctx->shutdown) return;
 
@@ -272,28 +272,28 @@ POOL_add_internal(POOL_ctx* ctx, POOL_function function, void *opaque)
     ZSTD_v1_5_2_pthread_cond_signal(&ctx->queuePopCond);
 }
 
-void POOL_add(POOL_ctx* ctx, POOL_function function, void* opaque)
+void POOL_v1_5_2_add(POOL_v1_5_2_ctx* ctx, POOL_v1_5_2_function function, void* opaque)
 {
     assert(ctx != NULL);
     ZSTD_v1_5_2_pthread_mutex_lock(&ctx->queueMutex);
     /* Wait until there is space in the queue for the new job */
-    while (isQueueFull(ctx) && (!ctx->shutdown)) {
+    while (isQueueFull_v1_5_2(ctx) && (!ctx->shutdown)) {
         ZSTD_v1_5_2_pthread_cond_wait(&ctx->queuePushCond, &ctx->queueMutex);
     }
-    POOL_add_internal(ctx, function, opaque);
+    POOL_v1_5_2_add_internal(ctx, function, opaque);
     ZSTD_v1_5_2_pthread_mutex_unlock(&ctx->queueMutex);
 }
 
 
-int POOL_tryAdd(POOL_ctx* ctx, POOL_function function, void* opaque)
+int POOL_v1_5_2_tryAdd(POOL_v1_5_2_ctx* ctx, POOL_v1_5_2_function function, void* opaque)
 {
     assert(ctx != NULL);
     ZSTD_v1_5_2_pthread_mutex_lock(&ctx->queueMutex);
-    if (isQueueFull(ctx)) {
+    if (isQueueFull_v1_5_2(ctx)) {
         ZSTD_v1_5_2_pthread_mutex_unlock(&ctx->queueMutex);
         return 0;
     }
-    POOL_add_internal(ctx, function, opaque);
+    POOL_v1_5_2_add_internal(ctx, function, opaque);
     ZSTD_v1_5_2_pthread_mutex_unlock(&ctx->queueMutex);
     return 1;
 }
@@ -307,48 +307,48 @@ int POOL_tryAdd(POOL_ctx* ctx, POOL_function function, void* opaque)
 
 
 /* We don't need any data, but if it is empty, malloc() might return NULL. */
-struct POOL_ctx_s {
+struct POOL_v1_5_2_ctx_s {
     int dummy;
 };
-static POOL_ctx g_poolCtx;
+static POOL_v1_5_2_ctx g_poolCtx_v1_5_2;
 
-POOL_ctx* POOL_create(size_t numThreads, size_t queueSize) {
-    return POOL_create_advanced(numThreads, queueSize, ZSTD_v1_5_2_defaultCMem);
+POOL_v1_5_2_ctx* POOL_v1_5_2_create(size_t numThreads, size_t queueSize) {
+    return POOL_v1_5_2_create_advanced(numThreads, queueSize, ZSTD_v1_5_2_defaultCMem);
 }
 
-POOL_ctx*
-POOL_create_advanced(size_t numThreads, size_t queueSize, ZSTD_v1_5_2_customMem customMem)
+POOL_v1_5_2_ctx*
+POOL_v1_5_2_create_advanced(size_t numThreads, size_t queueSize, ZSTD_v1_5_2_customMem customMem)
 {
     (void)numThreads;
     (void)queueSize;
     (void)customMem;
-    return &g_poolCtx;
+    return &g_poolCtx_v1_5_2;
 }
 
-void POOL_free(POOL_ctx* ctx) {
-    assert(!ctx || ctx == &g_poolCtx);
+void POOL_v1_5_2_free(POOL_v1_5_2_ctx* ctx) {
+    assert(!ctx || ctx == &g_poolCtx_v1_5_2);
     (void)ctx;
 }
 
-int POOL_resize(POOL_ctx* ctx, size_t numThreads) {
+int POOL_v1_5_2_resize(POOL_v1_5_2_ctx* ctx, size_t numThreads) {
     (void)ctx; (void)numThreads;
     return 0;
 }
 
-void POOL_add(POOL_ctx* ctx, POOL_function function, void* opaque) {
+void POOL_v1_5_2_add(POOL_v1_5_2_ctx* ctx, POOL_v1_5_2_function function, void* opaque) {
     (void)ctx;
     function(opaque);
 }
 
-int POOL_tryAdd(POOL_ctx* ctx, POOL_function function, void* opaque) {
+int POOL_v1_5_2_tryAdd(POOL_v1_5_2_ctx* ctx, POOL_v1_5_2_function function, void* opaque) {
     (void)ctx;
     function(opaque);
     return 1;
 }
 
-size_t POOL_sizeof(const POOL_ctx* ctx) {
+size_t POOL_v1_5_2_sizeof(const POOL_v1_5_2_ctx* ctx) {
     if (ctx==NULL) return 0;  /* supports sizeof NULL */
-    assert(ctx == &g_poolCtx);
+    assert(ctx == &g_poolCtx_v1_5_2);
     return sizeof(*ctx);
 }
 

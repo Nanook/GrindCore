@@ -2,19 +2,15 @@
 # zstd v1.5.2 and v1.5.7 to eliminate duplicate-symbol (LNK4006) warnings.
 # Uses v1.5.7 source files. Compiled with v1.5.7 include paths.
 #
-# Contains: debug.c, error_private.c, pool.c, threading.c,
-#           zstdmt_compress.c, legacy decoders (zstd_v01-v07)
+# Contains: debug.c, error_private.c, legacy decoders (zstd_v01-v07)
 #
-# NOTE: pool.c, threading.c, and zstdmt_compress.c are safe to share ONLY
-# because ZSTD_MULTITHREAD is NOT defined. If MULTITHREAD is enabled later,
-# these must be moved back to per-version targets with prefixed symbol names.
+# NOTE: pool.c, threading.c, and zstdmt_compress.c are per-version because
+# ZSTD_MULTITHREAD is enabled and v1.5.2 uses prefixed symbols
+# (POOL_v1_5_2_*, ZSTDMT_v1_5_2_*) to avoid collision with v1.5.7.
 
 set(ZSTD_SHARED_SOURCES_BASE
     common/debug.c
     common/error_private.c
-    common/pool.c
-    common/threading.c
-    compress/zstdmt_compress.c
     legacy/zstd_v01.c
     legacy/zstd_v02.c
     legacy/zstd_v03.c

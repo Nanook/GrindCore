@@ -144,10 +144,21 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetCompressionL
 }
 
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetBlockSize(SZ_ZStd_v1_5_7_CompressionContext* ctx, size_t blockSize) {
-    // Not supported in zstd 1.5.2
-    (void)ctx;
-    (void)blockSize;
-    return -1;
+    if (!ctx || !ctx->cctx) return -1;
+    return (int32_t)ZSTD_CCtx_setParameter(ctx->cctx, ZSTD_c_targetCBlockSize, (int)blockSize);
+}
+
+//
+// ===== Multithreading Configuration =====
+//
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetNbWorkers(SZ_ZStd_v1_5_7_CompressionContext* ctx, int32_t nbWorkers) {
+    if (!ctx || !ctx->cctx || nbWorkers < 0) return -1;
+    return (int32_t)ZSTD_CCtx_setParameter(ctx->cctx, ZSTD_c_nbWorkers, nbWorkers);
+}
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetJobSize(SZ_ZStd_v1_5_7_CompressionContext* ctx, size_t jobSize) {
+    if (!ctx || !ctx->cctx) return -1;
+    return (int32_t)ZSTD_CCtx_setParameter(ctx->cctx, ZSTD_c_jobSize, (int)jobSize);
 }
 
 //

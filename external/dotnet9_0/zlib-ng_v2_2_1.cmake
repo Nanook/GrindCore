@@ -29,6 +29,7 @@ set(SKIP_INSTALL_ALL OFF)
 set_property(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/zlib-ng_v2_2_1 PROPERTY MSVC_WARNING_LEVEL 3)
 target_compile_options(zlib PRIVATE $<$<COMPILE_LANG_AND_ID:C,Clang,AppleClang>:-Wno-unused-command-line-argument>)
 target_compile_options(zlib PRIVATE $<$<COMPILE_LANG_AND_ID:C,Clang,AppleClang>:-Wno-logical-op-parentheses>)
+target_compile_options(zlib PRIVATE $<$<COMPILE_LANG_AND_ID:C,Clang,AppleClang>:-Wno-ignored-target-attributes>)
 target_compile_options(zlib PRIVATE $<$<COMPILE_LANG_AND_ID:C,MSVC>:/wd4127>)
 target_compile_options(zlib PRIVATE $<$<COMPILE_LANG_AND_ID:C,MSVC>:/guard:cf>)
 
