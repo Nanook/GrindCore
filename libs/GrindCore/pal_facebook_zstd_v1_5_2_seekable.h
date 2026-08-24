@@ -21,12 +21,12 @@
 
 /* Seekable Compression Context Management */
 typedef struct {
-    ZSTD_seekable_CStream* zcs;
+    ZSTD_v1_5_2_seekable_CStream* zcs;
 } SZ_ZStd_v1_5_2_SeekableCStream;
 
 /* Seekable Decompression Context Management */
 typedef struct {
-    ZSTD_seekable* zs;
+    ZSTD_v1_5_2_seekable* zs;
 } SZ_ZStd_v1_5_2_Seekable;
 
 /* Function Prototypes */
@@ -86,8 +86,8 @@ FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_InitBuf
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_InitAdvanced(
     SZ_ZStd_v1_5_2_Seekable* ctx,
     void* opaque,
-    ZSTD_seekable_read* readFn,
-    ZSTD_seekable_seek* seekFn);
+    ZSTD_v1_5_2_seekable_read* readFn,
+    ZSTD_v1_5_2_seekable_seek* seekFn);
 
 /* Decompression */
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_Seekable_Decompress(

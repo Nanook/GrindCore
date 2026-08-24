@@ -49,9 +49,9 @@ struct ZSTD_frameLog_s {
     U32 seekTableIndex;
 } framelog_t;
 
-struct ZSTD_seekable_CStream_s {
+struct ZSTD_v1_5_7_seekable_CStream_s {
     ZSTD_CStream* cstream;
-    ZSTD_frameLog framelog;
+    ZSTD_v1_5_7_frameLog framelog;
 
     U32 frameCSize;
     U32 frameDSize;
@@ -63,7 +63,7 @@ struct ZSTD_seekable_CStream_s {
     int writingSeekTable;
 };
 
-static size_t ZSTD_seekable_frameLog_allocVec(ZSTD_frameLog* fl)
+static size_t ZSTD_v1_5_7_seekable_frameLog_allocVec(ZSTD_v1_5_7_frameLog* fl)
 {
     /* allocate some initial space */
     size_t const FRAMELOG_STARTING_CAPACITY = 16;
@@ -74,18 +74,18 @@ static size_t ZSTD_seekable_frameLog_allocVec(ZSTD_frameLog* fl)
     return 0;
 }
 
-static size_t ZSTD_seekable_frameLog_freeVec(ZSTD_frameLog* fl)
+static size_t ZSTD_v1_5_7_seekable_frameLog_freeVec(ZSTD_v1_5_7_frameLog* fl)
 {
     if (fl != NULL) free(fl->entries);
     return 0;
 }
 
-ZSTD_frameLog* ZSTD_seekable_createFrameLog(int checksumFlag)
+ZSTD_v1_5_7_frameLog* ZSTD_v1_5_7_seekable_createFrameLog(int checksumFlag)
 {
-    ZSTD_frameLog* const fl = (ZSTD_frameLog*)malloc(sizeof(ZSTD_frameLog));
+    ZSTD_v1_5_7_frameLog* const fl = (ZSTD_v1_5_7_frameLog*)malloc(sizeof(ZSTD_v1_5_7_frameLog));
     if (fl == NULL) return NULL;
 
-    if (ZSTD_isError(ZSTD_seekable_frameLog_allocVec(fl))) {
+    if (ZSTD_isError(ZSTD_v1_5_7_seekable_frameLog_allocVec(fl))) {
         free(fl);
         return NULL;
     }
@@ -98,16 +98,16 @@ ZSTD_frameLog* ZSTD_seekable_createFrameLog(int checksumFlag)
     return fl;
 }
 
-size_t ZSTD_seekable_freeFrameLog(ZSTD_frameLog* fl)
+size_t ZSTD_v1_5_7_seekable_freeFrameLog(ZSTD_v1_5_7_frameLog* fl)
 {
-    ZSTD_seekable_frameLog_freeVec(fl);
+    ZSTD_v1_5_7_seekable_frameLog_freeVec(fl);
     free(fl);
     return 0;
 }
 
-ZSTD_seekable_CStream* ZSTD_seekable_createCStream(void)
+ZSTD_v1_5_7_seekable_CStream* ZSTD_v1_5_7_seekable_createCStream(void)
 {
-    ZSTD_seekable_CStream* const zcs = (ZSTD_seekable_CStream*)malloc(sizeof(ZSTD_seekable_CStream));
+    ZSTD_v1_5_7_seekable_CStream* const zcs = (ZSTD_v1_5_7_seekable_CStream*)malloc(sizeof(ZSTD_v1_5_7_seekable_CStream));
     if (zcs == NULL) return NULL;
 
     memset(zcs, 0, sizeof(*zcs));
@@ -115,7 +115,7 @@ ZSTD_seekable_CStream* ZSTD_seekable_createCStream(void)
     zcs->cstream = ZSTD_createCStream();
     if (zcs->cstream == NULL) goto failed1;
 
-    if (ZSTD_isError(ZSTD_seekable_frameLog_allocVec(&zcs->framelog))) goto failed2;
+    if (ZSTD_isError(ZSTD_v1_5_7_seekable_frameLog_allocVec(&zcs->framelog))) goto failed2;
 
     return zcs;
 
@@ -126,16 +126,16 @@ failed1:
     return NULL;
 }
 
-size_t ZSTD_seekable_freeCStream(ZSTD_seekable_CStream* zcs)
+size_t ZSTD_v1_5_7_seekable_freeCStream(ZSTD_v1_5_7_seekable_CStream* zcs)
 {
     if (zcs == NULL) return 0; /* support free on null */
     ZSTD_freeCStream(zcs->cstream);
-    ZSTD_seekable_frameLog_freeVec(&zcs->framelog);
+    ZSTD_v1_5_7_seekable_frameLog_freeVec(&zcs->framelog);
     free(zcs);
     return 0;
 }
 
-size_t ZSTD_seekable_initCStream(ZSTD_seekable_CStream* zcs,
+size_t ZSTD_v1_5_7_seekable_initCStream(ZSTD_v1_5_7_seekable_CStream* zcs,
                                  int compressionLevel,
                                  int checksumFlag,
                                  unsigned maxFrameSize)
@@ -145,12 +145,12 @@ size_t ZSTD_seekable_initCStream(ZSTD_seekable_CStream* zcs,
     zcs->frameDSize = 0;
 
     /* make sure maxFrameSize has a reasonable value */
-    if (maxFrameSize > ZSTD_SEEKABLE_MAX_FRAME_DECOMPRESSED_SIZE) {
+    if (maxFrameSize > ZSTD_v1_5_7_seekable_MAX_FRAME_DECOMPRESSED_SIZE) {
         return ERROR(frameParameter_unsupported);
     }
 
     zcs->maxFrameSize = maxFrameSize ?
-                        maxFrameSize : ZSTD_SEEKABLE_MAX_FRAME_DECOMPRESSED_SIZE;
+                        maxFrameSize : ZSTD_v1_5_7_seekable_MAX_FRAME_DECOMPRESSED_SIZE;
 
     zcs->framelog.checksumFlag = checksumFlag;
     if (zcs->framelog.checksumFlag) {
@@ -164,12 +164,12 @@ size_t ZSTD_seekable_initCStream(ZSTD_seekable_CStream* zcs,
     return ZSTD_initCStream(zcs->cstream, compressionLevel);
 }
 
-size_t ZSTD_seekable_logFrame(ZSTD_frameLog* fl,
+size_t ZSTD_v1_5_7_seekable_logFrame(ZSTD_v1_5_7_frameLog* fl,
                               unsigned compressedSize,
                               unsigned decompressedSize,
                               unsigned checksum)
 {
-    if (fl->size == ZSTD_SEEKABLE_MAXFRAMES)
+    if (fl->size == ZSTD_v1_5_7_seekable_MAXFRAMES)
         return ERROR(frameIndex_tooLarge);
 
     /* grow the buffer if required */
@@ -194,7 +194,7 @@ size_t ZSTD_seekable_logFrame(ZSTD_frameLog* fl,
     return 0;
 }
 
-size_t ZSTD_seekable_endFrame(ZSTD_seekable_CStream* zcs, ZSTD_outBuffer* output)
+size_t ZSTD_v1_5_7_seekable_endFrame(ZSTD_v1_5_7_seekable_CStream* zcs, ZSTD_outBuffer* output)
 {
     size_t const prevOutPos = output->pos;
     /* end the frame */
@@ -208,7 +208,7 @@ size_t ZSTD_seekable_endFrame(ZSTD_seekable_CStream* zcs, ZSTD_outBuffer* output
     /* frame done */
 
     /* store the frame data for later */
-    ret = ZSTD_seekable_logFrame(
+    ret = ZSTD_v1_5_7_seekable_logFrame(
             &zcs->framelog, zcs->frameCSize, zcs->frameDSize,
             zcs->framelog.checksumFlag
                     ? XXH64_digest(&zcs->xxhState) & 0xFFFFFFFFU
@@ -225,7 +225,7 @@ size_t ZSTD_seekable_endFrame(ZSTD_seekable_CStream* zcs, ZSTD_outBuffer* output
     return 0;
 }
 
-size_t ZSTD_seekable_compressStream(ZSTD_seekable_CStream* zcs, ZSTD_outBuffer* output, ZSTD_inBuffer* input)
+size_t ZSTD_v1_5_7_seekable_compressStream(ZSTD_v1_5_7_seekable_CStream* zcs, ZSTD_outBuffer* output, ZSTD_inBuffer* input)
 {
     const BYTE* const inBase = (const BYTE*) input->src + input->pos;
     size_t inLen = input->size - input->pos;
@@ -255,7 +255,7 @@ size_t ZSTD_seekable_compressStream(ZSTD_seekable_CStream* zcs, ZSTD_outBuffer* 
 
     if (zcs->maxFrameSize == zcs->frameDSize) {
         /* log the frame and start over */
-        size_t const ret = ZSTD_seekable_endFrame(zcs, output);
+        size_t const ret = ZSTD_v1_5_7_seekable_endFrame(zcs, output);
         if (ZSTD_isError(ret)) return ret;
 
         /* get the client ready for the next frame */
@@ -265,7 +265,7 @@ size_t ZSTD_seekable_compressStream(ZSTD_seekable_CStream* zcs, ZSTD_outBuffer* 
     return (size_t)(zcs->maxFrameSize - zcs->frameDSize);
 }
 
-static inline size_t ZSTD_seekable_seekTableSize(const ZSTD_frameLog* fl)
+static inline size_t ZSTD_v1_5_7_seekable_seekTableSize(const ZSTD_v1_5_7_frameLog* fl)
 {
     size_t const sizePerFrame = 8 + (fl->checksumFlag?4:0);
     size_t const seekTableLen = ZSTD_SKIPPABLEHEADERSIZE +
@@ -275,7 +275,7 @@ static inline size_t ZSTD_seekable_seekTableSize(const ZSTD_frameLog* fl)
     return seekTableLen;
 }
 
-static inline size_t ZSTD_stwrite32(ZSTD_frameLog* fl,
+static inline size_t ZSTD_stwrite32(ZSTD_v1_5_7_frameLog* fl,
                                     ZSTD_outBuffer* output, U32 const value,
                                     U32 const offset)
 {
@@ -289,12 +289,12 @@ static inline size_t ZSTD_stwrite32(ZSTD_frameLog* fl,
         output->pos += lenWrite;
         fl->seekTablePos += (U32)lenWrite;
 
-        if (lenWrite < 4) return ZSTD_seekable_seekTableSize(fl) - fl->seekTablePos;
+        if (lenWrite < 4) return ZSTD_v1_5_7_seekable_seekTableSize(fl) - fl->seekTablePos;
     }
     return 0;
 }
 
-size_t ZSTD_seekable_writeSeekTable(ZSTD_frameLog* fl, ZSTD_outBuffer* output)
+size_t ZSTD_v1_5_7_seekable_writeSeekTable(ZSTD_v1_5_7_frameLog* fl, ZSTD_outBuffer* output)
 {
     /* seekTableIndex: the current index in the table and
      * seekTableSize: the amount of the table written so far
@@ -304,7 +304,7 @@ size_t ZSTD_seekable_writeSeekTable(ZSTD_frameLog* fl, ZSTD_outBuffer* output)
      */
 
     size_t const sizePerFrame = 8 + (fl->checksumFlag?4:0);
-    size_t const seekTableLen = ZSTD_seekable_seekTableSize(fl);
+    size_t const seekTableLen = ZSTD_v1_5_7_seekable_seekTableSize(fl);
 
     CHECK_Z(ZSTD_stwrite32(fl, output, ZSTD_MAGIC_SKIPPABLE_START | 0xE, 0));
     assert(seekTableLen <= (size_t)UINT_MAX);
@@ -343,23 +343,23 @@ size_t ZSTD_seekable_writeSeekTable(ZSTD_frameLog* fl, ZSTD_outBuffer* output)
         fl->seekTablePos++;
     }
 
-    CHECK_Z(ZSTD_stwrite32(fl, output, ZSTD_SEEKABLE_MAGICNUMBER,
+    CHECK_Z(ZSTD_stwrite32(fl, output, ZSTD_v1_5_7_seekable_MAGICNUMBER,
                            (U32)seekTableLen - 4));
 
     if (fl->seekTablePos != seekTableLen) return ERROR(GENERIC);
     return 0;
 }
 
-size_t ZSTD_seekable_endStream(ZSTD_seekable_CStream* zcs, ZSTD_outBuffer* output)
+size_t ZSTD_v1_5_7_seekable_endStream(ZSTD_v1_5_7_seekable_CStream* zcs, ZSTD_outBuffer* output)
 {
     if (!zcs->writingSeekTable) {
-        const size_t endFrame = ZSTD_seekable_endFrame(zcs, output);
+        const size_t endFrame = ZSTD_v1_5_7_seekable_endFrame(zcs, output);
         if (ZSTD_isError(endFrame)) return endFrame;
         /* return an accurate size hint */
-        if (endFrame) return endFrame + ZSTD_seekable_seekTableSize(&zcs->framelog);
+        if (endFrame) return endFrame + ZSTD_v1_5_7_seekable_seekTableSize(&zcs->framelog);
     }
 
     zcs->writingSeekTable = 1;
 
-    return ZSTD_seekable_writeSeekTable(&zcs->framelog, output);
+    return ZSTD_v1_5_7_seekable_writeSeekTable(&zcs->framelog, output);
 }

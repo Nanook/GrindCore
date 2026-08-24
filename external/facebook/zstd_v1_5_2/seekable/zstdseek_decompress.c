@@ -79,11 +79,11 @@
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
-#define ZSTD_SEEKABLE_NO_OUTPUT_PROGRESS_MAX 16
+#define ZSTD_v1_5_2_seekable_NO_OUTPUT_PROGRESS_MAX 16
 
 /* Special-case callbacks for FILE* and in-memory modes, so that we can treat
  * them the same way as the advanced API */
-static int ZSTD_seekable_read_FILE(void* opaque, void* buffer, size_t n)
+static int ZSTD_v1_5_2_seekable_read_FILE(void* opaque, void* buffer, size_t n)
 {
     size_t const result = fread(buffer, 1, n, (FILE*)opaque);
     if (result != n) {
@@ -92,7 +92,7 @@ static int ZSTD_seekable_read_FILE(void* opaque, void* buffer, size_t n)
     return 0;
 }
 
-static int ZSTD_seekable_seek_FILE(void* opaque, long long offset, int origin)
+static int ZSTD_v1_5_2_seekable_seek_FILE(void* opaque, long long offset, int origin)
 {
     int const ret = LONG_SEEK((FILE*)opaque, offset, origin);
     if (ret) return ret;
@@ -105,7 +105,7 @@ typedef struct {
     size_t pos;
 } buffWrapper_t;
 
-static int ZSTD_seekable_read_buff(void* opaque, void* buffer, size_t n)
+static int ZSTD_v1_5_2_seekable_read_buff(void* opaque, void* buffer, size_t n)
 {
     buffWrapper_t* const buff = (buffWrapper_t*)opaque;
     assert(buff != NULL);
@@ -115,7 +115,7 @@ static int ZSTD_seekable_read_buff(void* opaque, void* buffer, size_t n)
     return 0;
 }
 
-static int ZSTD_seekable_seek_buff(void* opaque, long long offset, int origin)
+static int ZSTD_v1_5_2_seekable_seek_buff(void* opaque, long long offset, int origin)
 {
     buffWrapper_t* const buff = (buffWrapper_t*) opaque;
     unsigned long long newOffset = 0;
@@ -147,7 +147,7 @@ typedef struct {
     U32 checksum;
 } seekEntry_t;
 
-struct ZSTD_seekTable_s {
+struct ZSTD_v1_5_2_seekTable_s {
     seekEntry_t* entries;
     size_t tableLen;
 
@@ -156,10 +156,10 @@ struct ZSTD_seekTable_s {
 
 #define SEEKABLE_BUFF_SIZE ZSTD_v1_5_2_BLOCKSIZE_MAX
 
-struct ZSTD_seekable_s {
+struct ZSTD_v1_5_2_seekable_s {
     ZSTD_v1_5_2_DStream* dstream;
-    ZSTD_seekTable seekTable;
-    ZSTD_seekable_customFile src;
+    ZSTD_v1_5_2_seekTable seekTable;
+    ZSTD_v1_5_2_seekable_customFile src;
 
     U64 decompressedOffset;
     U32 curFrame;
@@ -168,15 +168,15 @@ struct ZSTD_seekable_s {
     BYTE outBuff[SEEKABLE_BUFF_SIZE]; /* so we can efficiently decompress the
                                          starts of chunks before we get to the
                                          desired section */
-    ZSTD_v1_5_2_inBuffer in; /* maintain continuity across ZSTD_seekable_decompress operations */
+    ZSTD_v1_5_2_inBuffer in; /* maintain continuity across ZSTD_v1_5_2_seekable_decompress operations */
     buffWrapper_t buffWrapper; /* for `src.opaque` in in-memory mode */
 
     XXH64_state_t xxhState;
 };
 
-ZSTD_seekable* ZSTD_seekable_create(void)
+ZSTD_v1_5_2_seekable* ZSTD_v1_5_2_seekable_create(void)
 {
-    ZSTD_seekable* const zs = (ZSTD_seekable*)malloc(sizeof(ZSTD_seekable));
+    ZSTD_v1_5_2_seekable* const zs = (ZSTD_v1_5_2_seekable*)malloc(sizeof(ZSTD_v1_5_2_seekable));
     if (zs == NULL) return NULL;
 
     /* also initializes stage to zsds_init */
@@ -191,7 +191,7 @@ ZSTD_seekable* ZSTD_seekable_create(void)
     return zs;
 }
 
-size_t ZSTD_seekable_free(ZSTD_seekable* zs)
+size_t ZSTD_v1_5_2_seekable_free(ZSTD_v1_5_2_seekable* zs)
 {
     if (zs == NULL) return 0; /* support free on null */
     ZSTD_v1_5_2_freeDStream(zs->dstream);
@@ -200,9 +200,9 @@ size_t ZSTD_seekable_free(ZSTD_seekable* zs)
     return 0;
 }
 
-ZSTD_seekTable* ZSTD_seekTable_create_fromSeekable(const ZSTD_seekable* zs)
+ZSTD_v1_5_2_seekTable* ZSTD_v1_5_2_seekTable_create_fromSeekable(const ZSTD_v1_5_2_seekable* zs)
 {
-    ZSTD_seekTable* const st = (ZSTD_seekTable*)malloc(sizeof(ZSTD_seekTable));
+    ZSTD_v1_5_2_seekTable* const st = (ZSTD_v1_5_2_seekTable*)malloc(sizeof(ZSTD_v1_5_2_seekTable));
     if (st==NULL) return NULL;
 
     st->checksumFlag = zs->seekTable.checksumFlag;
@@ -221,7 +221,7 @@ ZSTD_seekTable* ZSTD_seekTable_create_fromSeekable(const ZSTD_seekable* zs)
     return st;
 }
 
-size_t ZSTD_seekTable_free(ZSTD_seekTable* st)
+size_t ZSTD_v1_5_2_seekTable_free(ZSTD_v1_5_2_seekTable* st)
 {
     if (st == NULL) return 0; /* support free on null */
     free(st->entries);
@@ -229,16 +229,16 @@ size_t ZSTD_seekTable_free(ZSTD_seekTable* st)
     return 0;
 }
 
-/** ZSTD_seekable_offsetToFrameIndex() :
+/** ZSTD_v1_5_2_seekable_offsetToFrameIndex() :
  *  Performs a binary search to find the last frame with a decompressed offset
  *  <= pos
  *  @return : the frame's index */
-unsigned ZSTD_seekable_offsetToFrameIndex(const ZSTD_seekable* zs, unsigned long long pos)
+unsigned ZSTD_v1_5_2_seekable_offsetToFrameIndex(const ZSTD_v1_5_2_seekable* zs, unsigned long long pos)
 {
-    return ZSTD_seekTable_offsetToFrameIndex(&zs->seekTable, pos);
+    return ZSTD_v1_5_2_seekTable_offsetToFrameIndex(&zs->seekTable, pos);
 }
 
-unsigned ZSTD_seekTable_offsetToFrameIndex(const ZSTD_seekTable* st, unsigned long long pos)
+unsigned ZSTD_v1_5_2_seekTable_offsetToFrameIndex(const ZSTD_v1_5_2_seekTable* st, unsigned long long pos)
 {
     U32 lo = 0;
     U32 hi = (U32)st->tableLen;
@@ -259,72 +259,72 @@ unsigned ZSTD_seekTable_offsetToFrameIndex(const ZSTD_seekTable* st, unsigned lo
     return lo;
 }
 
-unsigned ZSTD_seekable_getNumFrames(const ZSTD_seekable* zs)
+unsigned ZSTD_v1_5_2_seekable_getNumFrames(const ZSTD_v1_5_2_seekable* zs)
 {
-    return ZSTD_seekTable_getNumFrames(&zs->seekTable);
+    return ZSTD_v1_5_2_seekTable_getNumFrames(&zs->seekTable);
 }
 
-unsigned ZSTD_seekTable_getNumFrames(const ZSTD_seekTable* st)
+unsigned ZSTD_v1_5_2_seekTable_getNumFrames(const ZSTD_v1_5_2_seekTable* st)
 {
     assert(st->tableLen <= UINT_MAX);
     return (unsigned)st->tableLen;
 }
 
-unsigned long long ZSTD_seekable_getFrameCompressedOffset(const ZSTD_seekable* zs, unsigned frameIndex)
+unsigned long long ZSTD_v1_5_2_seekable_getFrameCompressedOffset(const ZSTD_v1_5_2_seekable* zs, unsigned frameIndex)
 {
-    return ZSTD_seekTable_getFrameCompressedOffset(&zs->seekTable, frameIndex);
+    return ZSTD_v1_5_2_seekTable_getFrameCompressedOffset(&zs->seekTable, frameIndex);
 }
 
-unsigned long long ZSTD_seekTable_getFrameCompressedOffset(const ZSTD_seekTable* st, unsigned frameIndex)
+unsigned long long ZSTD_v1_5_2_seekTable_getFrameCompressedOffset(const ZSTD_v1_5_2_seekTable* st, unsigned frameIndex)
 {
-    if (frameIndex >= st->tableLen) return ZSTD_SEEKABLE_FRAMEINDEX_TOOLARGE;
+    if (frameIndex >= st->tableLen) return ZSTD_v1_5_2_seekable_FRAMEINDEX_TOOLARGE;
     return st->entries[frameIndex].cOffset;
 }
 
-unsigned long long ZSTD_seekable_getFrameDecompressedOffset(const ZSTD_seekable* zs, unsigned frameIndex)
+unsigned long long ZSTD_v1_5_2_seekable_getFrameDecompressedOffset(const ZSTD_v1_5_2_seekable* zs, unsigned frameIndex)
 {
-    return ZSTD_seekTable_getFrameDecompressedOffset(&zs->seekTable, frameIndex);
+    return ZSTD_v1_5_2_seekTable_getFrameDecompressedOffset(&zs->seekTable, frameIndex);
 }
 
-unsigned long long ZSTD_seekTable_getFrameDecompressedOffset(const ZSTD_seekTable* st, unsigned frameIndex)
+unsigned long long ZSTD_v1_5_2_seekTable_getFrameDecompressedOffset(const ZSTD_v1_5_2_seekTable* st, unsigned frameIndex)
 {
-    if (frameIndex >= st->tableLen) return ZSTD_SEEKABLE_FRAMEINDEX_TOOLARGE;
+    if (frameIndex >= st->tableLen) return ZSTD_v1_5_2_seekable_FRAMEINDEX_TOOLARGE;
     return st->entries[frameIndex].dOffset;
 }
 
-size_t ZSTD_seekable_getFrameCompressedSize(const ZSTD_seekable* zs, unsigned frameIndex)
+size_t ZSTD_v1_5_2_seekable_getFrameCompressedSize(const ZSTD_v1_5_2_seekable* zs, unsigned frameIndex)
 {
-    return ZSTD_seekTable_getFrameCompressedSize(&zs->seekTable, frameIndex);
+    return ZSTD_v1_5_2_seekTable_getFrameCompressedSize(&zs->seekTable, frameIndex);
 }
 
-size_t ZSTD_seekTable_getFrameCompressedSize(const ZSTD_seekTable* st, unsigned frameIndex)
+size_t ZSTD_v1_5_2_seekTable_getFrameCompressedSize(const ZSTD_v1_5_2_seekTable* st, unsigned frameIndex)
 {
     if (frameIndex >= st->tableLen) return ERROR(frameIndex_tooLarge);
     return st->entries[frameIndex + 1].cOffset -
            st->entries[frameIndex].cOffset;
 }
 
-size_t ZSTD_seekable_getFrameDecompressedSize(const ZSTD_seekable* zs, unsigned frameIndex)
+size_t ZSTD_v1_5_2_seekable_getFrameDecompressedSize(const ZSTD_v1_5_2_seekable* zs, unsigned frameIndex)
 {
-    return ZSTD_seekTable_getFrameDecompressedSize(&zs->seekTable, frameIndex);
+    return ZSTD_v1_5_2_seekTable_getFrameDecompressedSize(&zs->seekTable, frameIndex);
 }
 
-size_t ZSTD_seekTable_getFrameDecompressedSize(const ZSTD_seekTable* st, unsigned frameIndex)
+size_t ZSTD_v1_5_2_seekTable_getFrameDecompressedSize(const ZSTD_v1_5_2_seekTable* st, unsigned frameIndex)
 {
     if (frameIndex > st->tableLen) return ERROR(frameIndex_tooLarge);
     return st->entries[frameIndex + 1].dOffset -
            st->entries[frameIndex].dOffset;
 }
 
-static size_t ZSTD_seekable_loadSeekTable(ZSTD_seekable* zs)
+static size_t ZSTD_v1_5_2_seekable_loadSeekTable(ZSTD_v1_5_2_seekable* zs)
 {
     int checksumFlag;
-    ZSTD_seekable_customFile src = zs->src;
+    ZSTD_v1_5_2_seekable_customFile src = zs->src;
     /* read the footer, fixed size */
     CHECK_IO(src.seek(src.opaque, -(int)ZSTD_seekTableFooterSize, SEEK_END));
     CHECK_IO(src.read(src.opaque, zs->inBuff, ZSTD_seekTableFooterSize));
 
-    if (MEM_readLE32(zs->inBuff + 5) != ZSTD_SEEKABLE_MAGICNUMBER) {
+    if (MEM_readLE32(zs->inBuff + 5) != ZSTD_v1_5_2_seekable_MAGICNUMBER) {
         return ERROR(prefix_unknown);
     }
 
@@ -400,27 +400,27 @@ static size_t ZSTD_seekable_loadSeekTable(ZSTD_seekable* zs)
     }
 }
 
-size_t ZSTD_seekable_initBuff(ZSTD_seekable* zs, const void* src, size_t srcSize)
+size_t ZSTD_v1_5_2_seekable_initBuff(ZSTD_v1_5_2_seekable* zs, const void* src, size_t srcSize)
 {
     zs->buffWrapper = (buffWrapper_t){src, srcSize, 0};
-    {   ZSTD_seekable_customFile srcFile = {&zs->buffWrapper,
-                                            &ZSTD_seekable_read_buff,
-                                            &ZSTD_seekable_seek_buff};
-        return ZSTD_seekable_initAdvanced(zs, srcFile); }
+    {   ZSTD_v1_5_2_seekable_customFile srcFile = {&zs->buffWrapper,
+                                            &ZSTD_v1_5_2_seekable_read_buff,
+                                            &ZSTD_v1_5_2_seekable_seek_buff};
+        return ZSTD_v1_5_2_seekable_initAdvanced(zs, srcFile); }
 }
 
-size_t ZSTD_seekable_initFile(ZSTD_seekable* zs, FILE* src)
+size_t ZSTD_v1_5_2_seekable_initFile(ZSTD_v1_5_2_seekable* zs, FILE* src)
 {
-    ZSTD_seekable_customFile srcFile = {src, &ZSTD_seekable_read_FILE,
-                                        &ZSTD_seekable_seek_FILE};
-    return ZSTD_seekable_initAdvanced(zs, srcFile);
+    ZSTD_v1_5_2_seekable_customFile srcFile = {src, &ZSTD_v1_5_2_seekable_read_FILE,
+                                        &ZSTD_v1_5_2_seekable_seek_FILE};
+    return ZSTD_v1_5_2_seekable_initAdvanced(zs, srcFile);
 }
 
-size_t ZSTD_seekable_initAdvanced(ZSTD_seekable* zs, ZSTD_seekable_customFile src)
+size_t ZSTD_v1_5_2_seekable_initAdvanced(ZSTD_v1_5_2_seekable* zs, ZSTD_v1_5_2_seekable_customFile src)
 {
     zs->src = src;
 
-    {   const size_t seekTableInit = ZSTD_seekable_loadSeekTable(zs);
+    {   const size_t seekTableInit = ZSTD_v1_5_2_seekable_loadSeekTable(zs);
         if (ZSTD_v1_5_2_isError(seekTableInit)) return seekTableInit; }
 
     zs->decompressedOffset = (U64)-1;
@@ -431,14 +431,14 @@ size_t ZSTD_seekable_initAdvanced(ZSTD_seekable* zs, ZSTD_seekable_customFile sr
     return 0;
 }
 
-size_t ZSTD_seekable_decompress(ZSTD_seekable* zs, void* dst, size_t len, unsigned long long offset)
+size_t ZSTD_v1_5_2_seekable_decompress(ZSTD_v1_5_2_seekable* zs, void* dst, size_t len, unsigned long long offset)
 {
     unsigned long long const eos = zs->seekTable.entries[zs->seekTable.tableLen].dOffset;
     if (offset + len > eos) {
         len = eos - offset;
     }
 
-    U32 targetFrame = ZSTD_seekable_offsetToFrameIndex(zs, offset);
+    U32 targetFrame = ZSTD_v1_5_2_seekable_offsetToFrameIndex(zs, offset);
     U32 noOutputProgressCount = 0;
     size_t srcBytesRead = 0;
     do {
@@ -485,7 +485,7 @@ size_t ZSTD_seekable_decompress(ZSTD_seekable* zs, void* dst, size_t len, unsign
             }
             forwardProgress = outTmp.pos - prevOutPos;
             if (forwardProgress == 0) {
-                if (noOutputProgressCount++ > ZSTD_SEEKABLE_NO_OUTPUT_PROGRESS_MAX) {
+                if (noOutputProgressCount++ > ZSTD_v1_5_2_seekable_NO_OUTPUT_PROGRESS_MAX) {
                     return ERROR(seekableIO);
                 }
             } else {
@@ -506,7 +506,7 @@ size_t ZSTD_seekable_decompress(ZSTD_seekable* zs, void* dst, size_t len, unsign
 
                 if (zs->decompressedOffset < offset + len) {
                     /* go back to the start and force a reset of the stream */
-                    targetFrame = ZSTD_seekable_offsetToFrameIndex(zs, zs->decompressedOffset);
+                    targetFrame = ZSTD_v1_5_2_seekable_offsetToFrameIndex(zs, zs->decompressedOffset);
                     /* in this case it will fail later with corruption_detected, since last block does not have checksum */
                     assert(targetFrame != zs->seekTable.tableLen);
                 }
@@ -526,7 +526,7 @@ size_t ZSTD_seekable_decompress(ZSTD_seekable* zs, void* dst, size_t len, unsign
     return len;
 }
 
-size_t ZSTD_seekable_decompressFrame(ZSTD_seekable* zs, void* dst, size_t dstSize, unsigned frameIndex)
+size_t ZSTD_v1_5_2_seekable_decompressFrame(ZSTD_v1_5_2_seekable* zs, void* dst, size_t dstSize, unsigned frameIndex)
 {
     if (frameIndex >= zs->seekTable.tableLen) {
         return ERROR(frameIndex_tooLarge);
@@ -538,7 +538,7 @@ size_t ZSTD_seekable_decompressFrame(ZSTD_seekable* zs, void* dst, size_t dstSiz
         if (dstSize < decompressedSize) {
             return ERROR(dstSize_tooSmall);
         }
-        return ZSTD_seekable_decompress(
+        return ZSTD_v1_5_2_seekable_decompress(
                 zs, dst, decompressedSize,
                 zs->seekTable.entries[frameIndex].dOffset);
     }
