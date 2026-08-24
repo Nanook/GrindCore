@@ -17,10 +17,8 @@ endif ()
 
 # Set source files based on the condition
 if (USE_X64_ASM) # X86 fails
-    set (FL2_ASM_SOURCES_BASE
-        x86/7zCrcOpt.asm
-        x86/LzmaDecOpt.asm
-    )
+    # 7zCrcOpt.asm and LzmaDecOpt.asm moved to shared_asm
+    set (FL2_ASM_SOURCES_BASE)
 # elseif (USE_ARM64_ASM)
 #     set (FL2_ASM_SOURCES_BASE
 #         arm64/LzmaDecOpt.S
@@ -53,7 +51,7 @@ set (FL2_SOURCES_BASE
 )
 
 set (FL2_DEPS_SOURCES_BASE
-    xxhash.c
+    # xxhash.c  -- moved to shared_xxhash
 )
 
 include_directories ("${CMAKE_CURRENT_LIST_DIR}/C/zstd")
@@ -73,3 +71,11 @@ target_include_directories(fastlzma2_v1_0_1 PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/C/fast-lzma2
     ${CMAKE_CURRENT_LIST_DIR}/C/7z-deps
 )
+
+# Link shared xxhash (produces ZSTD_XXH* symbols)
+target_link_libraries(fastlzma2_v1_0_1 PUBLIC shared_xxhash)
+
+# Link shared ASM (7zCrcOpt.asm + LzmaDecOpt.asm) when available
+if (TARGET shared_asm)
+    target_link_libraries(fastlzma2_v1_0_1 PUBLIC shared_asm)
+endif()

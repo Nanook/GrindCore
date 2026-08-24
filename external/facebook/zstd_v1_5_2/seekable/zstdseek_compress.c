@@ -48,7 +48,7 @@ struct ZSTD_frameLog_s {
     /* for use when streaming out the seek table */
     U32 seekTablePos;
     U32 seekTableIndex;
-} framelog_t;
+};
 
 struct ZSTD_v1_5_2_seekable_CStream_s {
     ZSTD_v1_5_2_CStream* cstream;

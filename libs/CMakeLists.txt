@@ -128,6 +128,8 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
         add_compile_options(-Wno-typedef-redefinition)
         add_compile_options(-Wno-thread-safety-analysis)
         add_compile_options(-Wno-c11-extensions)
+        add_compile_options(-Wno-unknown-warning-option)
+        add_compile_options(-Wno-ignored-target-attributes)
 
         check_c_compiler_flag(-Wpre-c11-compat COMPILER_SUPPORTS_W_PRE_C11_COMPAT)
         if (COMPILER_SUPPORTS_W_PRE_C11_COMPAT)

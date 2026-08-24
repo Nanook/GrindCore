@@ -25,6 +25,11 @@ endif()
 # Optionally generate export header for cross-platform visibility
 include(GenerateExportHeader)
 
+# Add shared/consolidated libraries (must come before targets that depend on them)
+include(${CLR_SRC_NATIVE_DIR}/external/facebook/facebook-zstd_shared.cmake)
+include(${CLR_SRC_NATIVE_DIR}/external/facebook/facebook-shared_xxhash.cmake)
+include(${CLR_SRC_NATIVE_DIR}/external/shared_asm.cmake)
+
 # Add all algorithm/version libraries
 include(${CLR_SRC_NATIVE_DIR}/external/dotnet9_0/zlib-ng_v2_2_1.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/dotnet8_0/zlib_v1_3_1.cmake)
@@ -38,6 +43,8 @@ include(${CLR_SRC_NATIVE_DIR}/external/dotnet9_0/brotli_v1_1_0.cmake)
 
 # List all third-party static libraries to link
 set(GRINDCORE_THIRD_PARTY_LIBS
+    zstd_shared
+    shared_xxhash
     zlibng_v2_2_1
     zlib_v1_3_1
     hashes
@@ -48,6 +55,11 @@ set(GRINDCORE_THIRD_PARTY_LIBS
     zstd_v1_5_7
     brotli_v1_1_0
 )
+
+# Add shared_asm if it was created (x64 + USE_ASM only)
+if (TARGET shared_asm)
+    list(APPEND GRINDCORE_THIRD_PARTY_LIBS shared_asm)
+endif()
 
 # List all PAL and main GrindCore sources
 set(GRINDCORE_SOURCES
