@@ -151,14 +151,30 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetBlockSize(SZ
 }
 
 //
-// ===== Recommended Buffer Sizes =====
+// ===== Dictionary Compression & Decompression =====
 //
-FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CStreamInSize(void) {
-    return ZSTD_CStreamInSize();
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CompressBlockWithDict(SZ_ZStd_v1_5_7_CompressionContext* ctx, SZ_ZStd_v1_5_7_CompressionDict* dict, void* dst, size_t dstCapacity, const void* src, size_t srcSize) {
+    if (!ctx || !ctx->cctx || !dict || !dict->cdict || !dst || !src) return 0;
+    return ZSTD_compress_usingCDict(ctx->cctx, dst, dstCapacity, src, srcSize, dict->cdict);
 }
 
-FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CStreamOutSize(void) {
-    return ZSTD_CStreamOutSize();
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_DecompressBlockWithDict(SZ_ZStd_v1_5_7_DecompressionContext* ctx, SZ_ZStd_v1_5_7_DecompressionDict* dict, void* dst, size_t dstCapacity, const void* src, size_t srcSize) {
+    if (!ctx || !ctx->dctx || !dict || !dict->ddict || !dst || !src) return 0;
+    return ZSTD_decompress_usingDDict(ctx->dctx, dst, dstCapacity, src, srcSize, dict->ddict);
+}
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetCompressionDict(SZ_ZStd_v1_5_7_CompressionContext* ctx, SZ_ZStd_v1_5_7_CompressionDict* dict) {
+    if (!ctx || !ctx->cctx) return -1;
+    // Pass NULL cdict to clear the dictionary
+    size_t result = ZSTD_CCtx_refCDict(ctx->cctx, dict ? dict->cdict : NULL);
+    return ZSTD_isError(result) ? -1 : 0;
+}
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetDecompressionDict(SZ_ZStd_v1_5_7_DecompressionContext* ctx, SZ_ZStd_v1_5_7_DecompressionDict* dict) {
+    if (!ctx || !ctx->dctx) return -1;
+    // Pass NULL ddict to clear the dictionary
+    size_t result = ZSTD_DCtx_refDDict(ctx->dctx, dict ? dict->ddict : NULL);
+    return ZSTD_isError(result) ? -1 : 0;
 }
 
 //
@@ -170,6 +186,17 @@ FUNCTIONEXPORT unsigned FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_IsError(size_t
 
 FUNCTIONEXPORT const char* FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_GetErrorName(size_t result) {
     return ZSTD_getErrorName(result);
+}
+
+//
+// ===== Recommended Buffer Sizes =====
+//
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CStreamInSize(void) {
+    return ZSTD_CStreamInSize();
+}
+
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CStreamOutSize(void) {
+    return ZSTD_CStreamOutSize();
 }
 
 //

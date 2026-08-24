@@ -16,6 +16,12 @@ else()
     set(PALEXPORT_DEF "PALEXPORT=__attribute__((visibility(\"default\")))")
 endif()
 
+# ---- Symbol Isolation for Static Libraries ----
+# For the static library, we use objcopy --localize-hidden after bundling
+# to make all non-PAL symbols local. The third-party libs keep their normal
+# visibility attributes (needed for the shared library to export correctly).
+# The static archive gets post-processed to enforce isolation.
+
 # Optionally generate export header for cross-platform visibility
 include(GenerateExportHeader)
 
@@ -133,41 +139,148 @@ if (UNIX AND NOT APPLE AND NOT ANDROID)
     install_with_stripped_symbols (GrindCore PROGRAMS .)
 endif()
 
-# Static library (for static linking)
+# ---- Static Library (for NativeAOT static linking) ----
+# Produces a single fat static archive containing all PAL + third-party objects.
+# IPO disabled for cross-toolchain compatibility. GuardCF added on Windows.
+#
+# Strategy: Build a thin intermediate .a/.lib (just PAL objects), then merge it
+# with all third-party .a/.lib files into one fat archive. This is necessary
+# because CMake's target_link_libraries on STATIC targets only records metadata.
+
 add_library(GrindCoreStatic STATIC ${GRINDCORE_SOURCES})
 target_link_libraries(GrindCoreStatic PRIVATE ${GRINDCORE_THIRD_PARTY_LIBS})
 set_target_properties(GrindCoreStatic PROPERTIES
-    OUTPUT_NAME "GrindCore"
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/static"
+    OUTPUT_NAME "GrindCore_thin"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/obj"
+    INTERPROCEDURAL_OPTIMIZATION OFF
 )
 target_include_directories(GrindCoreStatic PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-target_compile_definitions(GrindCoreStatic PRIVATE ${PALEXPORT_DEF})
+if(WIN32)
+    target_compile_definitions(GrindCoreStatic PRIVATE "PALEXPORT=")
+    target_compile_options(GrindCoreStatic PRIVATE /guard:cf)
+else()
+    target_compile_definitions(GrindCoreStatic PRIVATE ${PALEXPORT_DEF})
+endif()
 
-# AOT static library (for NativeAOT scenarios)
-add_library(GrindCore.Aot STATIC ${GRINDCORE_SOURCES})
-target_link_libraries(GrindCore.Aot PRIVATE ${GRINDCORE_THIRD_PARTY_LIBS})
-set_target_properties(GrindCore.Aot PROPERTIES
-    OUTPUT_NAME "GrindCore.Aot"
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/aot"
-)
-target_include_directories(GrindCore.Aot PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-target_compile_definitions(GrindCore.Aot PRIVATE ${PALEXPORT_DEF})
+# ---- Fat Archive Bundling ----
+# Merge the thin GrindCore archive with all third-party archives into one file.
+set(FAT_STATIC_DIR "${CMAKE_BINARY_DIR}/static")
+file(MAKE_DIRECTORY "${FAT_STATIC_DIR}")
 
-# Optionally, add a GuardCF variant for AOT with Control Flow Guard
-add_library(GrindCore.Aot.GuardCF STATIC ${GRINDCORE_SOURCES})
-target_link_libraries(GrindCore.Aot.GuardCF PRIVATE ${GRINDCORE_THIRD_PARTY_LIBS})
-set_target_properties(GrindCore.Aot.GuardCF PROPERTIES
-    OUTPUT_NAME "GrindCore.Aot.GuardCF"
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/aot"
-)
-target_include_directories(GrindCore.Aot.GuardCF PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-target_compile_definitions(GrindCore.Aot.GuardCF PRIVATE ${PALEXPORT_DEF})
+if(WIN32)
+    set(FAT_STATIC_LIB "${FAT_STATIC_DIR}/GrindCore.lib")
+    # On Windows, use lib.exe to merge all .lib files
+    set(_merge_cmd ${CMAKE_AR} /NOLOGO /OUT:${FAT_STATIC_LIB} $<TARGET_FILE:GrindCoreStatic>)
+    foreach(_dep ${GRINDCORE_THIRD_PARTY_LIBS})
+        list(APPEND _merge_cmd $<TARGET_FILE:${_dep}>)
+    endforeach()
+
+    add_custom_command(
+        OUTPUT ${FAT_STATIC_LIB}
+        COMMAND ${_merge_cmd}
+        DEPENDS GrindCoreStatic ${GRINDCORE_THIRD_PARTY_LIBS}
+        COMMENT "Bundling fat static library: GrindCore.lib"
+        VERBATIM
+    )
+elseif(APPLE)
+    set(FAT_STATIC_LIB "${FAT_STATIC_DIR}/libGrindCore.a")
+    # On macOS, use libtool to merge all .a files
+    find_program(_libtool libtool)
+    set(_merge_cmd ${_libtool} -static -o ${FAT_STATIC_LIB} $<TARGET_FILE:GrindCoreStatic>)
+    foreach(_dep ${GRINDCORE_THIRD_PARTY_LIBS})
+        list(APPEND _merge_cmd $<TARGET_FILE:${_dep}>)
+    endforeach()
+
+    add_custom_command(
+        OUTPUT ${FAT_STATIC_LIB}
+        COMMAND ${_merge_cmd}
+        DEPENDS GrindCoreStatic ${GRINDCORE_THIRD_PARTY_LIBS}
+        COMMENT "Bundling fat static library: libGrindCore.a"
+        VERBATIM
+    )
+else()
+    set(FAT_STATIC_LIB "${FAT_STATIC_DIR}/libGrindCore.a")
+    # On Linux, use AR MRI script to merge archives (handles duplicate object names)
+    set(_mri_script "${FAT_STATIC_DIR}/GrindCore_bundle.mri")
+    set(_mri_content "CREATE ${FAT_STATIC_LIB}\n")
+    set(_mri_content "${_mri_content}ADDLIB $<TARGET_FILE:GrindCoreStatic>\n")
+    foreach(_dep ${GRINDCORE_THIRD_PARTY_LIBS})
+        set(_mri_content "${_mri_content}ADDLIB $<TARGET_FILE:${_dep}>\n")
+    endforeach()
+    set(_mri_content "${_mri_content}SAVE\nEND\n")
+    file(GENERATE OUTPUT "${_mri_script}" CONTENT "${_mri_content}")
+
+    set(_ar_merge_script "${FAT_STATIC_DIR}/GrindCore_ar_merge.sh")
+    file(GENERATE OUTPUT "${_ar_merge_script}" CONTENT
+"#!/bin/sh
+rm -f \"${FAT_STATIC_LIB}\"
+${CMAKE_AR} -M < \"${_mri_script}\"
+")
+
+    add_custom_command(
+        OUTPUT ${FAT_STATIC_LIB}
+        COMMAND sh "${_ar_merge_script}"
+        DEPENDS GrindCoreStatic ${GRINDCORE_THIRD_PARTY_LIBS}
+        COMMENT "Bundling fat static library: libGrindCore.a"
+    )
+endif()
+
+add_custom_target(GrindCoreFat ALL DEPENDS ${FAT_STATIC_LIB})
 
 # Install targets
-install(TARGETS GrindCoreStatic DESTINATION .)
+install(FILES ${FAT_STATIC_LIB} DESTINATION .)
 install(TARGETS GrindCore DESTINATION .)
-install(TARGETS GrindCore.Aot DESTINATION .)
-install(TARGETS GrindCore.Aot.GuardCF DESTINATION .)
+
+# ---- Symbol Localization & Verification (Unix/macOS) ----
+# After bundling the fat archive, localize all hidden-visibility symbols
+# so only PAL functions remain global. Then verify no leaks.
+if(NOT WIN32)
+    set(VERIFY_SYMBOLS_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/verify_static_symbols.sh")
+    file(WRITE ${VERIFY_SYMBOLS_SCRIPT}
+"#!/bin/sh
+# Verify that only PAL symbols (SZ_*, DN8_*, DN9_*, FL2_*) are global in the static archive.
+ARCHIVE=\"$1\"
+NM_TOOL=\"$2\"
+if [ -z \"$NM_TOOL\" ]; then NM_TOOL=nm; fi
+
+UNEXPECTED=$($NM_TOOL --defined-only -g \"$ARCHIVE\" 2>/dev/null | grep ' T ' | grep -v -E ' (SZ_|DN8_|DN9_|FL2_)' | head -20)
+if [ -n \"$UNEXPECTED\" ]; then
+    echo \"ERROR: Unexpected global symbols found in $ARCHIVE:\"
+    echo \"$UNEXPECTED\"
+    COUNT=$($NM_TOOL --defined-only -g \"$ARCHIVE\" 2>/dev/null | grep ' T ' | grep -v -E ' (SZ_|DN8_|DN9_|FL2_)' | wc -l)
+    echo \"Total unexpected global symbols: $COUNT\"
+    exit 1
+fi
+echo \"OK: Only PAL symbols are global in $ARCHIVE\"
+exit 0
+")
+
+    if(APPLE)
+        add_custom_command(TARGET GrindCoreFat POST_BUILD
+            COMMENT "Localizing internal symbols in fat archive (macOS)"
+            COMMAND bash -c "nm -g --defined-only ${FAT_STATIC_LIB} | grep ' T ' | grep -E ' _(SZ_|DN8_|DN9_|FL2_)' | awk '{print $$3}' > ${FAT_STATIC_LIB}.exports && nmedit -s ${FAT_STATIC_LIB}.exports ${FAT_STATIC_LIB} || true"
+            VERBATIM
+        )
+    else()
+        # Linux: Keep only PAL symbols global, localize everything else
+        set(LOCALIZE_SCRIPT "${FAT_STATIC_DIR}/localize_symbols.sh")
+        file(WRITE ${LOCALIZE_SCRIPT}
+"#!/bin/sh
+${CMAKE_NM} --defined-only -g \"${FAT_STATIC_LIB}\" | grep ' T ' | grep -E ' (SZ_|DN8_|DN9_|FL2_)' | awk '{print $3}' > \"${FAT_STATIC_LIB}.globals\"
+objcopy --keep-global-symbols=\"${FAT_STATIC_LIB}.globals\" \"${FAT_STATIC_LIB}\"
+")
+        add_custom_command(TARGET GrindCoreFat POST_BUILD
+            COMMENT "Localizing internal symbols in fat archive"
+            COMMAND sh ${LOCALIZE_SCRIPT}
+        )
+    endif()
+
+    add_custom_command(TARGET GrindCoreFat POST_BUILD
+        COMMENT "Verifying symbol isolation in fat archive"
+        COMMAND sh ${VERIFY_SYMBOLS_SCRIPT} ${FAT_STATIC_LIB} ${CMAKE_NM}
+        VERBATIM
+    )
+endif()
 
 # Generate export header for cross-platform symbol visibility
 GENERATE_EXPORT_HEADER(GrindCore
