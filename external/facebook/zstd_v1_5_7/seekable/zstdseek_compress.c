@@ -352,7 +352,7 @@ size_t ZSTD_v1_5_7_seekable_writeSeekTable(ZSTD_v1_5_7_frameLog* fl, ZSTD_outBuf
 
 size_t ZSTD_v1_5_7_seekable_endStream(ZSTD_v1_5_7_seekable_CStream* zcs, ZSTD_outBuffer* output)
 {
-    if (!zcs->writingSeekTable) {
+    if (!zcs->writingSeekTable && zcs->frameDSize) {
         const size_t endFrame = ZSTD_v1_5_7_seekable_endFrame(zcs, output);
         if (ZSTD_isError(endFrame)) return endFrame;
         /* return an accurate size hint */
