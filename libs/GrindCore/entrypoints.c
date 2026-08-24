@@ -258,6 +258,8 @@ static const Entry s_compressionNative[] =
     DllImportEntry(SZ_ZStd_v1_5_2_SetBlockSize)
     DllImportEntry(SZ_ZStd_v1_5_2_SetNbWorkers)
     DllImportEntry(SZ_ZStd_v1_5_2_SetJobSize)
+    DllImportEntry(SZ_ZStd_v1_5_2_SetCompressionDict)
+    DllImportEntry(SZ_ZStd_v1_5_2_SetDecompressionDict)
     DllImportEntry(SZ_ZStd_v1_5_2_CStreamInSize)
     DllImportEntry(SZ_ZStd_v1_5_2_CStreamOutSize)
     DllImportEntry(SZ_ZStd_v1_5_2_IsError)

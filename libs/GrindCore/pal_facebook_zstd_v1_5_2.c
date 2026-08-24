@@ -163,6 +163,18 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetJobSize(SZ_Z
     return (int32_t)ZSTD_v1_5_2_CCtx_setParameter(ctx->cctx, ZSTD_v1_5_2_c_jobSize, (int)jobSize);
 }
 
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetCompressionDict(SZ_ZStd_v1_5_2_CompressionContext* ctx, SZ_ZStd_v1_5_2_CompressionDict* dict) {
+    if (!ctx || !ctx->cctx) return -1;
+    size_t result = ZSTD_v1_5_2_CCtx_refCDict(ctx->cctx, dict ? dict->cdict : NULL);
+    return ZSTD_v1_5_2_isError(result) ? -1 : 0;
+}
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetDecompressionDict(SZ_ZStd_v1_5_2_DecompressionContext* ctx, SZ_ZStd_v1_5_2_DecompressionDict* dict) {
+    if (!ctx || !ctx->dctx) return -1;
+    size_t result = ZSTD_v1_5_2_DCtx_refDDict(ctx->dctx, dict ? dict->ddict : NULL);
+    return ZSTD_v1_5_2_isError(result) ? -1 : 0;
+}
+
 //
 // ===== Recommended Buffer Sizes =====
 //
