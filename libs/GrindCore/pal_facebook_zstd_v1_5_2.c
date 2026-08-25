@@ -163,6 +163,19 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetJobSize(SZ_Z
     return (int32_t)ZSTD_v1_5_2_CCtx_setParameter(ctx->cctx, ZSTD_v1_5_2_c_jobSize, (int)jobSize);
 }
 
+//
+// ===== Dictionary Compression & Decompression =====
+//
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_CompressBlockWithDict(SZ_ZStd_v1_5_2_CompressionContext* ctx, SZ_ZStd_v1_5_2_CompressionDict* dict, void* dst, size_t dstCapacity, const void* src, size_t srcSize) {
+    if (!ctx || !ctx->cctx || !dict || !dict->cdict || !dst || !src) return 0;
+    return ZSTD_v1_5_2_compress_usingCDict(ctx->cctx, dst, dstCapacity, src, srcSize, dict->cdict);
+}
+
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_DecompressBlockWithDict(SZ_ZStd_v1_5_2_DecompressionContext* ctx, SZ_ZStd_v1_5_2_DecompressionDict* dict, void* dst, size_t dstCapacity, const void* src, size_t srcSize) {
+    if (!ctx || !ctx->dctx || !dict || !dict->ddict || !dst || !src) return 0;
+    return ZSTD_v1_5_2_decompress_usingDDict(ctx->dctx, dst, dstCapacity, src, srcSize, dict->ddict);
+}
+
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetCompressionDict(SZ_ZStd_v1_5_2_CompressionContext* ctx, SZ_ZStd_v1_5_2_CompressionDict* dict) {
     if (!ctx || !ctx->cctx) return -1;
     size_t result = ZSTD_v1_5_2_CCtx_refCDict(ctx->cctx, dict ? dict->cdict : NULL);

@@ -250,6 +250,8 @@ static const Entry s_compressionNative[] =
     DllImportEntry(SZ_ZStd_v1_5_2_FreeDecompressionDict)
     DllImportEntry(SZ_ZStd_v1_5_2_CompressBlock)
     DllImportEntry(SZ_ZStd_v1_5_2_DecompressBlock)
+    DllImportEntry(SZ_ZStd_v1_5_2_CompressBlockWithDict)
+    DllImportEntry(SZ_ZStd_v1_5_2_DecompressBlockWithDict)
     DllImportEntry(SZ_ZStd_v1_5_2_CompressStream)
     DllImportEntry(SZ_ZStd_v1_5_2_FlushStream)
     DllImportEntry(SZ_ZStd_v1_5_2_EndStream)
