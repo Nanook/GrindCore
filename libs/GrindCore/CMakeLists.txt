@@ -40,6 +40,7 @@ include(${CLR_SRC_NATIVE_DIR}/external/sevenzip/sevenzip-lzma_v25_01.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/facebook/facebook-zstd_v1_5_2.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/facebook/facebook-zstd_v1_5_7.cmake)
 include(${CLR_SRC_NATIVE_DIR}/external/dotnet9_0/brotli_v1_1_0.cmake)
+include(${CLR_SRC_NATIVE_DIR}/external/bzip2/bzip2-bzip2.cmake)
 
 # List all third-party static libraries to link
 set(GRINDCORE_THIRD_PARTY_LIBS
@@ -54,6 +55,7 @@ set(GRINDCORE_THIRD_PARTY_LIBS
     zstd_v1_5_2
     zstd_v1_5_7
     brotli_v1_1_0
+    bzip2_v1_0_8
 )
 
 # Add shared_asm if it was created (x64 + USE_ASM only)
@@ -73,6 +75,7 @@ set(GRINDCORE_SOURCES
     pal_facebook_zstd_v1_5_7.c
     pal_facebook_zstd_v1_5_7_seekable.c
     pal_brotli_v1_1_0.c
+    pal_bzip2_v1_0_8.c
     entrypoints.c
     # Add any other GrindCore sources as needed
 )
