@@ -34,9 +34,22 @@ FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_FreeDecompressionC
 //
 // ===== Dictionary Handling =====
 //
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CreateCompressionDict(SZ_ZStd_v1_5_7_CompressionDict* dict, const void* dictBuffer, size_t dictSize, int32_t compressionLevel) {
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CreateCompressionDict(SZ_ZStd_v1_5_7_CompressionDict* dict, const void* dictBuffer, size_t dictSize, int32_t compressionLevel, int32_t windowLog) {
     if (!dict || !dictBuffer || dictSize == 0) return -1;
-    dict->cdict = ZSTD_createCDict(dictBuffer, dictSize, compressionLevel);
+    if (windowLog > 0) {
+        /* Advanced path: override windowLog explicitly. ZSTD_createCDict()'s implicit sizing (used below)
+         * caps the window at 8MB for any dictionary >256KB at level 19 (its size-tiered default table
+         * never grows the window beyond the level's own default) - this lets a caller with a larger
+         * dictionary force full coverage instead of silently losing match material beyond 8MB. */
+        ZSTD_CCtx_params* params = ZSTD_createCCtxParams();
+        if (!params) return -1;
+        ZSTD_CCtxParams_init(params, compressionLevel);
+        ZSTD_CCtxParams_setParameter(params, ZSTD_c_windowLog, windowLog);
+        dict->cdict = ZSTD_createCDict_advanced2(dictBuffer, dictSize, ZSTD_dlm_byCopy, ZSTD_dct_auto, params, ZSTD_defaultCMem);
+        ZSTD_freeCCtxParams(params);
+    } else {
+        dict->cdict = ZSTD_createCDict(dictBuffer, dictSize, compressionLevel);
+    }
     return dict->cdict ? 0 : -1;
 }
 

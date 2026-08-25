@@ -36,9 +36,19 @@ FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_FreeDecompressionC
 //
 // ===== Dictionary Handling =====
 //
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_CreateCompressionDict(SZ_ZStd_v1_5_2_CompressionDict* dict, const void* dictBuffer, size_t dictSize, int32_t compressionLevel) {
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_CreateCompressionDict(SZ_ZStd_v1_5_2_CompressionDict* dict, const void* dictBuffer, size_t dictSize, int32_t compressionLevel, int32_t windowLog) {
     if (!dict || !dictBuffer || dictSize == 0) return -1;
-    dict->cdict = ZSTD_v1_5_2_createCDict(dictBuffer, dictSize, compressionLevel);
+    if (windowLog > 0) {
+        /* Advanced path: override windowLog explicitly - see the matching v1.5.7 comment for why. */
+        ZSTD_v1_5_2_CCtx_params* params = ZSTD_v1_5_2_createCCtxParams();
+        if (!params) return -1;
+        ZSTD_v1_5_2_CCtxParams_init(params, compressionLevel);
+        ZSTD_v1_5_2_CCtxParams_setParameter(params, ZSTD_v1_5_2_c_windowLog, windowLog);
+        dict->cdict = ZSTD_v1_5_2_createCDict_advanced2(dictBuffer, dictSize, ZSTD_v1_5_2_dlm_byCopy, ZSTD_v1_5_2_dct_auto, params, ZSTD_v1_5_2_defaultCMem);
+        ZSTD_v1_5_2_freeCCtxParams(params);
+    } else {
+        dict->cdict = ZSTD_v1_5_2_createCDict(dictBuffer, dictSize, compressionLevel);
+    }
     return dict->cdict ? 0 : -1;
 }
 

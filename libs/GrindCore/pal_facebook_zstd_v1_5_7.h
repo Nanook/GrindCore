@@ -49,7 +49,7 @@ FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_FreeCompressionCon
 FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_FreeDecompressionContext(SZ_ZStd_v1_5_7_DecompressionContext* ctx);
 
 /* Dictionary Handling */
-FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CreateCompressionDict(SZ_ZStd_v1_5_7_CompressionDict* dict, const void* dictBuffer, size_t dictSize, int32_t compressionLevel);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CreateCompressionDict(SZ_ZStd_v1_5_7_CompressionDict* dict, const void* dictBuffer, size_t dictSize, int32_t compressionLevel, int32_t windowLog);
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CreateDecompressionDict(SZ_ZStd_v1_5_7_DecompressionDict* dict, const void* dictBuffer, size_t dictSize);
 FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_FreeCompressionDict(SZ_ZStd_v1_5_7_CompressionDict* dict);
 FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_FreeDecompressionDict(SZ_ZStd_v1_5_7_DecompressionDict* dict);
