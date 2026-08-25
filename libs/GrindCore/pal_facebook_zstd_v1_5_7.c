@@ -144,10 +144,59 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetCompressionL
 }
 
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetBlockSize(SZ_ZStd_v1_5_7_CompressionContext* ctx, size_t blockSize) {
-    // Not supported in zstd 1.5.2
-    (void)ctx;
-    (void)blockSize;
-    return -1;
+    if (!ctx || !ctx->cctx) return -1;
+    return (int32_t)ZSTD_CCtx_setParameter(ctx->cctx, ZSTD_c_targetCBlockSize, (int)blockSize);
+}
+
+//
+// ===== Multithreading Configuration =====
+//
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetNbWorkers(SZ_ZStd_v1_5_7_CompressionContext* ctx, int32_t nbWorkers) {
+    if (!ctx || !ctx->cctx || nbWorkers < 0) return -1;
+    return (int32_t)ZSTD_CCtx_setParameter(ctx->cctx, ZSTD_c_nbWorkers, nbWorkers);
+}
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetJobSize(SZ_ZStd_v1_5_7_CompressionContext* ctx, size_t jobSize) {
+    if (!ctx || !ctx->cctx) return -1;
+    return (int32_t)ZSTD_CCtx_setParameter(ctx->cctx, ZSTD_c_jobSize, (int)jobSize);
+}
+
+//
+// ===== Dictionary Compression & Decompression =====
+//
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CompressBlockWithDict(SZ_ZStd_v1_5_7_CompressionContext* ctx, SZ_ZStd_v1_5_7_CompressionDict* dict, void* dst, size_t dstCapacity, const void* src, size_t srcSize) {
+    if (!ctx || !ctx->cctx || !dict || !dict->cdict || !dst || !src) return 0;
+    return ZSTD_compress_usingCDict(ctx->cctx, dst, dstCapacity, src, srcSize, dict->cdict);
+}
+
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_DecompressBlockWithDict(SZ_ZStd_v1_5_7_DecompressionContext* ctx, SZ_ZStd_v1_5_7_DecompressionDict* dict, void* dst, size_t dstCapacity, const void* src, size_t srcSize) {
+    if (!ctx || !ctx->dctx || !dict || !dict->ddict || !dst || !src) return 0;
+    return ZSTD_decompress_usingDDict(ctx->dctx, dst, dstCapacity, src, srcSize, dict->ddict);
+}
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetCompressionDict(SZ_ZStd_v1_5_7_CompressionContext* ctx, SZ_ZStd_v1_5_7_CompressionDict* dict) {
+    if (!ctx || !ctx->cctx) return -1;
+    // Pass NULL cdict to clear the dictionary
+    size_t result = ZSTD_CCtx_refCDict(ctx->cctx, dict ? dict->cdict : NULL);
+    return ZSTD_isError(result) ? -1 : 0;
+}
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetDecompressionDict(SZ_ZStd_v1_5_7_DecompressionContext* ctx, SZ_ZStd_v1_5_7_DecompressionDict* dict) {
+    if (!ctx || !ctx->dctx) return -1;
+    // Pass NULL ddict to clear the dictionary
+    size_t result = ZSTD_DCtx_refDDict(ctx->dctx, dict ? dict->ddict : NULL);
+    return ZSTD_isError(result) ? -1 : 0;
+}
+
+//
+// ===== Error Handling =====
+//
+FUNCTIONEXPORT unsigned FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_IsError(size_t result) {
+    return ZSTD_isError(result);
+}
+
+FUNCTIONEXPORT const char* FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_GetErrorName(size_t result) {
+    return ZSTD_getErrorName(result);
 }
 
 //
@@ -160,3 +209,34 @@ FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CStreamInSize(vo
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CStreamOutSize(void) {
     return ZSTD_CStreamOutSize();
 }
+
+//
+// ===== Skippable Frame Functions =====
+//
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_WriteSkippableFrame(
+    void* dst,
+    size_t dstCapacity,
+    const void* src,
+    size_t srcSize,
+    uint32_t magicVariant)
+{
+    return ZSTD_writeSkippableFrame(dst, dstCapacity, src, srcSize, magicVariant);
+}
+
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_ReadSkippableFrame(
+    void* dst,
+    size_t dstCapacity,
+    uint32_t* magicVariant,
+    const void* src,
+    size_t srcSize)
+{
+    return ZSTD_readSkippableFrame(dst, dstCapacity, magicVariant, src, srcSize);
+}
+
+FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_IsSkippableFrame(
+    const void* buffer,
+    size_t size)
+{
+    return ZSTD_isSkippableFrame(buffer, size);
+}
+

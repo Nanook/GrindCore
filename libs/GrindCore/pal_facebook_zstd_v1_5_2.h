@@ -76,10 +76,41 @@ FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_DecompressStream
 /* Configuration */
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetCompressionLevel(SZ_ZStd_v1_5_2_CompressionContext* ctx, int32_t level);
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetBlockSize(SZ_ZStd_v1_5_2_CompressionContext* ctx, size_t blockSize);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetNbWorkers(SZ_ZStd_v1_5_2_CompressionContext* ctx, int32_t nbWorkers);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetJobSize(SZ_ZStd_v1_5_2_CompressionContext* ctx, size_t jobSize);
+
+/* Dictionary Compression & Decompression */
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_CompressBlockWithDict(SZ_ZStd_v1_5_2_CompressionContext* ctx, SZ_ZStd_v1_5_2_CompressionDict* dict, void* dst, size_t dstCapacity, const void* src, size_t srcSize);
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_DecompressBlockWithDict(SZ_ZStd_v1_5_2_DecompressionContext* ctx, SZ_ZStd_v1_5_2_DecompressionDict* dict, void* dst, size_t dstCapacity, const void* src, size_t srcSize);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetCompressionDict(SZ_ZStd_v1_5_2_CompressionContext* ctx, SZ_ZStd_v1_5_2_CompressionDict* dict);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetDecompressionDict(SZ_ZStd_v1_5_2_DecompressionContext* ctx, SZ_ZStd_v1_5_2_DecompressionDict* dict);
 
 /* Recommended Buffer Sizes */
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_CStreamInSize(void);
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_CStreamOutSize(void);
+
+/* Error Handling */
+FUNCTIONEXPORT unsigned FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_IsError(size_t result);
+FUNCTIONEXPORT const char* FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_GetErrorName(size_t result);
+
+/* Skippable Frame Functions */
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_WriteSkippableFrame(
+    void* dst,
+    size_t dstCapacity,
+    const void* src,
+    size_t srcSize,
+    uint32_t magicVariant);
+
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_ReadSkippableFrame(
+    void* dst,
+    size_t dstCapacity,
+    uint32_t* magicVariant,
+    const void* src,
+    size_t srcSize);
+
+FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_IsSkippableFrame(
+    const void* buffer,
+    size_t size);
 
 #ifdef __cplusplus
 }

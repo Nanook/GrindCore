@@ -9,9 +9,9 @@ if (USE_ASM)
 endif ()
 
 set (DEPS_SOURCES_BASE
-    xxhash.c
+    # xxhash.c  -- moved to shared_xxhash
     Blake2s.c
-    CpuArch.c
+    # CpuArch.c -- provided by lzma_v25_01 (sevenzip version, superset)
     Sha1.c
     Sha256.c
 )
@@ -53,4 +53,7 @@ target_include_directories(hashes PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/C/7z-deps
     ${CMAKE_CURRENT_LIST_DIR}/C/hashes
 )
+
+# Link shared xxhash (produces ZSTD_XXH* symbols)
+target_link_libraries(hashes PUBLIC shared_xxhash)
 

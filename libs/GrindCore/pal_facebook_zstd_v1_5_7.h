@@ -15,6 +15,7 @@
 
 #undef ZSTD_NAMESPACE
 #define ZSTD_NAMESPACE ZSTD_v1_5_7
+#define ZSTD_STATIC_LINKING_ONLY
 #include "external/facebook/zstd_v1_5_7/zstd.h"
 #include <stddef.h>
 
@@ -76,10 +77,45 @@ FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_DecompressStream
 /* Configuration */
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetCompressionLevel(SZ_ZStd_v1_5_7_CompressionContext* ctx, int32_t level);
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetBlockSize(SZ_ZStd_v1_5_7_CompressionContext* ctx, size_t blockSize);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetNbWorkers(SZ_ZStd_v1_5_7_CompressionContext* ctx, int32_t nbWorkers);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetJobSize(SZ_ZStd_v1_5_7_CompressionContext* ctx, size_t jobSize);
+
+/* Dictionary Compression & Decompression */
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CompressBlockWithDict(SZ_ZStd_v1_5_7_CompressionContext* ctx, SZ_ZStd_v1_5_7_CompressionDict* dict, void* dst, size_t dstCapacity, const void* src, size_t srcSize);
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_DecompressBlockWithDict(SZ_ZStd_v1_5_7_DecompressionContext* ctx, SZ_ZStd_v1_5_7_DecompressionDict* dict, void* dst, size_t dstCapacity, const void* src, size_t srcSize);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetCompressionDict(SZ_ZStd_v1_5_7_CompressionContext* ctx, SZ_ZStd_v1_5_7_CompressionDict* dict);
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetDecompressionDict(SZ_ZStd_v1_5_7_DecompressionContext* ctx, SZ_ZStd_v1_5_7_DecompressionDict* dict);
+
+/* Error Handling */
+FUNCTIONEXPORT unsigned FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_IsError(size_t result);
+FUNCTIONEXPORT const char* FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_GetErrorName(size_t result);
 
 /* Recommended Buffer Sizes */
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CStreamInSize(void);
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CStreamOutSize(void);
+
+/* Error Handling */
+FUNCTIONEXPORT unsigned FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_IsError(size_t result);
+FUNCTIONEXPORT const char* FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_GetErrorName(size_t result);
+
+/* Skippable Frame Functions */
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_WriteSkippableFrame(
+    void* dst,
+    size_t dstCapacity,
+    const void* src,
+    size_t srcSize,
+    uint32_t magicVariant);
+
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_ReadSkippableFrame(
+    void* dst,
+    size_t dstCapacity,
+    uint32_t* magicVariant,
+    const void* src,
+    size_t srcSize);
+
+FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_IsSkippableFrame(
+    const void* buffer,
+    size_t size);
 
 #ifdef __cplusplus
 }

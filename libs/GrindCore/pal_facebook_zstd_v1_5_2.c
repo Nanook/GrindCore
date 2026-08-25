@@ -1,3 +1,5 @@
+#define ZSTD_STATIC_LINKING_ONLY
+#define ZSTD_v1_5_2_STATIC_LINKING_ONLY
 #include "pal_facebook_zstd_v1_5_2.h"
 #include <stdlib.h>
 #include <stdint.h>
@@ -144,10 +146,46 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetCompressionL
 }
 
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetBlockSize(SZ_ZStd_v1_5_2_CompressionContext* ctx, size_t blockSize) {
-    // Not supported in zstd 1.5.2
-    (void)ctx;
-    (void)blockSize;
-    return -1;
+    if (!ctx || !ctx->cctx) return -1;
+    return (int32_t)ZSTD_v1_5_2_CCtx_setParameter(ctx->cctx, ZSTD_v1_5_2_c_targetCBlockSize, (int)blockSize);
+}
+
+//
+// ===== Multithreading Configuration =====
+//
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetNbWorkers(SZ_ZStd_v1_5_2_CompressionContext* ctx, int32_t nbWorkers) {
+    if (!ctx || !ctx->cctx || nbWorkers < 0) return -1;
+    return (int32_t)ZSTD_v1_5_2_CCtx_setParameter(ctx->cctx, ZSTD_v1_5_2_c_nbWorkers, nbWorkers);
+}
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetJobSize(SZ_ZStd_v1_5_2_CompressionContext* ctx, size_t jobSize) {
+    if (!ctx || !ctx->cctx) return -1;
+    return (int32_t)ZSTD_v1_5_2_CCtx_setParameter(ctx->cctx, ZSTD_v1_5_2_c_jobSize, (int)jobSize);
+}
+
+//
+// ===== Dictionary Compression & Decompression =====
+//
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_CompressBlockWithDict(SZ_ZStd_v1_5_2_CompressionContext* ctx, SZ_ZStd_v1_5_2_CompressionDict* dict, void* dst, size_t dstCapacity, const void* src, size_t srcSize) {
+    if (!ctx || !ctx->cctx || !dict || !dict->cdict || !dst || !src) return 0;
+    return ZSTD_v1_5_2_compress_usingCDict(ctx->cctx, dst, dstCapacity, src, srcSize, dict->cdict);
+}
+
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_DecompressBlockWithDict(SZ_ZStd_v1_5_2_DecompressionContext* ctx, SZ_ZStd_v1_5_2_DecompressionDict* dict, void* dst, size_t dstCapacity, const void* src, size_t srcSize) {
+    if (!ctx || !ctx->dctx || !dict || !dict->ddict || !dst || !src) return 0;
+    return ZSTD_v1_5_2_decompress_usingDDict(ctx->dctx, dst, dstCapacity, src, srcSize, dict->ddict);
+}
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetCompressionDict(SZ_ZStd_v1_5_2_CompressionContext* ctx, SZ_ZStd_v1_5_2_CompressionDict* dict) {
+    if (!ctx || !ctx->cctx) return -1;
+    size_t result = ZSTD_v1_5_2_CCtx_refCDict(ctx->cctx, dict ? dict->cdict : NULL);
+    return ZSTD_v1_5_2_isError(result) ? -1 : 0;
+}
+
+FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetDecompressionDict(SZ_ZStd_v1_5_2_DecompressionContext* ctx, SZ_ZStd_v1_5_2_DecompressionDict* dict) {
+    if (!ctx || !ctx->dctx) return -1;
+    size_t result = ZSTD_v1_5_2_DCtx_refDDict(ctx->dctx, dict ? dict->ddict : NULL);
+    return ZSTD_v1_5_2_isError(result) ? -1 : 0;
 }
 
 //
@@ -160,3 +198,45 @@ FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_CStreamInSize(vo
 FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_CStreamOutSize(void) {
     return ZSTD_v1_5_2_CStreamOutSize();
 }
+
+//
+// ===== Error Handling =====
+//
+FUNCTIONEXPORT unsigned FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_IsError(size_t result) {
+    return ZSTD_v1_5_2_isError(result);
+}
+
+FUNCTIONEXPORT const char* FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_GetErrorName(size_t result) {
+    return ZSTD_v1_5_2_getErrorName(result);
+}
+
+//
+// ===== Skippable Frame Functions =====
+//
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_WriteSkippableFrame(
+    void* dst,
+    size_t dstCapacity,
+    const void* src,
+    size_t srcSize,
+    uint32_t magicVariant)
+{
+    return ZSTD_v1_5_2_writeSkippableFrame(dst, dstCapacity, src, srcSize, magicVariant);
+}
+
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_ReadSkippableFrame(
+    void* dst,
+    size_t dstCapacity,
+    uint32_t* magicVariant,
+    const void* src,
+    size_t srcSize)
+{
+    return ZSTD_v1_5_2_readSkippableFrame(dst, dstCapacity, magicVariant, src, srcSize);
+}
+
+FUNCTIONEXPORT uint32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_IsSkippableFrame(
+    const void* buffer,
+    size_t size)
+{
+    return ZSTD_v1_5_2_isSkippableFrame(buffer, size);
+}
+

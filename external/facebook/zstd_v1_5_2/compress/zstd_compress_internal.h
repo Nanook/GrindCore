@@ -419,7 +419,7 @@ struct ZSTD_v1_5_2_CCtx_s {
 
     /* Multi-threading */
 #ifdef ZSTD_v1_5_2_MULTITHREAD
-    ZSTDMT_CCtx* mtctx;
+    ZSTDMT_v1_5_2_CCtx* mtctx;
 #endif
 
     /* Tracing */

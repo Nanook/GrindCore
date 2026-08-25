@@ -28,10 +28,9 @@ if(USE_ASM)
         set(USE_X86_ASM 1)
         set(USE_X64_ASM 1)
         set(LZMA_OPT_DEFS Z7_LZMA_DEC_OPT)
+    # 7zCrcOpt.asm and LzmaDecOpt.asm moved to shared_asm
     list(APPEND SZ_LZMA_ASM_SOURCES_BASE
-            x86/7zCrcOpt.asm
             x86/LzFindOpt.asm
-            x86/LzmaDecOpt.asm
         )
     elseif(IS_X86)
         set(USE_X86_ASM 1)
@@ -70,6 +69,10 @@ set(SZ_LZMA_SOURCES
 add_library(lzma_v25_01 STATIC ${SZ_LZMA_SOURCES})
 target_include_directories(lzma_v25_01 PUBLIC ${CMAKE_CURRENT_LIST_DIR}/lzma)
 
+# Link shared ASM (7zCrcOpt.asm + LzmaDecOpt.asm) when available
+if (TARGET shared_asm)
+    target_link_libraries(lzma_v25_01 PUBLIC shared_asm)
+endif()
 
 if(LZMA_OPT_DEFS)
     target_compile_definitions(lzma_v25_01 PRIVATE ${LZMA_OPT_DEFS})

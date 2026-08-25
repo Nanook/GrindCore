@@ -1,7 +1,7 @@
 set (ZSTD_V1_5_2_C_SOURCES_BASE
-    common/debug.c
+    # common/debug.c           -- moved to zstd_shared
     common/entropy_common.c
-    common/error_private.c
+    # common/error_private.c   -- moved to zstd_shared
     compress/fse_compress.c
     common/fse_decompress.c
     compress/hist.c
@@ -23,14 +23,10 @@ set (ZSTD_V1_5_2_C_SOURCES_BASE
     compress/zstd_lazy.c
     compress/zstd_ldm.c
     compress/zstd_opt.c
-    legacy/zstd_v01.c
-    legacy/zstd_v02.c
-    legacy/zstd_v03.c
-    legacy/zstd_v04.c
-    legacy/zstd_v05.c
-    legacy/zstd_v06.c
-    legacy/zstd_v07.c
+    # legacy/zstd_v01-v07.c    -- moved to zstd_shared
     compress/zstdmt_compress.c
+    seekable/zstdseek_compress.c
+    seekable/zstdseek_decompress.c
 )
 
 # Conditionally add the x86-64 assembly source for BMI2
@@ -47,17 +43,21 @@ set (ZSTD_SOURCES_V1_5_2
 # Create a static library for zstd 1.5.2
 add_library(zstd_v1_5_2 STATIC ${ZSTD_SOURCES_V1_5_2})
 
-# Suppress MSVC C4267 (size_t to int conversion) warnings for zstd sources
+# Suppress MSVC conversion warnings for zstd sources
+# C4267: size_t to int conversion
+# C4242/C4244: U64 to size_t narrowing (seekable format on 32-bit targets)
 if (MSVC)
-    set_source_files_properties(${ZSTD_SOURCES_V1_5_2} PROPERTIES COMPILE_FLAGS "/wd4267")
+    set_source_files_properties(${ZSTD_SOURCES_V1_5_2} PROPERTIES COMPILE_FLAGS "/wd4267 /wd4242 /wd4244")
 endif()
 
 # Include directories for official zstd
 target_include_directories(zstd_v1_5_2 PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR}/zstd_v1_5_2
     ${CMAKE_CURRENT_LIST_DIR}/zstd_v1_5_2/common
     ${CMAKE_CURRENT_LIST_DIR}/zstd_v1_5_2/compress
     ${CMAKE_CURRENT_LIST_DIR}/zstd_v1_5_2/decompress
     ${CMAKE_CURRENT_LIST_DIR}/zstd_v1_5_2/legacy
+    ${CMAKE_CURRENT_LIST_DIR}/zstd_v1_5_2/seekable
 )
 
 # Suppress implicit-fallthrough warnings for zstd 1.5.2 sources if building with GCC or Clang
@@ -68,6 +68,9 @@ if (CMAKE_C_COMPILER_ID MATCHES "Clang|GNU")
     )
 endif()
 
-target_compile_definitions(zstd_v1_5_2 PRIVATE ZSTD_NAMESPACE=ZSTD_v1_5_2 ZSTD_v1_5_2_DISABLE_ASM )
+target_compile_definitions(zstd_v1_5_2 PRIVATE ZSTD_NAMESPACE=ZSTD_v1_5_2 ZSTD_v1_5_2_DISABLE_ASM ZSTD_v1_5_2_MULTITHREAD)
+
+# Link shared libraries (debug, error_private, legacy decoders)
+target_link_libraries(zstd_v1_5_2 PUBLIC zstd_shared)
 
 set_target_properties(zstd_v1_5_2 PROPERTIES LINKER_LANGUAGE C)

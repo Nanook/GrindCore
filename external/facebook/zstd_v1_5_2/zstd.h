@@ -1612,7 +1612,7 @@ ZSTDLIB_STATIC_API ZSTD_v1_5_2_CDict* ZSTD_v1_5_2_createCDict_advanced(const voi
  *  to use an internal thread pool).
  *  ZSTD_v1_5_2_freeThreadPool frees a thread pool, accepts NULL pointer.
  */
-typedef struct POOL_ctx_s ZSTD_v1_5_2_threadPool;
+typedef struct POOL_v1_5_2_ctx_s ZSTD_v1_5_2_threadPool;
 ZSTDLIB_STATIC_API ZSTD_v1_5_2_threadPool* ZSTD_v1_5_2_createThreadPool(size_t numThreads);
 ZSTDLIB_STATIC_API void ZSTD_v1_5_2_freeThreadPool (ZSTD_v1_5_2_threadPool* pool);  /* accept NULL pointer */
 ZSTDLIB_STATIC_API size_t ZSTD_v1_5_2_CCtx_refThreadPool(ZSTD_v1_5_2_CCtx* cctx, ZSTD_v1_5_2_threadPool* pool);
