@@ -12,6 +12,7 @@
 #include "pal_facebook_zstd_v1_5_2_seekable.h"
 #include "pal_facebook_zstd_v1_5_7.h"
 #include "pal_facebook_zstd_v1_5_7_seekable.h"
+#include "pal_bzip2_v1_0_8.h"
 
 static const Entry s_compressionNative[] =
 {
@@ -336,6 +337,15 @@ static const Entry s_compressionNative[] =
     DllImportEntry(SZ_ZStd_v1_5_7_Seekable_GetFrameDecompressedSize)
     DllImportEntry(SZ_ZStd_v1_5_7_Seekable_GetDecompressedSize)
     DllImportEntry(SZ_ZStd_v1_5_7_Seekable_OffsetToFrameIndex)
+
+    DllImportEntry(SZ_BZip2_v1_0_8_CreateCompressionContext)
+    DllImportEntry(SZ_BZip2_v1_0_8_CompressStream)
+    DllImportEntry(SZ_BZip2_v1_0_8_FreeCompressionContext)
+    DllImportEntry(SZ_BZip2_v1_0_8_CreateDecompressionContext)
+    DllImportEntry(SZ_BZip2_v1_0_8_DecompressStream)
+    DllImportEntry(SZ_BZip2_v1_0_8_FreeDecompressionContext)
+    DllImportEntry(SZ_BZip2_v1_0_8_CompressBlock)
+    DllImportEntry(SZ_BZip2_v1_0_8_DecompressBlock)
 };
 
 EXTERN_C const void* CompressionResolveDllImport(const char* name);
