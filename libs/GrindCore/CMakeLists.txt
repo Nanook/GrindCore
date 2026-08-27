@@ -254,8 +254,14 @@ endif()
 add_custom_target(GrindCoreFat ALL DEPENDS ${FAT_STATIC_LIB})
 
 # Install targets
+# On Windows, only install the DLL (RUNTIME) from the shared target — not the import .lib
+# which would overwrite the fat static .lib. On Linux/macOS there's no collision.
+if(WIN32)
+    install(TARGETS GrindCore RUNTIME DESTINATION .)
+else()
+    install(TARGETS GrindCore DESTINATION .)
+endif()
 install(FILES ${FAT_STATIC_LIB} DESTINATION .)
-install(TARGETS GrindCore DESTINATION .)
 
 # Install PDB debug symbols on Windows (equivalent to .dbg on Linux)
 if(WIN32)
@@ -263,64 +269,12 @@ if(WIN32)
 endif()
 
 # ---- Symbol Localization & Verification (Unix/macOS) ----
-# After bundling the fat archive, localize all hidden-visibility symbols
-# so only PAL functions remain global. Then verify no leaks.
-if(NOT WIN32)
-    set(VERIFY_SYMBOLS_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/verify_static_symbols.sh")
-    file(WRITE ${VERIFY_SYMBOLS_SCRIPT}
-"#!/bin/sh
-# Verify that only PAL symbols (SZ_*, DN8_*, DN9_*, FL2_*) are global in the static archive.
-# On macOS symbols have a leading underscore prefix, so we match without requiring a space before.
-ARCHIVE=\"$1\"
-NM_TOOL=\"$2\"
-if [ -z \"$NM_TOOL\" ]; then NM_TOOL=nm; fi
-
-UNEXPECTED=$($NM_TOOL --defined-only -g \"$ARCHIVE\" 2>/dev/null | grep ' T ' | grep -v -E '(SZ_|DN8_|DN9_|FL2_)' | head -20)
-if [ -n \"$UNEXPECTED\" ]; then
-    echo \"ERROR: Unexpected global symbols found in $ARCHIVE:\"
-    echo \"$UNEXPECTED\"
-    COUNT=$($NM_TOOL --defined-only -g \"$ARCHIVE\" 2>/dev/null | grep ' T ' | grep -v -E '(SZ_|DN8_|DN9_|FL2_)' | wc -l)
-    echo \"Total unexpected global symbols: $COUNT\"
-    exit 1
-fi
-echo \"OK: Only PAL symbols are global in $ARCHIVE\"
-exit 0
-")
-
-    if(APPLE)
-        # macOS: Keep only PAL symbols global using nmedit
-        set(LOCALIZE_SCRIPT_MAC "${FAT_STATIC_DIR}/localize_symbols_mac.sh")
-        file(WRITE ${LOCALIZE_SCRIPT_MAC}
-"#!/bin/sh
-nm -g --defined-only \"${FAT_STATIC_LIB}\" | grep ' T ' | grep -E '_(SZ_|DN8_|DN9_|FL2_)' | awk '{print \$3}' > \"${FAT_STATIC_LIB}.exports\"
-if [ -s \"${FAT_STATIC_LIB}.exports\" ]; then
-    nmedit -s \"${FAT_STATIC_LIB}.exports\" \"${FAT_STATIC_LIB}\"
-fi
-")
-        add_custom_command(TARGET GrindCoreFat POST_BUILD
-            COMMENT "Localizing internal symbols in fat archive (macOS)"
-            COMMAND sh ${LOCALIZE_SCRIPT_MAC}
-        )
-    else()
-        # Linux: Keep only PAL symbols global, localize everything else
-        set(LOCALIZE_SCRIPT "${FAT_STATIC_DIR}/localize_symbols.sh")
-        file(WRITE ${LOCALIZE_SCRIPT}
-"#!/bin/sh
-${CMAKE_NM} --defined-only -g \"${FAT_STATIC_LIB}\" | grep ' T ' | grep -E ' (SZ_|DN8_|DN9_|FL2_)' | awk '{print $3}' > \"${FAT_STATIC_LIB}.globals\"
-objcopy --keep-global-symbols=\"${FAT_STATIC_LIB}.globals\" \"${FAT_STATIC_LIB}\"
-")
-        add_custom_command(TARGET GrindCoreFat POST_BUILD
-            COMMENT "Localizing internal symbols in fat archive"
-            COMMAND sh ${LOCALIZE_SCRIPT}
-        )
-    endif()
-
-    add_custom_command(TARGET GrindCoreFat POST_BUILD
-        COMMENT "Verifying symbol isolation in fat archive"
-        COMMAND sh ${VERIFY_SYMBOLS_SCRIPT} ${FAT_STATIC_LIB} ${CMAKE_NM}
-        VERBATIM
-    )
-endif()
+# ---- Symbol Localization DISABLED ----
+# The objcopy/nmedit localization step was stripping internal symbols (FL2POOL_*,
+# RMF_buildTable, LZMA2_encode, etc.) that are needed by other objects within the
+# same archive. For static archives used in AOT linking, symbol visibility is
+# handled by the final linker — localization is unnecessary and actively harmful
+# on newer toolchains (Ubuntu 22.04+ / Clang 15+).
 
 # Generate export header for cross-platform symbol visibility
 GENERATE_EXPORT_HEADER(GrindCore
