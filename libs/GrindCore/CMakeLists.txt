@@ -194,7 +194,7 @@ set(FAT_STATIC_DIR "${CMAKE_BINARY_DIR}/static")
 file(MAKE_DIRECTORY "${FAT_STATIC_DIR}")
 
 if(WIN32)
-    set(FAT_STATIC_LIB "${FAT_STATIC_DIR}/GrindCore.lib")
+    set(FAT_STATIC_LIB "${FAT_STATIC_DIR}/GrindCore.Aot.lib")
     # On Windows, use lib.exe to merge all .lib files
     set(_merge_cmd ${CMAKE_AR} /NOLOGO /OUT:${FAT_STATIC_LIB} $<TARGET_FILE:GrindCoreStatic>)
     foreach(_dep ${GRINDCORE_THIRD_PARTY_LIBS})
@@ -209,7 +209,7 @@ if(WIN32)
         VERBATIM
     )
 elseif(APPLE)
-    set(FAT_STATIC_LIB "${FAT_STATIC_DIR}/libGrindCore.a")
+    set(FAT_STATIC_LIB "${FAT_STATIC_DIR}/libGrindCore.Aot.a")
     # On macOS, use libtool to merge all .a files
     find_program(_libtool libtool)
     set(_merge_cmd ${_libtool} -static -o ${FAT_STATIC_LIB} $<TARGET_FILE:GrindCoreStatic>)
@@ -225,7 +225,7 @@ elseif(APPLE)
         VERBATIM
     )
 else()
-    set(FAT_STATIC_LIB "${FAT_STATIC_DIR}/libGrindCore.a")
+    set(FAT_STATIC_LIB "${FAT_STATIC_DIR}/libGrindCore.Aot.a")
     # On Linux, use AR MRI script to merge archives (handles duplicate object names)
     set(_mri_script "${FAT_STATIC_DIR}/GrindCore_bundle.mri")
     set(_mri_content "CREATE ${FAT_STATIC_LIB}\n")
