@@ -15,9 +15,12 @@ typedef struct {
 #define SZ_LZ4_ENCODE(stream) (&((SZ_Lz4_v1_10_0_StreamState*)(stream)->internalState)->encode)
 #define SZ_LZ4_DECODE(stream) (&((SZ_Lz4_v1_10_0_StreamState*)(stream)->internalState)->decode)
 
+// Init, and the LZ4F context creates below, refuse a struct that already holds a state: they would replace it, and it
+// would leak (audit/memory.md M10). End or free it first, which sets it back to NULL. GrindCore.net always passes a
+// zeroed struct.
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4_v1_10_0_Init(SZ_Lz4_v1_10_0_Stream* stream)
 {
-    if (stream == NULL)
+    if (stream == NULL || stream->internalState != NULL)
         return SZ_Lz4_v1_10_0_ERROR;
 
     SZ_Lz4_v1_10_0_StreamState* state = (SZ_Lz4_v1_10_0_StreamState*)malloc(sizeof(SZ_Lz4_v1_10_0_StreamState));
@@ -279,7 +282,7 @@ FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_Lz4F_v1_10_0_CompressBound(s
 /* Compression Context Management */
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4F_v1_10_0_CreateCompressionContext(SZ_Lz4F_v1_10_0_CompressionContext* ctx)
 {
-    if (ctx == NULL) return SZ_Lz4_v1_10_0_ERROR;
+    if (ctx == NULL || ctx->internalState != NULL) return SZ_Lz4_v1_10_0_ERROR;   // M10, as Init
     return (int32_t)LZ4F_createCompressionContext((LZ4F_cctx**)&ctx->internalState, LZ4F_VERSION);
 }
 
@@ -331,7 +334,7 @@ FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_Lz4F_v1_10_0_CompressEnd(
 /* Decompression Context Management */
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_Lz4F_v1_10_0_CreateDecompressionContext(SZ_Lz4F_v1_10_0_DecompressionContext* ctx)
 {
-    if (ctx == NULL) return SZ_Lz4_v1_10_0_ERROR;
+    if (ctx == NULL || ctx->internalState != NULL) return SZ_Lz4_v1_10_0_ERROR;   // M10, as Init
     return (int32_t)LZ4F_createDecompressionContext((LZ4F_dctx**)&ctx->internalState, LZ4F_VERSION);
 }
 

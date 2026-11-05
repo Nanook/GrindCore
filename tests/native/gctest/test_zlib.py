@@ -490,6 +490,38 @@ class _ZlibTests(object):
         self.assertEqual(got, [Z_STREAM_ERROR] * 4 + [0], "%s: Deflate, DeflateEnd, Inflate, InflateEnd on a stream "
                          "without a z_stream, then whether one appeared" % self.z.name)
 
+    def test_init_refuses_a_stream_that_has_its_z_stream(self):
+        """DeflateInit2_ and InflateInit2_ refuse a stream that still has its z_stream: Init would replace it, and the
+        old one would leak (memory.md M10). End sets it back to NULL, and then the stream can be initialised again. On
+        a library without the check the second init replaces the z_stream: the known defect (the first one leaks)."""
+        for init, args, end in (("DeflateInit2_", (6, DEFLATED, 15, 8, 0), "DeflateEnd"),
+                                ("InflateInit2_", (15,), "InflateEnd")):
+            with self.subTest(init=init):
+                f, e = self.z.fn(init), self.z.fn(end)
+                s = self.z.L.struct.PAL_ZStream()
+                self.assertEqual(f(ctypes.byref(s), *args), Z_OK)
+                first = s.internalState
+                second = f(ctypes.byref(s), *args)
+                if second == Z_OK and s.internalState != first:
+                    e(ctypes.byref(s))
+                    known(self, "pal-create-overwrite")
+                self.assertEqual(second, Z_STREAM_ERROR)
+                self.assertEqual(s.internalState, first, "a refused init leaves the stream as it was")
+                self.assertEqual(e(ctypes.byref(s)), Z_OK)
+                self.assertFalse(s.internalState)
+                self.assertEqual(f(ctypes.byref(s), *args), Z_OK, "after End the stream can be initialised again")
+                e(ctypes.byref(s))
+
+    def test_init_with_a_null_stream_is_an_error(self):
+        """DeflateInit2_ and InflateInit2_ return Z_STREAM_ERROR for a NULL stream. Only an assert, compiled out of a
+        release build, used to check it, and the init wrote through NULL, so the calls run in a child process."""
+        rc, out, err = child("""
+            print(L.%sDeflateInit2_(None, 6, 8, 15, 8, 0), L.%sInflateInit2_(None, 15))
+        """ % (self.PREFIX, self.PREFIX))
+        if rc != 0:
+            known(self, "zlib-init-null-stream")
+        self.assertEqual([int(x) for x in out.split()], [Z_STREAM_ERROR] * 2)
+
     # --- one-shot wrappers and Nanook's compress3/uncompress3 -------------------------------------------------------
 
     def test_one_shot_compress_equals_the_stream(self):

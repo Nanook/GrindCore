@@ -459,6 +459,32 @@ class Lz4Tests(unittest.TestCase):
         for name, r in got.items():
             self.assertLess(r, 0, name)
 
+    def test_init_and_create_refuse_a_struct_in_use(self):
+        """Init and the LZ4F context creates refuse a struct that still holds its state: they would replace it, and the
+        old one would leak (memory.md M10). End or free sets it back to NULL, and then the struct can be used again. On
+        a library without the check the second call replaces the state: the known defect (the first one leaks)."""
+        L = self.L
+        for struct_name, create, release in (
+                ("SZ_Lz4_v1_10_0_Stream", P + "Init", P + "End"),
+                ("SZ_Lz4F_v1_10_0_CompressionContext", PF + "CreateCompressionContext", PF + "FreeCompressionContext"),
+                ("SZ_Lz4F_v1_10_0_DecompressionContext", PF + "CreateDecompressionContext",
+                 PF + "FreeDecompressionContext")):
+            with self.subTest(create=create):
+                s, f, free = getattr(L.struct, struct_name)(), getattr(L, create), getattr(L, release)
+                self.assertEqual(f(ctypes.byref(s)), Z.OK)
+                first = s.internalState
+                self.assertTrue(first)
+                second = f(ctypes.byref(s))
+                if second == Z.OK and s.internalState != first:
+                    free(ctypes.byref(s))
+                    known(self, "pal-create-overwrite")
+                self.assertEqual(second, Z.ERROR)
+                self.assertEqual(s.internalState, first, "a refused call leaves the struct as it was")
+                free(ctypes.byref(s))
+                self.assertFalse(s.internalState)
+                self.assertEqual(f(ctypes.byref(s)), Z.OK, "after End or the free the struct can be used again")
+                free(ctypes.byref(s))
+
     def test_compress_hc_stream(self):
         """SZ_Lz4F_v1_10_0_CompressHC_Stream takes an LZ4F compression context, whose state is an LZ4F_cctx, and uses
         it as an LZ4_streamHC_t (about 256 KB), resetting and compressing into it. It must not write outside the

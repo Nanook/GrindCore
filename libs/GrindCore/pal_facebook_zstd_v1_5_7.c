@@ -12,14 +12,16 @@
 //
 // ===== Compression Context Management =====
 //
+// Each create refuses a struct that already holds an object: it would replace it, and the old one would leak
+// (audit/memory.md M10). Free first, which sets the field back to NULL. GrindCore.net always passes a zeroed struct.
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CreateCompressionContext(SZ_ZStd_v1_5_7_CompressionContext* ctx) {
-    if (!ctx) return -1;
+    if (!ctx || ctx->cctx) return -1;
     ctx->cctx = ZSTD_createCCtx();
     return ctx->cctx ? 0 : -1;
 }
 
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CreateDecompressionContext(SZ_ZStd_v1_5_7_DecompressionContext* ctx) {
-    if (!ctx) return -1;
+    if (!ctx || ctx->dctx) return -1;
     ctx->dctx = ZSTD_createDCtx();
     return ctx->dctx ? 0 : -1;
 }
@@ -42,7 +44,7 @@ FUNCTIONEXPORT void FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_FreeDecompressionC
 // ===== Dictionary Handling =====
 //
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CreateCompressionDict(SZ_ZStd_v1_5_7_CompressionDict* dict, const void* dictBuffer, size_t dictSize, int32_t compressionLevel, int32_t windowLog) {
-    if (!dict || !dictBuffer || dictSize == 0) return -1;
+    if (!dict || dict->cdict || !dictBuffer || dictSize == 0) return -1;   // a dictionary already there: M10, above
     if (windowLog > 0) {
         /* Advanced path: override windowLog explicitly. ZSTD_createCDict()'s implicit sizing (used below)
          * caps the window at 8MB for any dictionary >256KB at level 19 (its size-tiered default table
@@ -61,7 +63,7 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CreateCompressi
 }
 
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CreateDecompressionDict(SZ_ZStd_v1_5_7_DecompressionDict* dict, const void* dictBuffer, size_t dictSize) {
-    if (!dict || !dictBuffer || dictSize == 0) return -1;
+    if (!dict || dict->ddict || !dictBuffer || dictSize == 0) return -1;
     dict->ddict = ZSTD_createDDict(dictBuffer, dictSize);
     return dict->ddict ? 0 : -1;
 }

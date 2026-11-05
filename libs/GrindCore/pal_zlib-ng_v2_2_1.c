@@ -45,9 +45,16 @@
 
 /*
 Initializes the PAL_ZStream by creating and setting its underlying z_stream.
+
+A stream that already has one is refused: Init would replace it, and it would leak (audit/memory.md M10). End it
+first, which sets it back to NULL. GrindCore.net initialises each stream once. A NULL stream, which the callers'
+asserts let through in a release build, gets the same error.
 */
 static int32_t Init(PAL_ZStream* stream)
 {
+    if (stream == NULL || stream->internalState != NULL)
+        return PAL_Z_STREAMERROR;
+
     z_stream* zStream = (z_stream*)calloc(1, sizeof(z_stream));
     stream->internalState = zStream;
 

@@ -77,6 +77,13 @@ KNOWN_DEFECTS = {
                           "which Init leaves when its calloc fails, and GrindCore.net's handle calls DeflateEnd or "
                           "InflateEnd on it when released: a crash instead of the out-of-memory exception; fixed in "
                           "the PAL on audit/native-fixes; audit/memory.md M10",
+    "pal-create-overwrite": "the PAL's create and init functions (zstd's contexts, dictionaries and seekable streams, "
+                            "zlib's and zlib-ng's Init, LZ4's Init, LZ4F's contexts) store a new object into the "
+                            "caller's struct without checking for one already there, which then leaks; GrindCore.net "
+                            "always passes a zeroed struct; fixed in the PAL on audit/native-fixes; audit/memory.md M10",
+    "zlib-init-null-stream": "the zlib PALs' DeflateInit2_ and InflateInit2_ write through a NULL stream (only an "
+                             "assert, compiled out of a release build, checks it); GrindCore.net never passes NULL; "
+                             "fixed in the PAL on audit/native-fixes; audit/memory.md M10",
     "zlibng-arm32-neon-align": "zlib-ng's NEON Adler-32 uses :256-aligned loads (clang 14-19 on 32-bit ARM) on data "
                                "aligned to 16: SIGBUS on every call; fixed by the zlib-ng_arm32_neon_ld4.h header on "
                                "audit/native-fixes; audit/platforms.md 10.7",

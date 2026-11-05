@@ -6,8 +6,9 @@
 //
 // ===== Seekable Compression Context Management =====
 //
+// The creates refuse a struct that already holds a stream, which they would replace and leak (audit/memory.md M10).
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_Seekable_CreateCStream(SZ_ZStd_v1_5_7_SeekableCStream* ctx) {
-    if (!ctx) return -1;
+    if (!ctx || ctx->zcs) return -1;
     ctx->zcs = ZSTD_v1_5_7_seekable_createCStream();
     return ctx->zcs ? 0 : -1;
 }
@@ -100,7 +101,7 @@ FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_Seekable_EndStre
 // ===== Seekable Decompression Context Management =====
 //
 FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_Seekable_Create(SZ_ZStd_v1_5_7_Seekable* ctx) {
-    if (!ctx) return -1;
+    if (!ctx || ctx->zs) return -1;   // M10, as CreateCStream
     ctx->zs = ZSTD_v1_5_7_seekable_create();
     return ctx->zs ? 0 : -1;
 }

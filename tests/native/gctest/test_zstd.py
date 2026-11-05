@@ -465,6 +465,34 @@ class _ZStdTests(object):
         d = self.z.struct("CompressionDict")
         self.assertEqual(self.z.fn("CreateCompressionDict")(ctypes.byref(d), None, 10, 3, 0), -1)
 
+    def test_create_refuses_a_struct_in_use(self):
+        """Every create refuses a struct that still holds its object: it would replace it, and the old one would leak
+        (memory.md M10). The free sets the field back to NULL, and then the struct can be created into again. On a
+        library without the check the second create replaces the object: the known defect (the first one leaks)."""
+        content = self.dictionary()
+        for struct_name, create, args, free in (
+                ("CompressionContext", "CreateCompressionContext", (), "FreeCompressionContext"),
+                ("DecompressionContext", "CreateDecompressionContext", (), "FreeDecompressionContext"),
+                ("CompressionDict", "CreateCompressionDict", (content, len(content), 3, 0), "FreeCompressionDict"),
+                ("CompressionDict", "CreateCompressionDict", (content, len(content), 3, 20), "FreeCompressionDict"),
+                ("DecompressionDict", "CreateDecompressionDict", (content, len(content)), "FreeDecompressionDict"),
+                ("SeekableCStream", "Seekable_CreateCStream", (), "Seekable_FreeCStream"),
+                ("Seekable", "Seekable_Create", (), "Seekable_Free")):
+            with self.subTest(create=create, args=args[2:]):
+                s, f, release = self.z.struct(struct_name), self.z.fn(create), self.z.fn(free)
+                self.assertEqual(f(ctypes.byref(s), *args), 0)
+                first = bytes(s)
+                second = f(ctypes.byref(s), *args)
+                if second == 0 and bytes(s) != first:
+                    release(ctypes.byref(s))
+                    known(self, "pal-create-overwrite")
+                self.assertEqual(second, -1)
+                self.assertEqual(bytes(s), first, "a refused create leaves the struct as it was")
+                release(ctypes.byref(s))
+                self.assertFalse(any(bytes(s)), "the free sets the struct back to NULL")
+                self.assertEqual(f(ctypes.byref(s), *args), 0, "after the free the struct can be created into again")
+                release(ctypes.byref(s))
+
     # ------------------------------------------------------------------ skippable frames, sizes
 
     def test_skippable_frames(self):
