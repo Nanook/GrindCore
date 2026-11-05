@@ -41,6 +41,11 @@ OVERRIDES = {
     "FL2_isError": ("u32", ["size"]),
     "FL2_isTimedOut": ("u32", ["size"]),
     "FL2_getErrorName": ("cstr", ["size"]),
+    # audit/native-fixes: block compression with zstd's frame flags (content size, checksum, dictionary ID), zstd.md 2.3
+    "SZ_ZStd_v1_5_2_CompressBlockAdvanced": ("size", ["ptr", "ptr", "size", "ptr", "size", "i32", "i32", "i32", "i32"]),
+    "SZ_ZStd_v1_5_7_CompressBlockAdvanced": ("size", ["ptr", "ptr", "size", "ptr", "size", "i32", "i32", "i32", "i32"]),
+    "SZ_ZStd_v1_5_2_CompressBlockWithDictAdvanced": ("size", ["ptr", "ptr", "ptr", "size", "ptr", "size", "i32", "i32", "i32"]),
+    "SZ_ZStd_v1_5_7_CompressBlockWithDictAdvanced": ("size", ["ptr", "ptr", "ptr", "size", "ptr", "size", "i32", "i32", "i32"]),
 }
 EXPORTS = dict(_spec.EXPORTS)
 EXPORTS.update(OVERRIDES)

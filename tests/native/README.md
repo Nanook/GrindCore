@@ -1,6 +1,6 @@
 # Native test suite (ctypes, no .NET)
 
-Tests GrindCore's C library directly: all 337 exports, every codec, on all 11 RIDs. It was written for the 2026 audit.
+Tests GrindCore's C library directly: all 341 exports, every codec, on all 11 RIDs. It was written for the 2026 audit.
 The plan, the results and the findings are in the audit's notes, the `grindcore-workspace` repo (the
 `audit/<topic>.md` references in the code are to that repo). They aren't needed to run anything here.
 

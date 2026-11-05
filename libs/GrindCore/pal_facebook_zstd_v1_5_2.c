@@ -1,5 +1,7 @@
 #define ZSTD_STATIC_LINKING_ONLY
 #define ZSTD_v1_5_2_STATIC_LINKING_ONLY
+// For ZSTD_v1_5_2_compress_usingCDict_advanced (CompressBlockWithDictAdvanced): see the 1.5.7 PAL
+#define ZSTD_v1_5_2_DISABLE_DEPRECATE_WARNINGS
 #include "pal_facebook_zstd_v1_5_2.h"
 // ZSTD_v1_5_2_getErrorCode. Only here, not in the header: entrypoints.c also includes 1.5.7's zstd.h, which brings
 // 1.5.7's zstd_errors.h, and the two define ZSTDERRORLIB_API differently.
@@ -212,6 +214,33 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_SetDecompressio
     if (!ctx || !ctx->dctx) return -1;
     size_t result = ZSTD_v1_5_2_DCtx_refDDict(ctx->dctx, dict ? dict->ddict : NULL);
     return ZSTD_v1_5_2_isError(result) ? -1 : 0;
+}
+
+//
+// ===== Block Compression with Frame Parameters (audit/zstd.md 2.3) =====
+//
+// As in the 1.5.7 PAL: CompressBlock and CompressBlockWithDict with the content-size, checksum and dictionary-ID
+// flags chosen by the caller (0 or 1 each); 1, 0, 1 give exactly the plain functions' output.
+#define SZ_ZSTD_FLAG(f) ((f) == 0 || (f) == 1)
+
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_CompressBlockAdvanced(SZ_ZStd_v1_5_2_CompressionContext* ctx, void* dst, size_t dstCapacity, const void* src, size_t srcSize, int32_t compressionLevel, int32_t contentSizeFlag, int32_t checksumFlag, int32_t dictIDFlag) {
+    if (!ctx || !ctx->cctx || SZ_ZSTD_NULL_BUF(dst, dstCapacity) || SZ_ZSTD_NULL_BUF(src, srcSize)
+        || !SZ_ZSTD_FLAG(contentSizeFlag) || !SZ_ZSTD_FLAG(checksumFlag) || !SZ_ZSTD_FLAG(dictIDFlag))
+        return SZ_ZSTD_ARG_ERROR;
+    size_t r = ZSTD_v1_5_2_CCtx_reset(ctx->cctx, ZSTD_v1_5_2_reset_session_and_parameters);
+    if (!ZSTD_v1_5_2_isError(r)) r = ZSTD_v1_5_2_CCtx_setParameter(ctx->cctx, ZSTD_v1_5_2_c_compressionLevel, compressionLevel);
+    if (!ZSTD_v1_5_2_isError(r)) r = ZSTD_v1_5_2_CCtx_setParameter(ctx->cctx, ZSTD_v1_5_2_c_contentSizeFlag, contentSizeFlag);
+    if (!ZSTD_v1_5_2_isError(r)) r = ZSTD_v1_5_2_CCtx_setParameter(ctx->cctx, ZSTD_v1_5_2_c_checksumFlag, checksumFlag);
+    if (!ZSTD_v1_5_2_isError(r)) r = ZSTD_v1_5_2_CCtx_setParameter(ctx->cctx, ZSTD_v1_5_2_c_dictIDFlag, dictIDFlag);
+    return ZSTD_v1_5_2_isError(r) ? r : ZSTD_v1_5_2_compress2(ctx->cctx, dst, dstCapacity, src, srcSize);
+}
+
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_2_CompressBlockWithDictAdvanced(SZ_ZStd_v1_5_2_CompressionContext* ctx, SZ_ZStd_v1_5_2_CompressionDict* dict, void* dst, size_t dstCapacity, const void* src, size_t srcSize, int32_t contentSizeFlag, int32_t checksumFlag, int32_t dictIDFlag) {
+    if (!ctx || !ctx->cctx || !dict || !dict->cdict || SZ_ZSTD_NULL_BUF(dst, dstCapacity) || SZ_ZSTD_NULL_BUF(src, srcSize)
+        || !SZ_ZSTD_FLAG(contentSizeFlag) || !SZ_ZSTD_FLAG(checksumFlag) || !SZ_ZSTD_FLAG(dictIDFlag))
+        return SZ_ZSTD_ARG_ERROR;
+    ZSTD_v1_5_2_frameParameters const fParams = { contentSizeFlag, checksumFlag, !dictIDFlag };
+    return ZSTD_v1_5_2_compress_usingCDict_advanced(ctx->cctx, dst, dstCapacity, src, srcSize, dict->cdict, fParams);
 }
 
 //

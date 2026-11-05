@@ -16,6 +16,8 @@ MAX_FRAME = {"1.5.2": 0x80000000, "1.5.7": 0x40000000}  # ZSTD_SEEKABLE_MAX_FRAM
 # ZSTD_cParameter ids. targetCBlockSize is experimental (1003) in 1.5.2 and stable (130) in 1.5.7 (zstd.md 9.3).
 C_LEVEL, C_WINDOWLOG, C_WORKERS, C_JOBSIZE = 100, 101, 400, 401
 C_TARGETCBLOCK = {"1.5.2": 1003, "1.5.7": 130}
+C_CONTENTSIZE, C_CHECKSUM, C_DICTID = 200, 201, 202     # the frame flags, stable in both
+FLAG_SETS = [(cs, ck, di) for cs in (1, 0) for ck in (0, 1) for di in (1, 0)]   # (content size, checksum, dict ID)
 CONTINUE, FLUSH, END, END_FRAME = 0, 1, 2, "end_frame"
 
 
@@ -124,6 +126,22 @@ class ZStd(object):
                 r = self.fn("CompressBlock")(ctypes.byref(c), dst, cap, src.addr, src.n, level)
             else:
                 r = self.fn("CompressBlockWithDict")(ctypes.byref(c), ctypes.byref(cdict), dst, cap, src.addr, src.n)
+            return r, (None if self.is_error(r) else ctypes.string_at(dst, r))
+        finally:
+            self.free_cctx(c)
+
+    def compress_block_advanced(self, data, level, flags=(1, 0, 1), capacity=None, cdict=None):
+        """CompressBlockAdvanced, or CompressBlockWithDictAdvanced with a cdict (which carries the level), with the
+        frame flags (content size, checksum, dictionary ID): (return value, output or None)."""
+        c = self.cctx()
+        try:
+            cap = bound(len(data)) if capacity is None else capacity
+            dst, src = ctypes.create_string_buffer(max(cap, 1)), _Buf(data)
+            if cdict is None:
+                r = self.fn("CompressBlockAdvanced")(ctypes.byref(c), dst, cap, src.addr, src.n, level, *flags)
+            else:
+                r = self.fn("CompressBlockWithDictAdvanced")(ctypes.byref(c), ctypes.byref(cdict), dst, cap, src.addr,
+                                                              src.n, *flags)
             return r, (None if self.is_error(r) else ctypes.string_at(dst, r))
         finally:
             self.free_cctx(c)
@@ -291,6 +309,10 @@ class _CMem(ctypes.Structure):
     _fields_ = [("customAlloc", vp), ("customFree", vp), ("opaque", vp)]
 
 
+class _FParams(ctypes.Structure):        # ZSTD_frameParameters, passed by value
+    _fields_ = [("contentSizeFlag", ctypes.c_int), ("checksumFlag", ctypes.c_int), ("noDictIDFlag", ctypes.c_int)]
+
+
 def reference(version):
     """The official library for this version from $GC_REF_ZSTD, or None."""
     folder = os.environ.get("GC_REF_ZSTD")
@@ -314,6 +336,8 @@ REF_FUNCTIONS = [
     ("ZSTD_CCtxParams_init", sz, [vp, i32]), ("ZSTD_CCtxParams_setParameter", sz, [vp, i32, i32]),
     ("ZSTD_createCDict_advanced2", vp, [vp, sz, i32, i32, vp, _CMem]),
     ("ZSTD_compress_usingCDict", sz, [vp, vp, sz, vp, sz, vp]),
+    ("ZSTD_compress2", sz, [vp, vp, sz, vp, sz]),
+    ("ZSTD_compress_usingCDict_advanced", sz, [vp, vp, sz, vp, sz, vp, _FParams]),
     ("ZSTD_decompress", sz, [vp, sz, vp, sz]),
     ("ZSTD_CStreamInSize", sz, []), ("ZSTD_CStreamOutSize", sz, []),
     ("ZSTD_writeSkippableFrame", sz, [vp, sz, vp, sz, u32]),
@@ -364,6 +388,25 @@ class Ref(object):
                 r = self.compressCCtx(c, dst, cap, src.addr, src.n, level)
             else:
                 r = self.compress_usingCDict(c, dst, cap, src.addr, src.n, cdict)
+            return r, (None if self.is_error(r) else ctypes.string_at(dst, r))
+        finally:
+            self.freeCCtx(c)
+
+    def compress_block_advanced(self, data, level, flags=(1, 0, 1), cdict=None):
+        """zstd's advanced API, as python-zstandard and Python's compression.zstd use it: the level and the frame
+        flags set as parameters, then ZSTD_compress2. With a cdict, ZSTD_compress_usingCDict_advanced, the dictionary
+        call that takes the flags."""
+        c, src = self.createCCtx(), _Buf(data)
+        try:
+            dst = ctypes.create_string_buffer(max(bound(len(data)), 1))
+            if cdict is None:
+                for param, value in zip((C_LEVEL, C_CONTENTSIZE, C_CHECKSUM, C_DICTID), (level,) + tuple(flags)):
+                    if self.is_error(self.CCtx_setParameter(c, param, value)):
+                        raise ValueError("ZSTD_CCtx_setParameter(%d, %r)" % (param, value))
+                r = self.compress2(c, dst, len(dst), src.addr, src.n)
+            else:
+                cs, ck, di = flags
+                r = self.compress_usingCDict_advanced(c, dst, len(dst), src.addr, src.n, cdict, _FParams(cs, ck, 1 - di))
             return r, (None if self.is_error(r) else ctypes.string_at(dst, r))
         finally:
             self.freeCCtx(c)

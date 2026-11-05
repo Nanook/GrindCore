@@ -122,6 +122,130 @@ class _ZStdTests(object):
         r = self.z.decompress_block(stream, len(data) - 1)[0]
         self.assertTrue(self.z.is_error(r), "decoding into one byte too few must be an error, got %d" % r)
 
+    # ------------------------------------------------------------------ frame flags (zstd.md 2.3)
+
+    def need_advanced(self):
+        """CompressBlockAdvanced and CompressBlockWithDictAdvanced are exported on audit/native-fixes; the shipped
+        binaries don't have them."""
+        if not self.L.has(self.z.P + "CompressBlockAdvanced"):
+            self.skipTest("%sCompressBlockAdvanced not exported by this library (exported on audit/native-fixes)"
+                          % self.z.P)
+
+    def check_frame_header(self, stream, flags, what):
+        """The frame header descriptor (byte 4) says what the flags asked for: a content size (Single_Segment_flag or
+        a Frame_Content_Size_flag) only with contentSizeFlag 1, and Content_Checksum_flag as checksumFlag."""
+        fhd = stream[4]
+        has_size = bool(fhd & 0x20) or fhd >> 6 != 0
+        self.assertEqual(has_size, bool(flags[0]), "%s: content size in the header" % what)
+        self.assertEqual(bool(fhd & 0x04), bool(flags[1]), "%s: checksum flag" % what)
+
+    def test_block_advanced_defaults_are_the_plain_output(self):
+        """With the flags at zstd's defaults (content size, no checksum, dictionary ID), CompressBlockAdvanced gives
+        exactly CompressBlock's output at every level, and CompressBlockWithDictAdvanced exactly
+        CompressBlockWithDict's, with and without the dictionary's own windowLog. So setting a flag to its default
+        changes nothing."""
+        self.need_advanced()
+        for name, data in corpus():
+            for level in (-5, 0, 1, 2, 3, 5, 9, 15, 19, 22) if len(data) <= 70000 else (-5, 0, 1, 3, 9):
+                with self.subTest(data=name, level=level):
+                    r, out = self.z.compress_block_advanced(data, level)
+                    self.assertFalse(self.z.is_error(r), self.z.error_name(r))
+                    self.assertEqual(out, self.z.compress_block(data, level)[1])
+        content, data = self.dictionary(), sample.text(20000, seed=100)
+        for window_log in (0, 20):
+            with self.subTest(window_log=window_log):
+                rc, cd = self.z.cdict(content, 5, window_log)
+                self.assertEqual(rc, 0)
+                try:
+                    self.assertEqual(self.z.compress_block_advanced(data, 0, cdict=cd)[1],
+                                     self.z.compress_block(data, 0, cdict=cd)[1])
+                finally:
+                    self.z.fn("FreeCompressionDict")(ctypes.byref(cd))
+
+    def test_block_advanced_flags_match_official(self):
+        """Every combination of the three flags: the frame decodes, its header says what the flags asked for, and it's
+        byte-identical to official zstd's advanced API (the flags as parameters, then ZSTD_compress2), which is what
+        python-zstandard calls; and, where this Python's compression.zstd is the same zstd version, to that
+        independent build too. Without the content size, the header carries the window size in its place, the frame
+        NDZ trims GrindCore's into."""
+        self.need_advanced()
+        same_python = pyzstd is not None and py_version() == self.VERSION
+        for name, data in corpus():
+            for level in (1, 3, 19) if len(data) <= 70000 else (1, 3):
+                for flags in Z.FLAG_SETS:
+                    with self.subTest(data=name, level=level, flags=flags):
+                        r, out = self.z.compress_block_advanced(data, level, flags)
+                        self.assertFalse(self.z.is_error(r), self.z.error_name(r))
+                        self.assertEqual(self.z.decompress_block(out, len(data))[1], data)
+                        self.check_frame_header(out, flags, name)
+                        if self.ref:
+                            self.assertEqual(out, self.ref.compress_block_advanced(data, level, flags)[1])
+                        if same_python:
+                            P = pyzstd.CompressionParameter
+                            options = {P.compression_level: level, P.content_size_flag: flags[0],
+                                       P.checksum_flag: flags[1], P.dict_id_flag: flags[2]}
+                            self.assertEqual(out, pyzstd.compress(data, options=options),
+                                             "differs from Python's compression.zstd")
+        self.need_ref()
+
+    def test_block_with_dict_advanced_flags_match_official(self):
+        """Every combination of the three flags with a dictionary, with and without its own windowLog: the frame decodes
+        with the dictionary, its header says what the flags asked for, and it's byte-identical to official zstd's
+        ZSTD_compress_usingCDict_advanced. That's the call CompressBlockWithDict makes with 1, 0, 1, so the dictionary's
+        parameters, its window included, are kept. (This dictionary is raw content, whose ID is 0, so the
+        dictionary-ID flag can't show in the header; the official comparison still covers it.)"""
+        self.need_advanced()
+        content, data = self.dictionary(), sample.text(20000, seed=100)
+        rc, dd = self.z.ddict(content)
+        self.assertEqual(rc, 0)
+        try:
+            for window_log in (0, 20):
+                rc, cd = self.z.cdict(content, 5, window_log)
+                self.assertEqual(rc, 0)
+                rd = self.ref.make_cdict(content, 5, window_log) if self.ref else None
+                try:
+                    for flags in Z.FLAG_SETS:
+                        with self.subTest(window_log=window_log, flags=flags):
+                            r, out = self.z.compress_block_advanced(data, 0, flags, cdict=cd)
+                            self.assertFalse(self.z.is_error(r), self.z.error_name(r))
+                            self.assertEqual(self.z.decompress_block(out, len(data), ddict=dd)[1], data)
+                            self.check_frame_header(out, flags, "window_log %d" % window_log)
+                            if rd:
+                                self.assertEqual(out, self.ref.compress_block_advanced(data, 0, flags, cdict=rd)[1])
+                finally:
+                    self.z.fn("FreeCompressionDict")(ctypes.byref(cd))
+                    if rd:
+                        self.ref.freeCDict(rd)
+        finally:
+            self.z.fn("FreeDecompressionDict")(ctypes.byref(dd))
+        self.need_ref()
+
+    def test_block_advanced_arguments(self):
+        """A flag other than 0 or 1, a NULL context or dictionary, or a NULL buffer with a size is an error (IsError),
+        never a size."""
+        self.need_advanced()
+        f, fd = self.z.fn("CompressBlockAdvanced"), self.z.fn("CompressBlockWithDictAdvanced")
+        content = self.dictionary()
+        c = self.z.cctx()
+        rc, cd = self.z.cdict(content, 3)
+        dst, src = ctypes.create_string_buffer(256), ctypes.create_string_buffer(b"abc" * 10)
+        try:
+            for flags in ((2, 0, 1), (1, -1, 1), (1, 0, 2), (-1, 0, 0)):
+                with self.subTest(flags=flags):
+                    self.assertTrue(self.z.is_error(f(ctypes.byref(c), dst, 256, src, 30, 3, *flags)))
+                    self.assertTrue(self.z.is_error(fd(ctypes.byref(c), ctypes.byref(cd), dst, 256, src, 30, *flags)))
+            self.assertTrue(self.z.is_error(f(None, dst, 256, src, 30, 3, 1, 0, 1)))
+            self.assertTrue(self.z.is_error(f(ctypes.byref(c), None, 256, src, 30, 3, 1, 0, 1)))
+            self.assertTrue(self.z.is_error(f(ctypes.byref(c), dst, 256, None, 30, 3, 1, 0, 1)))
+            self.assertTrue(self.z.is_error(fd(ctypes.byref(c), None, dst, 256, src, 30, 1, 0, 1)))
+            self.assertTrue(self.z.is_error(fd(None, ctypes.byref(cd), dst, 256, src, 30, 1, 0, 1)))
+            empty = self.z.struct("CompressionDict")
+            self.assertTrue(self.z.is_error(fd(ctypes.byref(c), ctypes.byref(empty), dst, 256, src, 30, 1, 0, 1)))
+            self.assertFalse(self.z.is_error(f(ctypes.byref(c), dst, 256, None, 0, 3, 0, 0, 1)), "an empty input")
+        finally:
+            self.z.free_cctx(c)
+            self.z.fn("FreeCompressionDict")(ctypes.byref(cd))
+
     def test_error_codes(self):
         """GetErrorCode, exported on audit/native-fixes (absent from the shipped binaries, where this skips): zstd's
         ZSTD_ErrorCode for a result, so a caller can tell a too-small buffer from corrupt data (zstd.md, ZStdBlock's

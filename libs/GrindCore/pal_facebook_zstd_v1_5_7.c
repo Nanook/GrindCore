@@ -1,3 +1,7 @@
+// CompressBlockWithDictAdvanced (below) calls ZSTD_compress_usingCDict_advanced, which zstd marks deprecated in favour
+// of ZSTD_compress2. That one would choose the window from the level and the sizes, not keep the dictionary's own
+// (audit/zstd.md 2.3). zstd provides this switch for its deprecation warnings; it must come before zstd.h.
+#define ZSTD_DISABLE_DEPRECATE_WARNINGS
 #include "pal_facebook_zstd_v1_5_7.h"
 #include <stdlib.h>
 #include <stdint.h>
@@ -212,6 +216,41 @@ FUNCTIONEXPORT int32_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_SetDecompressio
     // Pass NULL ddict to clear the dictionary
     size_t result = ZSTD_DCtx_refDDict(ctx->dctx, dict ? dict->ddict : NULL);
     return ZSTD_isError(result) ? -1 : 0;
+}
+
+//
+// ===== Block Compression with Frame Parameters (audit/zstd.md 2.3) =====
+//
+// CompressBlock and CompressBlockWithDict, with zstd's three frame flags chosen by the caller (0 or 1 each):
+//   contentSizeFlag: the content size in the frame header. Without it the header carries the window size instead,
+//                    as zstd's advanced API and python-zstandard write it with the flag off (NDZ's 1-byte trim);
+//   checksumFlag:    a 4-byte checksum of the content after the frame;
+//   dictIDFlag:      the dictionary's ID in the header (dictionary frames only).
+// The plain functions are 1, 0, 1, and these give exactly their output with those values.
+#define SZ_ZSTD_FLAG(f) ((f) == 0 || (f) == 1)
+
+// ZSTD_compress2's call, after a reset of the session and every parameter: the context's earlier settings (workers,
+// block size, a referenced dictionary) don't apply, as they don't to ZSTD_compressCCtx in CompressBlock.
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CompressBlockAdvanced(SZ_ZStd_v1_5_7_CompressionContext* ctx, void* dst, size_t dstCapacity, const void* src, size_t srcSize, int32_t compressionLevel, int32_t contentSizeFlag, int32_t checksumFlag, int32_t dictIDFlag) {
+    if (!ctx || !ctx->cctx || SZ_ZSTD_NULL_BUF(dst, dstCapacity) || SZ_ZSTD_NULL_BUF(src, srcSize)
+        || !SZ_ZSTD_FLAG(contentSizeFlag) || !SZ_ZSTD_FLAG(checksumFlag) || !SZ_ZSTD_FLAG(dictIDFlag))
+        return SZ_ZSTD_ARG_ERROR;
+    size_t r = ZSTD_CCtx_reset(ctx->cctx, ZSTD_reset_session_and_parameters);
+    if (!ZSTD_isError(r)) r = ZSTD_CCtx_setParameter(ctx->cctx, ZSTD_c_compressionLevel, compressionLevel);
+    if (!ZSTD_isError(r)) r = ZSTD_CCtx_setParameter(ctx->cctx, ZSTD_c_contentSizeFlag, contentSizeFlag);
+    if (!ZSTD_isError(r)) r = ZSTD_CCtx_setParameter(ctx->cctx, ZSTD_c_checksumFlag, checksumFlag);
+    if (!ZSTD_isError(r)) r = ZSTD_CCtx_setParameter(ctx->cctx, ZSTD_c_dictIDFlag, dictIDFlag);
+    return ZSTD_isError(r) ? r : ZSTD_compress2(ctx->cctx, dst, dstCapacity, src, srcSize);
+}
+
+// The call CompressBlockWithDict makes (ZSTD_compress_usingCDict is this function with 1, 0, 1), so the dictionary's
+// own parameters apply, its window included (CreateCompressionDict's windowLog)
+FUNCTIONEXPORT size_t FUNCTIONCALLINGCONVENCTION SZ_ZStd_v1_5_7_CompressBlockWithDictAdvanced(SZ_ZStd_v1_5_7_CompressionContext* ctx, SZ_ZStd_v1_5_7_CompressionDict* dict, void* dst, size_t dstCapacity, const void* src, size_t srcSize, int32_t contentSizeFlag, int32_t checksumFlag, int32_t dictIDFlag) {
+    if (!ctx || !ctx->cctx || !dict || !dict->cdict || SZ_ZSTD_NULL_BUF(dst, dstCapacity) || SZ_ZSTD_NULL_BUF(src, srcSize)
+        || !SZ_ZSTD_FLAG(contentSizeFlag) || !SZ_ZSTD_FLAG(checksumFlag) || !SZ_ZSTD_FLAG(dictIDFlag))
+        return SZ_ZSTD_ARG_ERROR;
+    ZSTD_frameParameters const fParams = { contentSizeFlag, checksumFlag, !dictIDFlag };
+    return ZSTD_compress_usingCDict_advanced(ctx->cctx, dst, dstCapacity, src, srcSize, dict->cdict, fParams);
 }
 
 //
